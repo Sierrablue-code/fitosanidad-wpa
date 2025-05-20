@@ -1,10 +1,7 @@
 const CACHE_NAME = "miapp-cache-v1";
 const urlsToCache = [
   "/mapaEcuablueFitosanidad.html",
-  "/ecualasos.html",
-  "/sierrablue.html",
-  "/agrotati.html",
-  "/ecuablue.html"
+  "/ecualasos.html"
 ];
 
 self.addEventListener("install", event => {
