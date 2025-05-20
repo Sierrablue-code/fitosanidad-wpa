@@ -1,7 +1,7 @@
 {
   "name": "Mapas de Fitosanidad",
   "short_name": "Fitosanidad",
-  "start_url": "mapaAgrotati.html",
+  "start_url": "mapaEcuablueFitosanidad.html",
   "display": "standalone"
  
 }
