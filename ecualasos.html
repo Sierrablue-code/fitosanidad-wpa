@@ -1440,15 +1440,15 @@
         ]);
        }
        /* Enviar datos*/
-      async function runServerFunction(tabla, fila) {
+      async function runServerFunction(tablaN, filaJson) {
             try {
                 const response = await fetch(URL_APPSCRIPT, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         accion: "agregarFila",
-                        tabla,
-                        fila
+                        tabla:tablaN,
+                        fila: filaJson
                     })
                 });
 
