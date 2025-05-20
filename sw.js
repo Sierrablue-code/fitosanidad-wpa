@@ -3,8 +3,8 @@ const urlsToCache = [
   "/mapaEcuablueFitosanidad.html",
   "/ecualasos.html",
   "/sierrablue.html",
-  "/agrotati.css",
-  "/ecuablue.js"
+  "/agrotati.html",
+  "/ecuablue.html"
 ];
 
 self.addEventListener("install", event => {
