@@ -1885,7 +1885,7 @@
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
-                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecualasos",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
+                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecualasos",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':"",'Observación':observacionesPrincipales}
                   Array.from(filas).forEach(function(fila) {
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
