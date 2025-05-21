@@ -1718,25 +1718,23 @@
             document.getElementById('contador').textContent = total;
           }
 
-                      async function enviarPendientes() {
+async function enviarPendientes() {
     let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
-    let nuevosPendientes = []; // Acumulará los registros que no se pudieron enviar
+    let nuevosPendientes = [];
 
     console.log("Intentando guardar registros pendientes:", registros);
 
     if (registros.length > 0) {
         for (const registro of registros) {
-            let idPrincipal = registro.encabezado['Row ID']; // ID del encabezado de AppSheet
-            let encabezadoGuardadoExitosamente = false; // Bandera para controlar el flujo
+            let idPrincipal = registro.encabezado['Row ID'];
+            let encabezadoGuardadoExitosamente = false;
 
             // --- 1. Guardar encabezado si aún no tiene Row ID ---
-            // Solo entra en este bloque si el encabezado NO tiene un Row ID asignado
             if (!idPrincipal) {
                 try {
                     const rawBase64 = registro.encabezado["Foto 1 (Deficiencia)"];
-                    let imageUrl = ""; // Variable para la URL final de la imagen del encabezado (inicialmente vacía)
+                    let imageUrl = "";
 
-                    // Verificar si rawBase64 es una cadena no vacía antes de intentar procesarla
                     if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
                         let base64Pure = '';
                         let mimeType = '';
@@ -1746,7 +1744,7 @@
                             base64Pure = base64Pure.split(',')[1];
                         } else {
                             base64Pure = rawBase64;
-                            mimeType = 'image/png'; // **Ajusta este tipo MIME por defecto si tu imagen es JPG/otro**
+                            mimeType = 'image/png'; // Asegúrate de que esto coincida con tu tipo de imagen por defecto si no hay prefijo
                         }
 
                         const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotune"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
@@ -1759,13 +1757,15 @@
                             console.log("Imagen de encabezado subida. URL:", imageUrl);
                         } else {
                             console.error("Error al subir la imagen del encabezado:", uploadResult.error);
-                            // imageUrl permanece "", que es lo deseado.
+                            // imageUrl permanece "", lo que luego convertiremos a null
                         }
                     } else {
-                        console.log("No hay Base64 para la imagen de encabezado o no es una cadena válida. El campo se enviará vacío.");
+                        console.log("No hay Base64 para la imagen de encabezado o no es una cadena válida. El campo se enviará como null.");
                     }
 
-                    registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl; // Asigna la URL (o la cadena vacía)
+                    // *** MODIFICACIÓN CLAVE AQUÍ PARA EL ENCABEZADO ***
+                    // Si imageUrl sigue siendo una cadena vacía, la convertimos a null
+                    registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl === "" ? null : imageUrl;
 
                     console.log("Enviando encabezado a AppSheet:", registro.encabezado);
                     const rowId = await runServerFunction('Encabezado: Plagas y enfermedades', registro.encabezado);
@@ -1784,21 +1784,14 @@
                     encabezadoGuardadoExitosamente = false;
                 }
             } else {
-                // Si el encabezado ya tiene un Row ID, simplemente marcamos que ya está guardado
-                // y no hacemos ninguna operación de guardado o subida de imagen para él.
                 console.log(`Encabezado ya tiene Row ID (${idPrincipal}). No se re-procesará. Procediendo con detalles.`);
                 encabezadoGuardadoExitosamente = true;
             }
 
-            // Si el encabezado no se pudo guardar en este intento (o ya se sabía que falló),
-            // lo agregamos a los pendientes y pasamos al siguiente registro.
             if (!encabezadoGuardadoExitosamente) {
                 nuevosPendientes.push(registro);
-                continue; // Saltar al siguiente registro
+                continue;
             }
-
-            // A partir de aquí, sabemos que `idPrincipal` tiene un valor válido,
-            // ya sea porque se obtuvo en este intento o porque ya existía.
 
             // --- 2. Guardar detalles de Plagas ---
             const fallidosPlagas = [];
@@ -1806,7 +1799,7 @@
                 item["IdPlagas y Enfermedades"] = idPrincipal;
 
                 const rawBase64Plaga = item["Foto 1"];
-                let imageUrlPlaga = ""; // Inicialmente vacía
+                let imageUrlPlaga = "";
 
                 if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
                     let base64PurePlaga = '';
@@ -1817,7 +1810,7 @@
                         base64PurePlaga = base64PurePlaga.split(',')[1];
                     } else {
                         base64PurePlaga = rawBase64Plaga;
-                        mimeTypePlaga = 'image/png'; // **Ajustar**
+                        mimeTypePlaga = 'image/png';
                     }
 
                     const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
@@ -1830,12 +1823,12 @@
                         console.log("Imagen de plaga subida. URL:", imageUrlPlaga);
                     } else {
                         console.error("Error al subir la imagen de la plaga:", uploadResultPlaga.error);
-                        // imageUrlPlaga permanece "", que es lo deseado.
                     }
                 } else {
-                    console.log("No hay Base64 para la imagen de plaga o no es una cadena válida. El campo se enviará vacío.");
+                    console.log("No hay Base64 para la imagen de plaga o no es una cadena válida. El campo se enviará como null.");
                 }
-                item["Foto 1"] = imageUrlPlaga; // Asigna la URL (o la cadena vacía)
+                // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS PLAGAS ***
+                item["Foto 1"] = imageUrlPlaga === "" ? null : imageUrlPlaga;
 
                 try {
                     console.log("Enviando detalle de plaga a AppSheet:", item);
@@ -1853,7 +1846,7 @@
                 item["IdPlagas y Enfermedades"] = idPrincipal;
 
                 const rawBase64Enfermedad = item["Foto 1"];
-                let imageUrlEnfermedad = ""; // Inicialmente vacía
+                let imageUrlEnfermedad = "";
 
                 if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
                     let base64PureEnfermedad = '';
@@ -1864,7 +1857,7 @@
                         base64PureEnfermedad = base64PureEnfermedad.split(',')[1];
                     } else {
                         base64PureEnfermedad = rawBase64Enfermedad;
-                        mimeTypeEnfermedad = 'image/png'; // **Ajustar**
+                        mimeTypeEnfermedad = 'image/png';
                     }
 
                     const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
@@ -1877,12 +1870,12 @@
                         console.log("Imagen de enfermedad subida. URL:", imageUrlEnfermedad);
                     } else {
                         console.error("Error al subir la imagen de la enfermedad:", uploadResultEnfermedad.error);
-                        // imageUrlEnfermedad permanece "", que es lo deseado.
                     }
                 } else {
-                    console.log("No hay Base64 para la imagen de enfermedad o no es una cadena válida. El campo se enviará vacío.");
+                    console.log("No hay Base64 para la imagen de enfermedad o no es una cadena válida. El campo se enviará como null.");
                 }
-                item["Foto 1"] = imageUrlEnfermedad; // Asigna la URL (o la cadena vacía)
+                // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
+                item["Foto 1"] = imageUrlEnfermedad === "" ? null : imageUrlEnfermedad;
 
                 try {
                     console.log("Enviando detalle de enfermedad a AppSheet:", item);
@@ -1894,7 +1887,7 @@
                 }
             }
 
-            // --- 4. Manejo de reintentos: Si hubo errores en los detalles, agregar a nuevosPendientes ---
+            // --- 4. Manejo de reintentos ---
             if (fallidosPlagas.length > 0 || fallidosEnfermedades.length > 0) {
                 nuevosPendientes.push({
                     encabezado: registro.encabezado,
@@ -1909,7 +1902,7 @@
 
         // --- 5. Actualizar el Local Storage con los registros pendientes ---
         localStorage.setItem('registrosPendientes', JSON.stringify(nuevosPendientes));
-        actualizarContador(); // Asumo que esta función actualiza tu contador de pendientes
+        actualizarContador();
         console.log(`Proceso de envío de pendientes finalizado. Quedan ${nuevosPendientes.length} registros para reintentar.`);
 
     } else {
