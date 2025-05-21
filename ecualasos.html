@@ -1023,7 +1023,7 @@
   
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-    const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbw-kAv0noOQQwlgbnOygIibwnzX_4tp5fRnfSGW5FcWsV-rZ8R6GbiKLxodZrsekb_l/exec";
+    const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbz6bRhgh2XP3feposZuBx_TMZiK4k8T6J2NOh1mre8TeTGLdE-XXEVvLJ3Dam6ZAYeMvQ/exec";
     const fechaRegistro = document.getElementById("fechaRegistro");
     const hoy = new Date().toISOString().split('T')[0];
     fechaRegistro.value = hoy;
@@ -1441,41 +1441,34 @@
        }
        /* Enviar datos*/
       async function runServerFunction(tablaN, filaJson) {
-              try {
-        const response = await fetch(URL_APPSCRIPT, {
-            method: "POST",
-            mode: "cors", // Esto es importante
-            headers: { 
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({
-                accion: "agregarFila",
-                tabla: tablaN,
-                fila: filaJson
-            }),
-            redirect: "manual" // Importante para evitar problemas de redirección
-        });
+          try {
+    const response = await fetch(URL_APPSCRIPT, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        accion: "agregarFila",
+        tabla: tablaN,
+        fila: filaJson
+      })
+    });
 
-        // Manejar redirección manualmente si es necesario
-        if (response.type === "opaqueredirect") {
-            const newResponse = await fetch(response.url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    accion: "agregarFila",
-                    tabla: tablaN,
-                    fila: filaJson
-                })
-            });
-            return await handleResponse(newResponse);
-        }
-
-        return await handleResponse(response);
-    } catch (err) {
-        console.error("Error en la solicitud:", err);
-        return null;
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
     }
+
+    const data = await response.json();
+    
+    if (data.success) {
+      return data.rowId; // Devuelve directamente el ID
+    } else {
+      throw new Error(data.error || "Error al crear registro");
+    }
+  } catch (err) {
+    console.error("Error en runServerFunction:", err);
+    throw err; // Propaga el error para manejo externo
+  }
         }
 
        /*interaccion formulario de registro*/
