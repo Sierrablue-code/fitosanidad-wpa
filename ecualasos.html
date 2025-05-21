@@ -1410,7 +1410,7 @@
         const datos = localStorage.getItem(clave);
         return datos ? JSON.parse(datos) : [];
       }
-      function obtenerDesdeBase(productor,tabla, claveCache) {
+      async function obtenerDesdeBase(productor,tabla, claveCache) {
           if (!navigator.onLine) {
         console.warn(`⚠ Sin conexión: intentando cargar desde caché para ${claveCache}`);
         const cachedData = cargarDesdeCache(claveCache);
