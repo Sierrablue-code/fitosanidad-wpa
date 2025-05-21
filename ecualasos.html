@@ -1024,6 +1024,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
     const URL_APPSCRIPT = "https://sweet-voice-1412.ecuablue-ec.workers.dev/";
+    const URL_APPSCRIPT_UPLOAD_IMAGE = 'https://script.google.com/macros/s/AKfycbye8F0WlVjR82ou6dMB7ev-iSKKIQMl1bhYV6tyk6yIkHakMTkf6zcDmP5YyzMciM1zqg/exec'; // ¡PEGA AQUÍ LA URL DE TU APPS SCRIPT WEB APP!
+    const GOOGLE_DRIVE_FOLDER_ID = '1uAyXHrJ8SHVkpGTHvQ8DqnzqZN-2FkQd';
     const fechaRegistro = document.getElementById("fechaRegistro");
     const hoy = new Date().toISOString().split('T')[0];
     fechaRegistro.value = hoy;
@@ -1716,97 +1718,217 @@
             document.getElementById('contador').textContent = total;
           }
 
-          async function enviarPendientes() {
-  let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
-  let nuevosPendientes = [];
+        async function enviarPendientes() {
+    let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+    let nuevosPendientes = []; // Acumulará los registros que no se pudieron enviar
 
-  console.log("Intentando guardar registros pendientes:", registros);
+    console.log("Intentando guardar registros pendientes:", registros);
 
-  if (registros.length > 0) {
-    for (const registro of registros) {
-      let nuevoRegistro = {
-        encabezado: registro.encabezado,
-        detallesPlagas: [],
-        detallesEnfermedades: []
-      };
+    if (registros.length > 0) {
+        for (const registro of registros) {
+            let idPrincipal = registro.encabezado['Row ID']; // ID del encabezado de AppSheet
+            let encabezadoGuardadoExitosamente = false; // Bandera para controlar el flujo
 
-      let idPrincipal = registro.encabezado['Row ID'];
+            // --- 1. Guardar encabezado si aún no tiene Row ID ---
+            if (!idPrincipal) {
+                try {
+                    const rawBase64 = registro.encabezado["Foto 1 (Deficiencia)"];
+                    let imageUrl = ""; // Variable para la URL final de la imagen del encabezado
 
-      // Guardar encabezado si aún no tiene Row ID
-      if (!idPrincipal) {
-        try {
-          const base64 = registro.encabezado["Foto 1 (Deficiencia)"];
-          const nombre = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotune"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}`;
-          const urlBase64 = base64 ? subirImagenBase64DesdeCliente(base64, nombre, 'Imagenes_Monitoreo') : "";
+                    if (rawBase64) {
+                        // Extraer Base64 puro y tipo MIME
+                        let base64Pure = '';
+                        let mimeType = '';
+                        if (rawBase64.startsWith('data:')) {
+                            // Si es una Data URL completa
+                            [mimeType, base64Pure] = rawBase64.split(';');
+                            mimeType = mimeType.split(':')[1];
+                            base64Pure = base64Pure.split(',')[1];
+                        } else {
+                            // Si ya es Base64 puro, asumimos un MIME type por defecto
+                            base64Pure = rawBase64;
+                            mimeType = 'image/png'; // **Ajustar si tu imagen es JPG/otro**
+                        }
 
-          registro.encabezado["Foto 1 (Deficiencia)"] = urlBase64;
+                        // Construir el nombre del archivo para Drive
+                        const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotune"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`; // Se sugiere .png
 
-          const rowId = await runServerFunction('Encabezado: Plagas y enfermedades', registro.encabezado);
+                        console.log("Subiendo imagen de encabezado:", nombreArchivoEncabezado);
+                        // **¡AQUÍ AWAITAMOS LA SUBIDA DE LA IMAGEN DEL ENCABEZADO!**
+                        const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado, mimeType);
 
-          if (rowId) {
-            idPrincipal = rowId;
-            registro.encabezado["Row ID"] = rowId;
-          } else {
-            console.warn("No se pudo guardar el encabezado. Se reintentará.");
-            nuevosPendientes.push(registro);
-            continue;
-          }
-        } catch (e) {
-          console.error("Error al guardar encabezado:", e);
-          nuevosPendientes.push(registro);
-          continue;
-        }
-      }
+                        if (uploadResult.success) {
+                            imageUrl = uploadResult.url;
+                            console.log("Imagen de encabezado subida. URL:", imageUrl);
+                        } else {
+                            console.error("Error al subir la imagen del encabezado:", uploadResult.error);
+                            // La imagen no se subió, pero podemos intentar guardar el resto del registro.
+                        }
+                    }
 
-      // Guardar detalles de Plagas
-      const fallidosPlagas = [];
-      for (const item of registro.detallesPlagas) {
-        item["IdPlagas y Enfermedades"] = idPrincipal;
+                    // Asignar la URL (o cadena vacía si falló/no había imagen) al campo del encabezado
+                    registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl;
 
-        const base64Plaga = item["Foto 1"];
-        const nombreFotoPlaga = `${idPrincipal}-${item["Plaga"]}-${registro.encabezado["Fecha"]}`;
-        item["Foto 1"] = base64Plaga ? subirImagenBase64DesdeCliente(base64Plaga, nombreFotoPlaga, "Imagenes_Monitoreo") : "";
+                    // Ahora sí, enviar el encabezado a AppSheet
+                    console.log("Enviando encabezado a AppSheet:", registro.encabezado);
+                    const rowId = await runServerFunction('Encabezado: Plagas y enfermedades', registro.encabezado);
 
-        try {
-          const id = await runServerFunction("Detalle: Plagas", item);
-          if (!id) fallidosPlagas.push(item);
-        } catch (e) {
-          console.error("Error al guardar detalle de plaga:", e);
-          fallidosPlagas.push(item);
-        }
-      }
+                    if (rowId) {
+                        idPrincipal = rowId;
+                        registro.encabezado["Row ID"] = rowId;
+                        encabezadoGuardadoExitosamente = true;
+                        console.log("Encabezado guardado con Row ID:", rowId);
+                    } else {
+                        console.warn("No se pudo guardar el encabezado (no se recibió Row ID). Se reintentará.");
+                        encabezadoGuardadoExitosamente = false;
+                    }
+                } catch (e) {
+                    console.error("Error crítico al guardar encabezado o subir su imagen:", e);
+                    encabezadoGuardadoExitosamente = false;
+                }
+            } else {
+                // Si ya tiene Row ID, significa que el encabezado ya se guardó o se reintentará con un ID existente.
+                console.log(`Encabezado ya tiene Row ID (${idPrincipal}). Procediendo con detalles.`);
+                encabezadoGuardadoExitosamente = true; // Asumimos que si ya tiene ID, el encabezado está bien.
+            }
 
-      // Guardar detalles de Enfermedades
-      const fallidosEnfermedades = [];
-      for (const item of registro.detallesEnfermedades) {
-        item["IdPlagas y Enfermedades"] = idPrincipal;
+            // Si el encabezado no se pudo guardar (o ya se sabía que falló), no intentamos los detalles y lo ponemos en pendientes.
+            if (!encabezadoGuardadoExitosamente) {
+                nuevosPendientes.push(registro);
+                continue; // Saltar al siguiente registro en el bucle principal
+            }
 
-        const base64Enfermedad = item["Foto 1"];
-        const nombreFotoEnfermedad = `${idPrincipal}-${item["Plaga"]}-${registro.encabezado["Fecha"]}`;
-        item["Foto 1"] = base64Enfermedad ? subirImagenBase64DesdeCliente(base64Enfermedad, nombreFotoEnfermedad, "Imagenes_Monitoreo") : "";
 
-        try {
-          const id = await runServerFunction("Detalle: Enfermedades", item);
-          if (!id) fallidosEnfermedades.push(item);
-        } catch (e) {
-          console.error("Error al guardar detalle de enfermedad:", e);
-          fallidosEnfermedades.push(item);
-        }
-      }
+            // --- 2. Guardar detalles de Plagas ---
+            const fallidosPlagas = [];
+            for (const item of registro.detallesPlagas) {
+                // Asigna el ID principal del encabezado al detalle
+                item["IdPlagas y Enfermedades"] = idPrincipal;
 
-      // Guardar en nuevo intento si hubo errores
-      if (fallidosPlagas.length || fallidosEnfermedades.length) {
-        nuevoRegistro.detallesPlagas = fallidosPlagas;
-        nuevoRegistro.detallesEnfermedades = fallidosEnfermedades;
-        nuevoRegistro.encabezado = registro.encabezado;
-        nuevosPendientes.push(nuevoRegistro);
-      }
+                const rawBase64Plaga = item["Foto 1"];
+                let imageUrlPlaga = "";
+
+                if (rawBase64Plaga) {
+                    // Extraer Base64 puro y tipo MIME para la foto de plaga
+                    let base64PurePlaga = '';
+                    let mimeTypePlaga = '';
+                    if (rawBase64Plaga.startsWith('data:')) {
+                        [mimeTypePlaga, base64PurePlaga] = rawBase64Plaga.split(';');
+                        mimeTypePlaga = mimeTypePlaga.split(':')[1];
+                        base64PurePlaga = base64PurePlaga.split(',')[1];
+                    } else {
+                        base64PurePlaga = rawBase64Plaga;
+                        mimeTypePlaga = 'image/png'; // **Ajustar**
+                    }
+
+                    // Construir nombre de archivo único para la foto de la plaga
+                    const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`; // Se sugiere .png
+
+                    console.log("Subiendo imagen de detalle de plaga:", nombreFotoPlaga);
+                    // **¡AQUÍ AWAITAMOS LA SUBIDA DE LA IMAGEN DE LA PLAGA!**
+                    const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga, mimeTypePlaga);
+
+                    if (uploadResultPlaga.success) {
+                        imageUrlPlaga = uploadResultPlaga.url;
+                        console.log("Imagen de plaga subida. URL:", imageUrlPlaga);
+                    } else {
+                        console.error("Error al subir la imagen de la plaga:", uploadResultPlaga.error);
+                    }
+                }
+                item["Foto 1"] = imageUrlPlaga; // Asigna la URL (o cadena vacía) al campo del detalle
+
+                try {
+                    console.log("Enviando detalle de plaga a AppSheet:", item);
+                    const id = await runServerFunction("Detalle: Plagas", item);
+                    if (!id) {
+                        fallidosPlagas.push(item);
+                        console.warn("No se pudo guardar el detalle de plaga. Se reintentará.");
+                    } else {
+                        console.log("Detalle de plaga guardado con éxito.");
+                    }
+                } catch (e) {
+                    console.error("Error al guardar detalle de plaga:", e);
+                    fallidosPlagas.push(item);
+                }
+            }
+
+
+            // --- 3. Guardar detalles de Enfermedades ---
+            const fallidosEnfermedades = [];
+            for (const item of registro.detallesEnfermedades) {
+                // Asigna el ID principal del encabezado al detalle
+                item["IdPlagas y Enfermedades"] = idPrincipal;
+
+                const rawBase64Enfermedad = item["Foto 1"];
+                let imageUrlEnfermedad = "";
+
+                if (rawBase64Enfermedad) {
+                    // Extraer Base64 puro y tipo MIME para la foto de enfermedad
+                    let base64PureEnfermedad = '';
+                    let mimeTypeEnfermedad = '';
+                    if (rawBase64Enfermedad.startsWith('data:')) {
+                        [mimeTypeEnfermedad, base64PureEnfermedad] = rawBase64Enfermedad.split(';');
+                        mimeTypeEnfermedad = mimeTypeEnfermedad.split(':')[1];
+                        base64PureEnfermedad = base64PureEnfermedad.split(',')[1];
+                    } else {
+                        base64PureEnfermedad = rawBase64Enfermedad;
+                        mimeTypeEnfermedad = 'image/png'; // **Ajustar**
+                    }
+
+                    // Construir nombre de archivo único para la foto de la enfermedad
+                    const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`; // Se sugiere .png
+
+                    console.log("Subiendo imagen de detalle de enfermedad:", nombreFotoEnfermedad);
+                    // **¡AQUÍ AWAITAMOS LA SUBIDA DE LA IMAGEN DE LA ENFERMEDAD!**
+                    const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad, mimeTypeEnfermedad);
+
+                    if (uploadResultEnfermedad.success) {
+                        imageUrlEnfermedad = uploadResultEnfermedad.url;
+                        console.log("Imagen de enfermedad subida. URL:", imageUrlEnfermedad);
+                    } else {
+                        console.error("Error al subir la imagen de la enfermedad:", uploadResultEnfermedad.error);
+                    }
+                }
+                item["Foto 1"] = imageUrlEnfermedad; // Asigna la URL (o cadena vacía) al campo del detalle
+
+                try {
+                    console.log("Enviando detalle de enfermedad a AppSheet:", item);
+                    const id = await runServerFunction("Detalle: Enfermedades", item);
+                    if (!id) {
+                        fallidosEnfermedades.push(item);
+                        console.warn("No se pudo guardar el detalle de enfermedad. Se reintentará.");
+                    } else {
+                        console.log("Detalle de enfermedad guardado con éxito.");
+                    }
+                } catch (e) {
+                    console.error("Error al guardar detalle de enfermedad:", e);
+                    fallidosEnfermedades.push(item);
+                }
+            }
+
+            // --- 4. Guardar en nuevo intento si hubo errores en los detalles ---
+            if (fallidosPlagas.length > 0 || fallidosEnfermedades.length > 0) {
+                // Si algunos detalles fallaron, creamos un nuevo registro para reintentar solo los fallidos
+                let registroParaReintento = {
+                    encabezado: registro.encabezado, // El encabezado ya se guardó, pero lo incluimos para el reintento de detalles
+                    detallesPlagas: fallidosPlagas,
+                    detallesEnfermedades: fallidosEnfermedades
+                };
+                nuevosPendientes.push(registroParaReintento);
+                console.log("Registro con detalles fallidos añadido a la lista de reintentos.");
+            } else {
+                console.log("Registro completo enviado con éxito.");
+            }
+        } // Fin del bucle for (const registro of registros)
+
+        // --- 5. Actualizar el Local Storage con los registros pendientes ---
+        localStorage.setItem('registrosPendientes', JSON.stringify(nuevosPendientes));
+        actualizarContador(); // Asumo que esta función actualiza tu contador de pendientes
+        console.log(`Proceso de envío de pendientes finalizado. Quedan ${nuevosPendientes.length} registros para reintentar.`);
+
+    } else {
+        console.log("No hay registros pendientes para enviar.");
     }
-
-    // Guardar pendientes no enviados correctamente
-    localStorage.setItem('registrosPendientes', JSON.stringify(nuevosPendientes));
-    actualizarContador();
-  }
 }
 
           function submitForm(event){
@@ -1901,12 +2023,8 @@
                         plagasAgregadas.push(detallePlaga)
                     }
                   });
-                  
-                  console.log(hayConexion());
-                  console.log(filaEncabezado);
-                  console.log(plagasAgregadas);
-                  console.log(enfermedadesAgregadas);
                   guardarDatosLocalmente(filaEncabezado,plagasAgregadas,enfermedadesAgregadas);
+                  formulario.reset();
                   filaEncabezado={};
                   plagasAgregadas = [];
                   enfermedadesAgregadas =[];
@@ -1936,13 +2054,41 @@
             }
           }
 
-          async function subirImagenBase64DesdeCliente(base64, nombreArchivo,carpeta) {
-            return new Promise((resolve, reject) => {
-              google.script.run
-                .withSuccessHandler(resolve)
-                .withFailureHandler(reject)
-                .subirImagenBase64(base64, nombreArchivo,carpeta);
-            });
+          async function subirImagenBase64DesdeCliente(base64Data, fileName, mimeType) {
+           if (!base64Data || !fileName || !mimeType) {
+                return Promise.reject({ success: false, error: "Faltan datos para subir la imagen (Base64, nombre o tipo MIME)." });
+            }
+        
+            try {
+                const response = await fetch(URL_APPSCRIPT_UPLOAD_IMAGE, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        base64: base64Data,
+                        fileName: fileName,
+                        mimeType: mimeType,
+                        folderId: GOOGLE_DRIVE_FOLDER_ID
+                    }),
+                });
+        
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error HTTP al subir imagen a Apps Script: ${response.status} - ${errorText}`);
+                }
+        
+                const result = await response.json();
+        
+                if (result.success) {
+                    return { success: true, url: result.url };
+                } else {
+                    throw new Error(`Apps Script reportó un error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error("Error en uploadImageToDrive (fetch/parsing):", error);
+                throw { success: false, error: error.message };
+            }
           }
           
     </script>
