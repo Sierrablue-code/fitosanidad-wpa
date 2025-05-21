@@ -1442,7 +1442,17 @@
        /* Enviar datos*/
       async function runServerFunction(tablaN, filaJson) {
             try {
-                const response = await fetch(URL_APPSCRIPT, {
+                const url = `${URL_APPSCRIPT}?accion=agregarFila&tabla=${encodeURIComponent(tablaN)}&fila=filaJson`;
+                 return fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                    return data.rowId;
+                    })
+                    .catch(err => {
+                    
+                    return ""
+                    });
+                /*const response = await fetch(URL_APPSCRIPT, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -1460,7 +1470,7 @@
                 } else {
                     console.warn("Error al crear fila:", resultado.error || resultado);
                     return null;
-                }
+                }*/
             } catch (err) {
                 console.error("Error en la solicitud:", err);
                 return null;
