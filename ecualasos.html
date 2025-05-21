@@ -1023,7 +1023,7 @@
   
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-    const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbz6bRhgh2XP3feposZuBx_TMZiK4k8T6J2NOh1mre8TeTGLdE-XXEVvLJ3Dam6ZAYeMvQ/exec";
+    const URL_APPSCRIPT = "https://sweet-voice-1412.ecuablue-ec.workers.dev/";
     const fechaRegistro = document.getElementById("fechaRegistro");
     const hoy = new Date().toISOString().split('T')[0];
     fechaRegistro.value = hoy;
@@ -1411,23 +1411,61 @@
         return datos ? JSON.parse(datos) : [];
       }
       function obtenerDesdeBase(productor,tabla, claveCache) {
-        if (!navigator.onLine) {
-            console.warn(`⚠ Sin conexión: usando cache para ${claveCache}`);
-            return Promise.resolve(cargarDesdeCache(claveCache));
+          if (!navigator.onLine) {
+        console.warn(`⚠ Sin conexión: intentando cargar desde caché para ${claveCache}`);
+        const cachedData = cargarDesdeCache(claveCache);
+        if (cachedData) {
+            return cachedData;
+        } else {
+            // Si no hay conexión y no hay caché, lanza un error
+            throw new Error(`No hay conexión a internet y no hay datos en caché para ${claveCache}.`);
+        }
+    }
+
+    // 2. Si hay conexión, siempre intenta obtener los datos frescos del Worker
+    try {
+        // *** CAMBIO CLAVE AQUÍ: Usamos URL_APPSCRIPT en lugar de una nueva constante ***
+        const response = await fetch(URL_APPSCRIPT, {
+            method: "POST", // Tu Worker espera POST
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // Estructura que espera tu Cloudflare Worker
+                actionType: "Find",
+                tableName: tabla,
+                // El payload es el filtro para la API de AppSheet
+                payload: `Filter(${tabla}, [Productor] = "${productor}")` // **¡Ajusta este filtro!**
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error HTTP del Worker: ${response.status} - ${errorData.error || 'Mensaje desconocido'}`);
         }
 
-        const url = `${URL_APPSCRIPT}?accion=obtener&productor=${encodeURIComponent(productor)}&tabla=${encodeURIComponent(tabla)}`;
-        return fetch(url)
-            .then(res => res.json())
-            .then(data => {
-            guardarEnCache(claveCache, data);
-            return data;
-            })
-            .catch(err => {
-            console.error(`Error al obtener ${claveCache}:`, err);
-            return cargarDesdeCache(claveCache);
-            });
+        const data = await response.json();
+
+        // **Ajusta esta línea si tu Worker devuelve la lista de filas dentro de otra propiedad**
+        // Por ejemplo, si devuelve { success: true, rows: [...] }, sería: const rows = data.rows;
+        const rows = data;
+
+        // Guarda los datos frescos en caché
+        guardarEnCache(claveCache, rows);
+        return rows;
+
+    } catch (err) {
+        // 3. Si falla la llamada al Worker (por red o error del Worker), intenta cargar desde la caché
+        console.error(`Error al obtener ${claveCache} del Worker:`, err);
+        const fallbackData = cargarDesdeCache(claveCache);
+        if (fallbackData) {
+            console.warn(`⚠ Fallback: Cargando desde caché debido a error de red/Worker para ${claveCache}`);
+            return fallbackData;
         }
+        // Si no hay caché como fallback, propaga el error original
+        throw err;
+    }
+}
       function cargarDatos(productor) {
         const cacheP = `plagas-${productor.replace(/\s+/g, "-")}`;
         const cacheD = `enfermedades-${productor.replace(/\s+/g, "-")}`;
@@ -1440,36 +1478,42 @@
         ]);
        }
        /* Enviar datos*/
-      async function runServerFunction(tablaN, filaJson) {
-          try {
-    const response = await fetch(URL_APPSCRIPT, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        accion: "agregarFila",
-        tabla: tablaN,
-        fila: filaJson
-      })
-    });
+    async function runServerFunction(tablaN, filaJson) {
+        try {
+        const response = await fetch(WORKER_URL, { // <--- CAMBIO AQUÍ: Usar WORKER_URL
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // CAMBIO AQUÍ: La estructura del body debe coincidir con lo que espera tu Worker
+                // Tu Worker espera: { actionType, tableName, payload }
+                actionType: "Add", // La acción que el Worker debe realizar en AppSheet
+                tableName: tablaN, // El nombre de la tabla
+                payload: filaJson // Los datos de la fila a agregar
+            })
+        });
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    if (data.success) {
-      return data.rowId; // Devuelve directamente el ID
-    } else {
-      throw new Error(data.error || "Error al crear registro");
-    }
-  } catch (err) {
-    console.error("Error en runServerFunction:", err);
-    throw err; // Propaga el error para manejo externo
-  }
+        if (!response.ok) {
+            // Si el Worker devuelve un error (ej. 400, 500)
+            const errorData = await response.json(); // Intentamos leer el error JSON
+            throw new Error(`Error HTTP del Worker: ${response.status} - ${errorData.error || 'Mensaje desconocido'}`);
         }
+
+        const data = await response.json(); // La respuesta del Worker
+
+        // Tu Worker para 'Add' devuelve { success: true, rowId: "...", rawResponse: {...} }
+        if (data.success) {
+            return data.rowId; // Devuelve directamente el ID
+        } else {
+            // Si el Worker devolvió success: false (ej. no encontró Row ID)
+            throw new Error(data.error || "Error al crear registro (Worker no obtuvo Row ID)");
+        }
+    } catch (err) {
+        console.error("Error en runServerFunction:", err);
+        throw err; // Propaga el error para manejo externo
+    }  
+    }
 
        /*interaccion formulario de registro*/
       const tds = document.querySelectorAll('td[id]');
