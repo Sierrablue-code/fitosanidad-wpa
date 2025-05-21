@@ -1997,7 +1997,7 @@ async function enviarPendientes() {
                         const detalleEnfermedad = {'Enfermedad':selectAfeccion,'# Plantas enfermas':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdPlagas y Enfermedades':" ",'Foto 1':imagenHiden};
                         enfermedadesAgregadas.push(detalleEnfermedad);
                       }else if(listaPlagas.includes(selectAfeccion)){
-                        const detallePlaga = {'Enfermedad':selectAfeccion,'# Plantas con plaga':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdPlagas y Enfermedades':" ",'Foto 1':imagenHiden};
+                        const detallePlaga = {'Plaga':selectAfeccion,'# Plantas con plaga':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdPlagas y Enfermedades':" ",'Foto 1':imagenHiden};
                         plagasAgregadas.push(detallePlaga)
                     }
                   });
