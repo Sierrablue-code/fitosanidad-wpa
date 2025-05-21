@@ -1480,7 +1480,7 @@
        /* Enviar datos*/
     async function runServerFunction(tablaN, filaJson) {
         try {
-        const response = await fetch(WORKER_URL, { // <--- CAMBIO AQUÍ: Usar WORKER_URL
+        const response = await fetch(URL_APPSCRIPT, { // <--- CAMBIO AQUÍ: Usar WORKER_URL
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
