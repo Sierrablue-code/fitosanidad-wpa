@@ -1990,7 +1990,7 @@ async function enviarPendientes() {
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
                     const valorSeveridad = fila.querySelector(".severidad").value;
-                    const niveles =  Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value);
+                    const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
                     const imagenHiden = fila.querySelector('.foto input[type=hidden]');
                     const porcentajeIncidencia = muestrasInfectadas/muestraTotal;
                     if(listaEnfermedades.includes(selectAfeccion)){
