@@ -1718,7 +1718,7 @@
             document.getElementById('contador').textContent = total;
           }
 
-          async function enviarPendientes() {
+                      async function enviarPendientes() {
     let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
     let nuevosPendientes = []; // Acumulará los registros que no se pudieron enviar
 
@@ -1730,6 +1730,7 @@
             let encabezadoGuardadoExitosamente = false; // Bandera para controlar el flujo
 
             // --- 1. Guardar encabezado si aún no tiene Row ID ---
+            // Solo entra en este bloque si el encabezado NO tiene un Row ID asignado
             if (!idPrincipal) {
                 try {
                     const rawBase64 = registro.encabezado["Foto 1 (Deficiencia)"];
@@ -1783,14 +1784,21 @@
                     encabezadoGuardadoExitosamente = false;
                 }
             } else {
-                console.log(`Encabezado ya tiene Row ID (${idPrincipal}). Procediendo con detalles.`);
-                encabezadoGuardadoExitosamente = true; // Si ya tiene ID, asumimos que el encabezado está bien.
+                // Si el encabezado ya tiene un Row ID, simplemente marcamos que ya está guardado
+                // y no hacemos ninguna operación de guardado o subida de imagen para él.
+                console.log(`Encabezado ya tiene Row ID (${idPrincipal}). No se re-procesará. Procediendo con detalles.`);
+                encabezadoGuardadoExitosamente = true;
             }
 
+            // Si el encabezado no se pudo guardar en este intento (o ya se sabía que falló),
+            // lo agregamos a los pendientes y pasamos al siguiente registro.
             if (!encabezadoGuardadoExitosamente) {
                 nuevosPendientes.push(registro);
                 continue; // Saltar al siguiente registro
             }
+
+            // A partir de aquí, sabemos que `idPrincipal` tiene un valor válido,
+            // ya sea porque se obtuvo en este intento o porque ya existía.
 
             // --- 2. Guardar detalles de Plagas ---
             const fallidosPlagas = [];
@@ -1908,7 +1916,6 @@
         console.log("No hay registros pendientes para enviar.");
     }
 }
-
           function submitForm(event){
               event.preventDefault(); // Prevenir el envío del formulario por defecto
               const muestraTotal = document.getElementById('muestra').value;
