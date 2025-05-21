@@ -1023,7 +1023,7 @@
   
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-    const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbwYGbpSQRknCTsqcJDEgbnak3ByYwtS8Ku7zh6naRl7a_M0l2C9qAlyNAcTjITKVEULmQ/exec";
+    const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbw-kAv0noOQQwlgbnOygIibwnzX_4tp5fRnfSGW5FcWsV-rZ8R6GbiKLxodZrsekb_l/exec";
     const fechaRegistro = document.getElementById("fechaRegistro");
     const hoy = new Date().toISOString().split('T')[0];
     fechaRegistro.value = hoy;
@@ -1441,10 +1441,10 @@
        }
        /* Enviar datos*/
       async function runServerFunction(tablaN, filaJson) {
-           try {
+              try {
         const response = await fetch(URL_APPSCRIPT, {
             method: "POST",
-            mode: "cors", // Añade esto explícitamente
+            mode: "cors", // Esto es importante
             headers: { 
                 "Content-Type": "application/json",
                 "Accept": "application/json"
@@ -1454,22 +1454,24 @@
                 tabla: tablaN,
                 fila: filaJson
             }),
-            redirect: "follow" // Importante para Apps Script
+            redirect: "manual" // Importante para evitar problemas de redirección
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Manejar redirección manualmente si es necesario
+        if (response.type === "opaqueredirect") {
+            const newResponse = await fetch(response.url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    accion: "agregarFila",
+                    tabla: tablaN,
+                    fila: filaJson
+                })
+            });
+            return await handleResponse(newResponse);
         }
 
-        const resultado = await response.json();
-
-        if (resultado.success && resultado.rowId) {
-            console.log("Fila creada con Row ID:", resultado.rowId);
-            return resultado.rowId;
-        } else {
-            console.warn("Error al crear fila:", resultado.error || resultado);
-            return null;
-        }
+        return await handleResponse(response);
     } catch (err) {
         console.error("Error en la solicitud:", err);
         return null;
