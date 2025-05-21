@@ -1441,40 +1441,39 @@
        }
        /* Enviar datos*/
       async function runServerFunction(tablaN, filaJson) {
-            try {
-                const url = `${URL_APPSCRIPT}?accion=agregarFila&tabla=${encodeURIComponent(tablaN)}&fila=filaJson`;
-                 return fetch(url)
-                    .then(res => res.json())
-                    .then(data => {
-                    return data.rowId;
-                    })
-                    .catch(err => {
-                    
-                    return ""
-                    });
-                /*const response = await fetch(URL_APPSCRIPT, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        accion: "agregarFila",
-                        tabla:tablaN,
-                        fila: filaJson
-                    })
-                });
+           try {
+        const response = await fetch(URL_APPSCRIPT, {
+            method: "POST",
+            mode: "cors", // Añade esto explícitamente
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                accion: "agregarFila",
+                tabla: tablaN,
+                fila: filaJson
+            }),
+            redirect: "follow" // Importante para Apps Script
+        });
 
-                const resultado = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-                if (resultado.success && resultado.rowId) {
-                    console.log("Fila creada con Row ID:", resultado.rowId);
-                    return resultado.rowId;
-                } else {
-                    console.warn("Error al crear fila:", resultado.error || resultado);
-                    return null;
-                }*/
-            } catch (err) {
-                console.error("Error en la solicitud:", err);
-                return null;
-            }
+        const resultado = await response.json();
+
+        if (resultado.success && resultado.rowId) {
+            console.log("Fila creada con Row ID:", resultado.rowId);
+            return resultado.rowId;
+        } else {
+            console.warn("Error al crear fila:", resultado.error || resultado);
+            return null;
+        }
+    } catch (err) {
+        console.error("Error en la solicitud:", err);
+        return null;
+    }
         }
 
        /*interaccion formulario de registro*/
