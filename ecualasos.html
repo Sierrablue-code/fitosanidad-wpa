@@ -1406,13 +1406,14 @@
               allowInput: true,
               animate: false
             });
-            cargarDatos('Ecualasos').then(() => {
-            // Ahora pests y diseases ya están listos
-            console.log("Plagas:", auxPests);
-            console.log("Enfermedades:", auxDiseases);
-            // Aquí puedes llamar a tu función de renderizado
-      });
-            recorrerCS();
+         modalContent.addEventListener('keydown',(e)=>{
+            if (e.key === 'Escape') {
+            modalContent.style.display = 'none'; // O cualquier acción de cierre
+            console.log('Div cerrado con Escape');
+          }
+         })
+          recorrerCS();
+            cargarDatos('Ecualasos');
        });
           //fin cod aux
       /** online y offlien*/
