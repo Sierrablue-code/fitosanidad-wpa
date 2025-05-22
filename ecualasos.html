@@ -1246,14 +1246,7 @@
                         tdAux.id= idCelda;
                         td.replaceWith(tdAux);
                     }
-                   td.addEventListener('click', function(event) {
-                    // Aquí va el código que deseas ejecutar cuando se haga clic
-                    const id = event.target.id;
-                   
-                    
-                    // Llamar a tu función que maneja el clic
-                    abrirFormulario(id);
-                });
+                   td.addEventListener('click', () => abrirFormulario(id));
                 });
             }
 
