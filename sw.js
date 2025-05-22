@@ -1,7 +1,8 @@
 const CACHE_NAME = "miapp-cache-v1"; // ¡Recuerda cambiar esto a v2, v3, etc., con cada actualización!
 const urlsToCache = [
   "/mapaEcuablueFitosanidad.html",
-  "/ecualasos.html"
+  "/ecualasos.html",
+  "/manifest.json"
 ];
 
 self.addEventListener("install", event => {
