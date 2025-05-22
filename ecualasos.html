@@ -1929,11 +1929,10 @@ async function enviarPendientes() {
               const muestraTotal = document.getElementById('muestra').value;
               var formulario = document.getElementById('formulario');
               var valid = true;
-
               // Validar campos requeridos en la primera tabla
               var muestraInput = document.getElementById('muestra');
               var errorMessageMuestra = document.getElementById('error-messageMuestra');
-              if (muestraInput.value.trim() === '' || muestraInput.value>muestraTotal) {
+              if (muestraInput.value.trim() === '') {
                   errorMessageMuestra.textContent = muestraInput.value.trim() === ''?'Este campo es obligatorio.':'El valor no debe ser mayor al de la muestra.';
                   muestraInput.classList.add('error');
                   valid = false;
@@ -1948,8 +1947,8 @@ async function enviarPendientes() {
                   var selects = fila.querySelectorAll('select');
                   var inputs = fila.querySelectorAll('input[required]');
                   var checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
+                  const valorMuestra = fila.querySelector("input[type='number']").value;
                   var validFila = true;
-
                   selects.forEach(function(select) {
                       if (select.value === '') {
                           select.classList.add('error');
@@ -1984,6 +1983,7 @@ async function enviarPendientes() {
                         mensajeError.remove();
                     }
                   }
+                  validFila= Number(valorMuestra)<=Number(muestraTotal)
 
                   if (!validFila) {
                       valid = false;
