@@ -28,14 +28,6 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-  // --- ¡NUEVA LÓGICA AQUÍ! ---
-  // Si la petición es para favicon.ico, devuelve una respuesta 204 (No Content)
-  // para evitar el 404 y que el Service Worker no intente cachearlo o fallar por ello.
-  if (event.request.url.endsWith('/favicon.ico')) {
-    event.respondWith(new Response(null, { status: 204, statusText: 'No Content' }));
-    return; // Detiene el procesamiento para esta petición
-  }
-  // --- FIN DE LA NUEVA LÓGICA ---
 
   event.respondWith(
     caches.match(event.request).then(response => {
