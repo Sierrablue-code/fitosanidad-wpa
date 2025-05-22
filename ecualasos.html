@@ -1669,7 +1669,7 @@
               const tdNivelInfestacion= fila.querySelector(".nivelesInfestacion");
               const checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
               const selectValido = select && select.value !== "";
-              const muestrasValidas = muestras && muestras.value !== "" && NUMBER(muestras.value)<= NUMBER(totalMuesta);
+              const muestrasValidas = muestras && muestras.value !== "" && Number(muestras.value)<= Number(totalMuesta);
                 console.log(totalMuesta,muestrasValidas);
               const severidadValida = severidad && severidad.value !== "";
               const alMenosUnCheckbox = Array.from(checkboxes).some(cb => cb.checked);
@@ -2007,7 +2007,7 @@ async function enviarPendientes() {
                     const valorSeveridad = fila.querySelector(".severidad").value;
                     const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
                     const imagenHiden = fila.querySelector('.foto input[type=hidden]');
-                    const porcentajeIncidencia = (NUMBER(muestrasInfectadas)/NUMBER(muestraTotal))*100;
+                    const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal))*100;
                     if(listaEnfermedades.includes(selectAfeccion)){
                         const detalleEnfermedad = {'Enfermedad':selectAfeccion,'# Plantas enfermas':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdPlagas y Enfermedades':" ",'Foto 1':imagenHiden};
                         enfermedadesAgregadas.push(detalleEnfermedad);
