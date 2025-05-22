@@ -1544,7 +1544,8 @@
               document.getElementById('valorCuadrante').value=cuadrante;
               document.getElementById('valorHilera').value = hilera;
               modalContent.style.display = "block";
-              fechaRegistro.value=hoy;
+              document.getElementById('fechaRegistro').value = hoy;
+              //fechaRegistro.value=hoy;
               estructuraMapa.setAttribute("disabled", "true");
               estructuraMapa.classList.add("disabled");
               paletaColores.setAttribute("disabled", "true");
