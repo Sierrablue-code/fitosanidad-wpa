@@ -1408,8 +1408,7 @@
             });
          modalContent.addEventListener('keydown',(e)=>{
             if (e.key === 'Escape') {
-            modalContent.style.display = 'none'; // O cualquier acción de cierre
-            console.log('Div cerrado con Escape');
+            closeModal();
           }
          })
           recorrerCS();
