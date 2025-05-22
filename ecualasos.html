@@ -1660,7 +1660,8 @@
               const tdNivelInfestacion= fila.querySelector(".nivelesInfestacion");
               const checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
               const selectValido = select && select.value !== "";
-              const muestrasValidas = muestras && muestras.value !== "" && muestras.value<=totalMuesta;
+              const muestrasValidas = muestras && muestras.value !== "" &&number(muestras.value)<=number(totalMuesta);
+                console.log(totalMuesta,muestrasValidas);
               const severidadValida = severidad && severidad.value !== "";
               const alMenosUnCheckbox = Array.from(checkboxes).some(cb => cb.checked);
               return selectValido && muestrasValidas && severidadValida && alMenosUnCheckbox;
