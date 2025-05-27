@@ -2306,12 +2306,13 @@
            const bloque = "BLOQUE "+ bloqueNum;
             if(cb.checked ==true){
             if(tipo=="bloque" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque)){
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Bloque':bloque,'Macrotunel':"",'Cuadrante':[]});
+              const cuadrantes = [];
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':"",'Cuadrantes':""});
               const valor = 'b:'+idArea[0].split(':')[1];
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor)).map(td => td.querySelector("input[type='checkbox']")); 
             }else if(tipo=="macrotunel" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==idArea[1].split(':')[1])){
               const mt = idArea[1].split(':')[1];
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Bloque':bloque,'Macrotunel':mt,'Cuadrante':[]});
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mt,'Cuadrantes':""});
               const valor1 = 'b:'+bloqueNum;
               const valor2 = valor1+'-mt:'+mt;
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor2) || td.id==valor1).map(td => td.querySelector("input[type='checkbox']"));
@@ -2324,7 +2325,7 @@
                   if (!dato["Cuadrante"].includes(cuadrante)) dato["Cuadrante"].push(cuadrante);
                 })
               }else{
-                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrante':[cuadrante]});
+                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante].join(',')});
               }
               const valor1 = 'b:'+bloqueNum;
               const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
