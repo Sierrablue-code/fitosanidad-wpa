@@ -2,6 +2,7 @@ const CACHE_NAME = "miapp-cache-v1"; // ¡Recuerda cambiar esto a v2, v3, etc., 
 const urlsToCache = [
   "/mapaEcuablueFitosanidad.html",
   "/ecualasos.html",
+  "/mapaEcualasos.html",
   "/manifest.json"
 ];
 
