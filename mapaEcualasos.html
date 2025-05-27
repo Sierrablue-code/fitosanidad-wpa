@@ -889,7 +889,7 @@
             </div>
           </div>
         </div>
-        <div class="acciones-extra" id="botonesReportar" style="display: none;">
+         <div class="acciones-extra" id="botonesReportar" style="display: none;">
           <button onclick="guardarRegistros(event,'no')">💾 Guardar</button>
           <button onclick="abrirFormularioReporte()" style="display: none;">📋 Ver registros</button>
         </div>
@@ -1070,7 +1070,7 @@
       </div>
     </div>
     <div id="modal-content" class="modal-content" style="display: none;">
-      <div class="close" onclick="closeModal('mipe')"><b>x</b></div>
+      <div class="close" onclick="closeModal()"><b>x</b></div>
       <h2>Registro de plagas y enfermedades</h2>
       <form id="formulario" onsubmit="submitForm(event)">
       <table class="formulario-table" id="encabezado-registro">
@@ -1088,7 +1088,7 @@
             <tr>
                <td>
                   <label for="muestraPrincipal">Muestra:</label>
-                  <input type="number" id="muestra" placeholder="Ingrese el valor" required />
+                  <input type="number" id="muestra" placeholder="Ingrese el valor" min=1 required />
                   <span id="error-messageMuestra" class="error-message"></span>
                 </td>
                 <td colspan="2">
@@ -1168,13 +1168,13 @@
                 </tr>
             </tbody>
       </table>
+      <button type="submit" class="btn">Guardar</button>
       </form> 
-      <button type="submit">Guardar</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
     const URL_APPSCRIPT = "https://sweet-voice-1412.ecuablue-ec.workers.dev/";
-    const URL_APPSCRIPT_UPLOAD_IMAGE = 'https://script.google.com/macros/s/AKfycbye8F0WlVjR82ou6dMB7ev-iSKKIQMl1bhYV6tyk6yIkHakMTkf6zcDmP5YyzMciM1zqg/exec'; // ¡PEGA AQUÍ LA URL DE TU APPS SCRIPT WEB APP!
+    const URL_APPSCRIPT_UPLOAD_IMAGE = 'https://script.google.com/macros/s/AKfycbw5e9OdskfETF8h6zILJ3lsZQP2S7wFhuN-kZu76MpoemWfl9Wkwy27EuYGzcLRpQ-pNw/exec';
     const GOOGLE_DRIVE_FOLDER_ID = '1uAyXHrJ8SHVkpGTHvQ8DqnzqZN-2FkQd';
     const fechaRegistro = document.getElementById("fechaRegistro");
     const hoy = new Date().toISOString().split('T')[0];
@@ -1193,8 +1193,8 @@
     const listaPlagas =["Ácaros","Áfidos (Pulgón)","Arañita roja","Babosa","Cochinilla","Cuzo (Anómslo sp)","Trips","Lobesia botrana","Mosca blanca","Polilla","Trozador (Heliothis virescens)"];
     const opciones =[...listaEnfermedades,...listaPlagas];
     const modalContent =  document.getElementById("modal-content");
-    const modalReporte = document.getElementById("modal-reporte");
     const htmlModalIncial = modalContent.innerHTML;
+    const modalReporte = document.getElementById("modal-reporte");
     const htmlModalReporte = modalReporte.innerHTML;
     const botonesReporte = document.getElementById('botonesReportar');
     const header = document.querySelector('.header');
@@ -1214,7 +1214,6 @@
     let auxDiseases = [];
     let auxPests = [];
     var jsonDiseases,jsonPests;
-    const registroReportes =[];
     window.addEventListener('load', () => {
             const header = document.querySelector('.header');
             const container = document.querySelector('.container');
@@ -1235,17 +1234,7 @@
             flotante.style.top = (headerHeight+heightBoton-10)+'px';
     });
     // inicia cod aux
-      function activarBotonesReporte(){
-       botonesReporte.style.display = areasAgregadas.length>0?'block':'none';
-      }
-      function abrirFormularioReporte(){
-        modalContent.style.display='none';
-        modalReporte.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
-        deshabilitarElementos();
-        poblarTablaPlasticos();
-        modalReporte.style.display ='block';
-      }
-      function recorrerCS(){
+     function recorrerCS(){
          customSelects.forEach(customSelect => {
             const selectBox = customSelect.querySelector('.select-box');
             let selectedOptions = customSelect.classList.contains('custom-select-1') ? pests : diseases;
@@ -1411,9 +1400,10 @@
                         tdAux.className='txt-1';
                         tdAux.id= idCelda;
                         agregarCheckbox(tdAux);
-                         tdAux.addEventListener('click', function(event) {
+                        tdAux.addEventListener('click', function(event) {
                             const id = event.target.id;
                             abrirFormulario(id);
+                            
                         });
                         td.replaceWith(tdAux);
                     }
@@ -1545,6 +1535,7 @@
                 itemsDiv.appendChild(divNoDatos);
             }
         }
+      
       function setScale(factor) {
         currentScale = Math.min(2, Math.max(0.5, factor));
           document.documentElement.style.setProperty('--scale-factor', currentScale.toFixed(2));
@@ -1553,6 +1544,7 @@
       function zoomIn() {
           setScale(currentScale + 0.1);
       }
+      
       function zoomOut() {
           setScale(currentScale - 0.1);
       }
@@ -1560,26 +1552,19 @@
             flotante.style.display = flotante.style.display === "block" ? "none" : "block";
       });
       document.addEventListener('DOMContentLoaded', function() {
-          flatpickr("#fecha", {
+            flatpickr("#fecha", {
               mode: "range",
               dateFormat: "Y-m-d",
               allowInput: true,
               animate: false
             });
-          const formulario = document.getElementById("formulario");
-          formulario.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  return false;
-                }
-              });
-          inputMuestraTotal.addEventListener('change',actualizarBotones);
-          agregarListenersUltimoCampo(document.getElementById('fila-1'));
+         modalContent.addEventListener('keydown',(e)=>{
+            if (e.key === 'Escape') {
+            closeModal();
+          }
+         })
           recorrerCS();
-          recorrerTds();
-          hayConexion()?enviarPendientes():actualizarContador();
-          hayConexion()? cargarDatos('Ecualasos'):cargarDesdeCache();
-          
+            cargarDatos('Ecualasos');
        });
           //fin cod aux
       /** online y offlien*/
@@ -1658,7 +1643,7 @@
         ]);
        }
        /* Enviar datos*/
-      async function runServerFunction(tablaN, filaJson) {
+    async function runServerFunction(tablaN, filaJson) {
         try {
         const response = await fetch(URL_APPSCRIPT, { // <--- CAMBIO AQUÍ: Usar WORKER_URL
             method: "POST",
@@ -1696,45 +1681,24 @@
     }
 
        /*interaccion formulario de registro*/
-        function agregarCheckbox(td){
-           const tipo = td.textContent.includes('MT')?"macrotunel":td.textContent.includes('BLOQUE')?"bloque":"cuadrante";
-            const agregarCb =  td.id.includes('h:1') && tipo=="cuadrante"?true:tipo=="macrotunel"|| tipo=="bloque"?true:false;
-             
-              if (agregarCb){
-              const checkbox = document.createElement('input');
-              checkbox.type = 'checkbox';
-              checkbox.className = tipo=='cuadrante'?'dynamic-corner-checkbox': tipo=='macrotunel'?'dynamic-corner-checkbox2':'dynamic-corner-checkbox3'; // <-- ¡AQUÍ LA CLASE ESPECÍFICA!
-              checkbox.title = 'Seleccionar cuadrante';
-              td.prepend(checkbox);
-              checkbox.addEventListener('click', (event) => {
-                event.stopPropagation();
-                agregarAreaAfectada(td.id,tipo)
-              });
-              }
-        }
-        function recorrerTds(){
-          const tds = document.querySelectorAll('td[id]');
+      const tds = document.querySelectorAll('td[id]');
+
             // Asignamos el event listener a cada uno de los <td> con un id
             tds.forEach(td => {
                 agregarCheckbox(td);
                 td.addEventListener('click', function(event) {
+                    // Aquí va el código que deseas ejecutar cuando se haga clic
                     const id = event.target.id;
+                   
+                    
+                    // Llamar a tu función que maneja el clic
                     abrirFormulario(id);
                 });
             });
-            modalContent.addEventListener('keydown',(e)=>{
-            if (e.key === 'Escape') {
-            modalContent.style.display = 'none'; // O cualquier acción de cierre
-            console.log('Div cerrado con Escape');
-          }
-         })
 
-        }
-        function abrirFormulario(id){
-              modalReporte.style.display='none';
+       function abrirFormulario(id){
               modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
               const componentesId=id.split('-');
-              console.log(componentesId);
               const bloque = "BLOQUE "+ componentesId[0].split(':')[1];
               const macrotunel = componentesId[1].split(':')[1];
               const hilera = componentesId[2].split(':')[1];
@@ -1743,45 +1707,34 @@
               document.getElementById('valorMacrotunel').value= macrotunel;
               document.getElementById('valorCuadrante').value=cuadrante;
               document.getElementById('valorHilera').value = hilera;
-              document.getElementById('fechaRegistro').value = hoy;
-              deshabilitarElementos();
-              cargarOpciones();
-              actualizarBotones();
               modalContent.style.display = "block";
-            }
-        function closeModal(clase) {
-             const confirmacion = confirm("¿Estás seguro de que deseas cerrar el formulario? Se perderán los datos no guardados.");
-             if (!confirmacion) return;
-             if(clase=="mipe"){
-              modalContent.style.display ="none";
-              filas =1;
-              modalContent.innerHTML= htmlModalIncial;
-              fechaRegistro.value = hoy;
-             }else{
-              modalReporte.style.display ="none";
-              filasReporte =1;
-              modalReporte.innerHTML= htmlModalReporte;
-             }
-             //actualizarBotones();
-              habilitarElementos()
-            }
-        function deshabilitarElementos(){
-          estructuraMapa.setAttribute("disabled", "true");
+              document.getElementById('fechaRegistro').value = hoy;
+              //fechaRegistro.value=hoy;
+              estructuraMapa.setAttribute("disabled", "true");
               estructuraMapa.classList.add("disabled");
               paletaColores.setAttribute("disabled", "true");
               header.setAttribute("disabled", "true");
               paletaColores.classList.add("disabled");
               header.classList.add("disabled");
-        }
-        function habilitarElementos(){
-            estructuraMapa.removeAttribute("disabled");
+              cargarOpciones();
+              actualizarBotones();
+            }
+            function closeModal() {
+             const confirmacion = confirm("¿Estás seguro de que deseas cerrar el formulario? Se perderán los datos no guardados.");
+             if (!confirmacion) return; 
+             modalContent.style.display = "none";
+             filas=1;
+             modalContent.innerHTML=htmlModalIncial;
+             fechaRegistro.value = hoy;
+             //actualizarBotones();
+             estructuraMapa.removeAttribute("disabled");
              estructuraMapa.classList.remove("disabled");
              header.removeAttribute("disabled");
              header.classList.remove("disabled");
              paletaColores.removeAttribute("disabled");
              paletaColores.classList.remove("disabled");
-        }
-        function cargarOpciones(elemento) {
+            }
+            function cargarOpciones(elemento) {
                 const select =elemento || document.querySelector('.miSelect');;
                 select.innerHTML = '';
                   const optionPlaceholder = document.createElement('option');
@@ -1808,7 +1761,7 @@
                 });
                 
             }
-        function agregarFila() {
+            function agregarFila() {
                 filas=filas+1;
                 const identificador = 'fila-'+filas;
                 const tbody = document.getElementById("detalle");
@@ -1842,7 +1795,7 @@
                 actualizarBotones();
                  
             }
-        function actualizarBotones() {
+            function actualizarBotones() {
                 const filasTr = Array.from(document.getElementById("detalle").querySelectorAll("tr"));
                 
                filasTr.forEach((fila, i) => {
@@ -1855,7 +1808,7 @@
                   btnAgregar.style.display = i >= filasTr.length-1 && camposValidos ? "inline-block" : "none";
                 });
               }
-        function eliminarFila(id) {
+            function eliminarFila(id) {
               
               const fila = document.getElementById(id);
               fila.remove();
@@ -1863,8 +1816,8 @@
               actualizarBotones();
             
             }
-        function validarCamposFila(fila) {
-          const totalMuesta= document.getElementById('muestra').value;
+            function validarCamposFila(fila) {
+              const totalMuesta= document.getElementById('muestra').value;
               const select = fila.querySelector(".miSelect");
               const muestras = fila.querySelector("input[type='number']");
               const severidad = fila.querySelector(".severidad");
@@ -1872,12 +1825,13 @@
               const tdNivelInfestacion= fila.querySelector(".nivelesInfestacion");
               const checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
               const selectValido = select && select.value !== "";
-              const muestrasValidas = muestras && muestras.value !== "" && muestras.value<=totalMuesta;
+              const muestrasValidas = muestras && muestras.value !== "" && Number(muestras.value)<= Number(totalMuesta);
+                console.log(totalMuesta,muestrasValidas);
               const severidadValida = severidad && severidad.value !== "";
               const alMenosUnCheckbox = Array.from(checkboxes).some(cb => cb.checked);
               return selectValido && muestrasValidas && severidadValida && alMenosUnCheckbox;
             }
-        function agregarListenersUltimoCampo(fila) {
+            function agregarListenersUltimoCampo(fila) {
                 const select = fila.querySelector(".miSelect");
                 const muestras = fila.querySelector("input[type='number']");
                 const severidad = fila.querySelector(".severidad");
@@ -1898,27 +1852,35 @@
                 checkboxes.forEach(chk => {
                   chk.addEventListener("change", actualizarBotones);
                 });
-        }
-        function  hayConexion(){
+            }
+            agregarListenersUltimoCampo(document.getElementById('fila-1'))
+            document.addEventListener("DOMContentLoaded", function () {
+              const formulario = document.getElementById("formulario");
+              formulario.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  return false;
+                }
+              });
+              inputMuestraTotal.addEventListener('change',actualizarBotones);
+              hayConexion()?enviarPendientes():actualizarContador();
+              
+            });
+            function  hayConexion(){
               return navigator.onLine;
-        }
-        function guardarDatosLocalmente(jsonPrincipal, array1, array2) {
+            }
+           function guardarDatosLocalmente(jsonPrincipal, array1, array2) {
               let pendientes = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
               
-              pendientes.push({ 'encabezado':jsonPrincipal, 'detallesPlagas':array1, 'detallesEnfermedades':array2});
+              pendientes.push({ 'encabezado':jsonPrincipal, 'detallesPlagas':array1, 'detallesEnfermedades':array2 });
               
               localStorage.setItem('registrosPendientes', JSON.stringify(pendientes));
               console.log("Guardado local:",pendientes);
               actualizarContador();
-        }
-        function guardarReportesLocalmente(array){
-           if (Array.isArray(array) && array.length > 0) {
-              localStorage.setItem('reportesPendientes', JSON.stringify(array));
-           }
-           actualizarContador();
-        }
-        function actualizarContador() {
-            const registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+            }
+
+          function actualizarContador() {
+             const registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
             const plasticosPendientes = JSON.parse(localStorage.getItem('reportesPendientes')) || [];
 
             let total = 0;
@@ -1929,11 +1891,10 @@
             total=total +plasticosPendientes.length
             document.getElementById('contador').textContent = total;
           }
-
-        async function enviarPendientes() {
+           async function enviarPendientes() {
             let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
             let nuevosPendientes = [];
-            let reportes = JSON.parse(localStorage.getItem('reportePlasticos')) ||[];
+            let reportes = JSON.parse(localStorage.getItem('reportesPendientes')) ||[];
             let nuevosReportes =[];
             console.log("Intentando guardar registros pendientes:", registros);
 
@@ -2133,33 +2094,20 @@
                     }
                 }
             }
-            if(nuevosReportes.length>0)localStorage.setItem('reportePlasticos',JSON.stringify(nuevosReportes))
+            if(nuevosReportes.length>0)localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes))
+            activarBotonesReporte();
+        }
+       
 
-        }
-        function guardarRegistros(event,validar){
-          var enviar ='si';
-          if(validar=='si'){
-            event.preventDefault();
-            var formularioReporte = document.getElementById('formularioPlastico');
-            enviar = formularioReporte.valid?'si':'no';
-            if (enviar) formularioReporte.reset();
-          }
-          if(enviar){
-            guardarReportesLocalmente(areasAgregadas);
-            areasAgregadas =[];
-            if (hayConexion()) enviarPendientes();
-          }
-        }
-        function submitForm(event){
+          function submitForm(event){
               event.preventDefault(); // Prevenir el envío del formulario por defecto
               const muestraTotal = document.getElementById('muestra').value;
               var formulario = document.getElementById('formulario');
               var valid = true;
-
               // Validar campos requeridos en la primera tabla
               var muestraInput = document.getElementById('muestra');
               var errorMessageMuestra = document.getElementById('error-messageMuestra');
-              if (muestraInput.value.trim() === '' || muestraInput.value>muestraTotal) {
+              if (muestraInput.value.trim() === '') {
                   errorMessageMuestra.textContent = muestraInput.value.trim() === ''?'Este campo es obligatorio.':'El valor no debe ser mayor al de la muestra.';
                   muestraInput.classList.add('error');
                   valid = false;
@@ -2174,8 +2122,8 @@
                   var selects = fila.querySelectorAll('select');
                   var inputs = fila.querySelectorAll('input[required]');
                   var checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
+                  const valorMuestra = fila.querySelector("input[type='number']").value;
                   var validFila = true;
-
                   selects.forEach(function(select) {
                       if (select.value === '') {
                           select.classList.add('error');
@@ -2203,13 +2151,14 @@
                       mensajeError.classList.add("error-message");
                       mensajeError.textContent = "Debe seleccionar al menos un nivel";
                       contenedorCheckboxes.appendChild(mensajeError);
-                    }
+    }
                     validFila = false;
                   } else {
                     if (mensajeError) {
                         mensajeError.remove();
                     }
                   }
+                  validFila= Number(valorMuestra)<=Number(muestraTotal)
 
                   if (!validFila) {
                       valid = false;
@@ -2233,7 +2182,7 @@
                     const valorSeveridad = fila.querySelector(".severidad").value;
                     const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
                     const imagenHiden = fila.querySelector('.foto input[type=hidden]');
-                    const porcentajeIncidencia = muestrasInfectadas/muestraTotal;
+                    const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal))*100;
                     if(listaEnfermedades.includes(selectAfeccion)){
                         const detalleEnfermedad = {'Enfermedad':selectAfeccion,'# Plantas enfermas':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdPlagas y Enfermedades':" ",'Foto 1':imagenHiden};
                         enfermedadesAgregadas.push(detalleEnfermedad);
@@ -2255,7 +2204,7 @@
               }
           }
           
-        function convertirImagenA64(inputFile, idCampoOculto) {
+          function convertirImagenA64(inputFile, idCampoOculto) {
             console.log(idCampoOculto)
             if (inputFile.files && inputFile.files[0]) {
               const archivo = inputFile.files[0];
@@ -2273,7 +2222,7 @@
             }
           }
 
-        async function subirImagenBase64DesdeCliente(base64Data, fileName, mimeType) {
+          async function subirImagenBase64DesdeCliente(base64Data, fileName, mimeType) {
            if (!base64Data || !fileName || !mimeType) {
                 return Promise.reject({ success: false, error: "Faltan datos para subir la imagen (Base64, nombre o tipo MIME)." });
             }
@@ -2309,8 +2258,47 @@
                 throw { success: false, error: error.message };
             }
           }
-        /* Reportar daño de plastico*/
-        function agregarAreaAfectada(id,tipo){
+          /*nuevas funciones*/
+          function agregarCheckbox(td){
+           const tipo = td.textContent.includes('MT')?"macrotunel":td.textContent.includes('BLOQUE')?"bloque":"cuadrante";
+            const agregarCb =  td.id.includes('h:1') && tipo=="cuadrante"?true:tipo=="macrotunel"|| tipo=="bloque"?true:false;
+             
+              if (agregarCb){
+              const checkbox = document.createElement('input');
+              checkbox.type = 'checkbox';
+              checkbox.className = tipo=='cuadrante'?'dynamic-corner-checkbox': tipo=='macrotunel'?'dynamic-corner-checkbox2':'dynamic-corner-checkbox3'; // <-- ¡AQUÍ LA CLASE ESPECÍFICA!
+              checkbox.title = 'Seleccionar cuadrante';
+              td.prepend(checkbox);
+              checkbox.addEventListener('click', (event) => {
+                event.stopPropagation();
+                agregarAreaAfectada(td.id,tipo)
+              });
+              }
+          }
+           function guardarReportesLocalmente(array){
+           if (Array.isArray(array) && array.length > 0) {
+              localStorage.setItem('reportesPendientes', JSON.stringify(array));
+           }
+           actualizarContador();
+        }
+         function guardarRegistros(event,validar){
+          var enviar ='si';
+          if(validar=='si'){
+            event.preventDefault();
+            var formularioReporte = document.getElementById('formularioPlastico');
+            enviar = formularioReporte.valid?'si':'no';
+            if (enviar) formularioReporte.reset();
+          }
+          if(enviar){
+            guardarReportesLocalmente(areasAgregadas);
+            areasAgregadas =[];
+            if (hayConexion()) enviarPendientes();
+          }
+        }
+      function activarBotonesReporte(){
+       botonesReporte.style.display = areasAgregadas.length>0?'block':'none';
+      }
+      function agregarAreaAfectada(id,tipo){
           const idArea = id.split('-'); 
           const cb = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id==id).map(td => td.querySelector("input[type='checkbox']")).filter(chk => chk)[0];
           var checkboxes =[];
@@ -2382,63 +2370,6 @@
               if (check) check.disabled = valor;
           });
         }
-       
-        function poblarTablaPlasticos() {
-          const tbody = document.getElementById("detallePlasticos");
-          tbody.innerHTML = "";
-
-          areasAgregadas.forEach((item, index) => {
-            const fila = document.createElement("tr");
-            fila.id = `filaR-${index}`;
-
-            const opcionesCuadrantes = item.Cuadrante.map(c => `<option selected>${c}</option>`).join("");
-            const esUltimaFila = index === areasAgregadas.length - 1;
-
-            fila.innerHTML = `
-              <td class="fechaReporte">
-                <input type="date" required value="${item.Fecha}" onchange="actualizarDato(${index}, 'Fecha', this.value)">
-              </td>
-              <td class="bloqueReporte">
-                <select required onchange="actualizarDato(${index}, 'Bloque', this.value)">
-                  <option selected>${item.Bloque}</option>
-                </select>
-              </td>
-              <td class="marotunelReporte">
-                <select onchange="actualizarDato(${index}, 'Macrotunel', this.value)">
-                  <option selected>${item.Macrotunel}</option>
-                </select>
-              </td>
-              <td class="cuadranteReporte">
-                <select multiple onchange="actualizarCuadrantes(${index}, this)">
-                  ${opcionesCuadrantes}
-                </select>
-              </td>
-              <td class="comentarioReporte">
-                <input type="text" onchange="actualizarDato(${index}, 'Comentario', this.value)">
-              </td>
-              <td>
-                <button class="btnEliminarReporte" type="button" onclick="eliminarFilaReporte('filaR-${index}')">-</button>
-                ${esUltimaFila ? `<button class="btnAgregar" type="button" onclick="agregarFilaReporte()">+</button>` : ''}
-              </td>
-            `;
-
-            tbody.appendChild(fila);
-          });
-        }
-        function actualizarDato(index, campo, valor) {
-          if (!areasAgregadas[index]) return;
-
-          // Si el campo no existe en el objeto, se añade.
-          areasAgregadas[index][campo] = valor;
-        }
-
-        function actualizarCuadrantes(index, selectElement) {
-          if (!areasAgregadas[index]) return;
-
-          const seleccionados = Array.from(selectElement.selectedOptions).map(opt => opt.value);
-          areasAgregadas[index]["Cuadrante"] = seleccionados;
-        }
-
     </script>
 </body>
 </html>
