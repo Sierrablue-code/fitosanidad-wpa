@@ -1484,14 +1484,14 @@
                                 popup.style.top = '0';
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
-                                colorOption.onclick = function (event) {
+                                colorOption.addEventListener('click', function (event) {
                                     event.stopPropagation();
                                     const yaVisible = popup.style.display === 'block';
                                     document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
                                     if (!yaVisible) {
                                         popup.style.display = 'block';
                                     }
-                                };
+                                });
                                 celdaConProblemas.appendChild(colorOption);
                                 coloresPintadosPorArea[areaId].push(color); // Registrar el color pintado para esta área
 
