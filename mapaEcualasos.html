@@ -1485,7 +1485,7 @@
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
-                                    event.stopPropagation();
+                                    //event.stopPropagation();
                                     const yaVisible = popup.style.display === 'block';
                                     document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
                                     if (!yaVisible) {
