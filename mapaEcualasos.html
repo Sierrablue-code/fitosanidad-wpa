@@ -1896,8 +1896,6 @@
             let nuevosPendientes = [];
             let reportes = JSON.parse(localStorage.getItem('reportesPendientes')) ||[];
             let nuevosReportes =[];
-            console.log("Intentando guardar registros pendientes:", registros);
-
             if (registros.length > 0) {
                 for (const registro of registros) {
                     let idPrincipal = registro.encabezado['Row ID'];
@@ -2075,9 +2073,6 @@
 
                 // --- 5. Actualizar el Local Storage con los registros pendientes ---
                 localStorage.setItem('registrosPendientes', JSON.stringify(nuevosPendientes));
-                actualizarContador();
-                console.log(`Proceso de envío de pendientes finalizado. Quedan ${nuevosPendientes.length} registros para reintentar.`);
-
             } else {
                 console.log("No hay registros pendientes para enviar.");
             }
@@ -2095,6 +2090,7 @@
                 }
             }
             if(nuevosReportes.length>0)localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes))
+            actualizarContador();
             activarBotonesReporte();
         }
        
