@@ -1494,7 +1494,8 @@
                                 popup.style.top = '0';
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
-                                colorOption.onclick = function () {
+                                colorOption.onclick = function (event) {
+                                    event.stopPropagation();
                                     const yaVisible = popup.style.display === 'block';
                                     document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
                                     if (!yaVisible) {
