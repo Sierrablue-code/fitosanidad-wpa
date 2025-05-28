@@ -2454,11 +2454,47 @@
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
               });
-            console.log('areas encontradas v3: ',areasEncontradas)
-            const areasUnicas = [...new Set(areasEncontradas)];
+            console.log('areas encontradas v4: ',areasEncontradas)
+            const areasUnicas = agruparIds(areasEncontradas);
             console.log('areas unicas: ', areasUnicas);
-
         }
+       function agruparIds(idsValidos) {
+          const grupos = {};
+        
+          idsValidos.forEach(id => {
+            // Extraemos las partes sin regex (ya sabemos que el formato es válido)
+            // Asumiendo que siempre es b:x-mt:y-h:z-c:w
+            const partes = id.split('-').reduce((acc, parte) => {
+              const [key, val] = parte.split(':');
+              acc[key] = val;
+              return acc;
+            }, {});
+        
+            const clave = `b:${partes.b}-mt:${partes.mt}-c:${partes.c}`;
+        
+            if (!grupos[clave]) {
+              grupos[clave] = {
+                ids: [],
+                hUnicos: new Set(),
+              };
+            }
+        
+            grupos[clave].ids.push(id);
+            grupos[clave].hUnicos.add(partes.h);
+          });
+        
+          // Formateamos el resultado para devolverlo limpio
+          const resultado = {};
+          for (const clave in grupos) {
+            resultado[clave] = {
+              totalIds: grupos[clave].ids.length,
+              cantidadHUnicos: grupos[clave].hUnicos.size,
+              ids: [...new Set(grupos[clave])], // copia del array original
+            };
+          }
+          return resultado;
+        }
+
     </script>
 </body>
 </html>
