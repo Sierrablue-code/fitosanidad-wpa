@@ -2426,12 +2426,12 @@
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+cuadrante;
                            elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque) && td.id.includes(macrotunel) && td.id.includes(idCuadrante)).map(td=>td.id);
-                         console.log('hay cuadrantes', bloque, mactorunel, idCuadrante);
+                         console.log('hay cuadrantes', bloque, macrotunel, idCuadrante);
                           console.log('elementos por cuadrante encontrados: ', elementosTdPorC);
                       })
                   }else if(macrotunel !== ""){
                       elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque) && td.id.includes(macrotunel)).map(td=>td.id);
-                      console.log('hay macrotunel', bloque, mactorunel);
+                      console.log('hay macrotunel', bloque, macrotunel);
                        console.log('elementos por macrotunel: ', elementosTdPorC);
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque)).map(td=>td.id);
