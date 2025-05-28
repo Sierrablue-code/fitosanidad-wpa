@@ -2454,7 +2454,7 @@
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
               });
-            console.log('areas encontradas v4: ',areasEncontradas)
+            console.log('areas encontradas v5: ',areasEncontradas)
             const areasUnicas = agruparIds(areasEncontradas);
             console.log('areas unicas: ', areasUnicas);
         }
@@ -2489,7 +2489,7 @@
             resultado[clave] = {
               totalIds: grupos[clave].ids.length,
               cantidadHUnicos: grupos[clave].hUnicos.size,
-              ids: [...new Set(grupos[clave])], // copia del array original
+              ids: [...new Set(grupos[clave]).ids], // copia del array original
             };
           }
           return resultado;
