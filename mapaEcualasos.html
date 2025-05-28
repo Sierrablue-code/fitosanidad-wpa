@@ -2419,7 +2419,7 @@
               areasReportadas.forEach(area=>{
                   const bloque = 'b:'+area["N° Bloque"];
                   const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
-                  const cuadrantes = Array.from(area["Cuadrantes"]);
+                  const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => cuadrante !='');
                   let elementosTdPorC = [];
                   console.log('cuadrantres afectado: ', cuadrantes, cuadrantes.length)
                   if(cuadrantes.length>0){
