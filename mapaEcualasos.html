@@ -1626,7 +1626,6 @@
         // **Ajusta esta línea si tu Worker devuelve la lista de filas dentro de otra propiedad**
         // Por ejemplo, si devuelve { success: true, rows: [...] }, sería: const rows = data.rows;
         const rows = data;
-        console.log(rows);
         // Guarda los datos frescos en caché
         guardarEnCache(claveCache, rows);
         return rows;
