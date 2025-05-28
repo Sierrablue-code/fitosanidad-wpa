@@ -1204,6 +1204,7 @@
     let enfermedadesAgregadas =[];
     let plagasAgregadas =[];
     let areasAgregadas =[];
+    let areasConReportes = [];
     var filas =1;
     var filasReporte =1;
     let currentScale = 1;
@@ -1562,9 +1563,18 @@
             if (e.key === 'Escape') {
             closeModal();
           }
-         })
+         });
+          const formulario = document.getElementById("formulario");
+              formulario.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  return false;
+                }
+              });
+              inputMuestraTotal.addEventListener('change',actualizarBotones);
           recorrerCS();
-            cargarDatos('Ecualasos');
+          cargarDatos('Ecualasos');
+          hayConexion()?enviarPendientes():actualizarContador();
        });
           //fin cod aux
       /** online y offlien*/
@@ -1576,20 +1586,21 @@
         return datos ? JSON.parse(datos) : [];
       }
       async function obtenerDesdeBase(productor,tabla, claveCache) {
-          if (!navigator.onLine) {
-        console.warn(`⚠ Sin conexión: intentando cargar desde caché para ${claveCache}`);
-        const cachedData = cargarDesdeCache(claveCache);
-        if (cachedData) {
-            return cachedData;
-        } else {
-            // Si no hay conexión y no hay caché, lanza un error
-            throw new Error(`No hay conexión a internet y no hay datos en caché para ${claveCache}.`);
+        if (!navigator.onLine) {
+            console.warn(`⚠ Sin conexión: intentando cargar desde caché para ${claveCache}`);
+            const cachedData = cargarDesdeCache(claveCache);
+            if (cachedData) {
+                return cachedData;
+            } else {
+                // Si no hay conexión y no hay caché, lanza un error
+                throw new Error(`No hay conexión a internet y no hay datos en caché para ${claveCache}.`);
+            }
         }
-    }
 
     // 2. Si hay conexión, siempre intenta obtener los datos frescos del Worker
-    try {
+     try {
         // *** CAMBIO CLAVE AQUÍ: Usamos URL_APPSCRIPT en lugar de una nueva constante ***
+        const filtro = claveCache.includes('reportes')? `Filter(${tabla}, AND([Productor] = "${productor}",IN("Rotura de plástico",[Observación])))`:`Filter(${tabla}, [Productor] = "${productor}")`
         const response = await fetch(URL_APPSCRIPT, {
             method: "POST", // Tu Worker espera POST
             headers: {
@@ -1600,7 +1611,7 @@
                 actionType: "Find",
                 tableName: tabla,
                 // El payload es el filtro para la API de AppSheet
-                payload: `Filter(${tabla}, [Productor] = "${productor}")` // **¡Ajusta este filtro!**
+                payload: filtro // **¡Ajusta este filtro!**
             })
         });
 
@@ -1634,12 +1645,14 @@
       function cargarDatos(productor) {
         const cacheP = `plagas-${productor.replace(/\s+/g, "-")}`;
         const cacheD = `enfermedades-${productor.replace(/\s+/g, "-")}`;
-
+        const cacheR = `reportes-${productor.replace(/\s+/g, "-")}`
         return Promise.all([
             obtenerDesdeBase(productor, "Detalle: Plagas", cacheP)
             .then(datos => { auxPests = datos; jsonPests=auxPests; }),
             obtenerDesdeBase(productor, "Detalle: Enfermedades", cacheD)
-            .then(datos => { auxDiseases = datos; jsonDiseases=auxDiseases })
+            .then(datos => { auxDiseases = datos; jsonDiseases=auxDiseases }),
+            obtenerDesdeBase(productor,"Calendario",cacheR)
+            .then(datos => { areasConReporte = datos;})
         ]);
        }
        /* Enviar datos*/
@@ -1854,18 +1867,6 @@
                 });
             }
             agregarListenersUltimoCampo(document.getElementById('fila-1'))
-            document.addEventListener("DOMContentLoaded", function () {
-              const formulario = document.getElementById("formulario");
-              formulario.addEventListener("keydown", function (event) {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  return false;
-                }
-              });
-              inputMuestraTotal.addEventListener('change',actualizarBotones);
-              hayConexion()?enviarPendientes():actualizarContador();
-              
-            });
             function  hayConexion(){
               return navigator.onLine;
             }
