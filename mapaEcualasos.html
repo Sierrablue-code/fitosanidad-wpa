@@ -2319,7 +2319,7 @@
                   if (!dato["Cuadrantes"].includes(cuadrante)) dato["Cuadrantes"].push(cuadrante);
                 })
               }else{
-                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante].join(',')});
+                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante]});
               }
               const valor1 = 'b:'+bloqueNum;
               const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
