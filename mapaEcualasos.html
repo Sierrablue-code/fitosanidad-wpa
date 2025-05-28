@@ -2304,12 +2304,12 @@
             if(cb.checked ==true){
             if(tipo=="bloque" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque)){
               const cuadrantes = [];
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':"",'Cuadrantes':[]});
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':"",'Cuadrantes':[].join(',')});
               const valor = 'b:'+idArea[0].split(':')[1];
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor)).map(td => td.querySelector("input[type='checkbox']")); 
             }else if(tipo=="macrotunel" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==idArea[1].split(':')[1])){
               const mt = idArea[1].split(':')[1];
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mt,'Cuadrantes':[]});
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mt,'Cuadrantes':[].join(',')});
               const valor1 = 'b:'+bloqueNum;
               const valor2 = valor1+'-mt:'+mt;
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor2) || td.id==valor1).map(td => td.querySelector("input[type='checkbox']"));
@@ -2319,10 +2319,11 @@
               const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc)
               if(areaFiltrada.length>0){
                 areaFiltrada.forEach(dato=>{
-                  if (!dato["Cuadrantes"].includes(cuadrante)) dato["Cuadrantes"].push(cuadrante);
+                  const cuadrantes = Array.from(dato["Cuadrantes"]);
+                  if (!cuadrantes.includes(cuadrante)) dato["Cuadrantes"]= (cuadrantes.push(cuadrante)).join(',');
                 })
               }else{
-                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante]});
+                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante].join(',')});
               }
               const valor1 = 'b:'+bloqueNum;
               const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
