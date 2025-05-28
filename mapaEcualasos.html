@@ -2077,9 +2077,11 @@
             } else {
                 console.log("No hay registros pendientes para enviar.");
             }
+            console.log('reportes pendientes: ', reportes)
             if(reportes.length > 0){
                 for (const reporte of reportes) {
                     try {
+                        console.log('enviando reporte: ', reporte)
                         const id = await runServerFunction("Calendario", reporte);
                         if (!id) {
                             nuevosReportes.push(reporte);
