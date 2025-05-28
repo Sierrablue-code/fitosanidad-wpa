@@ -2431,7 +2431,7 @@
                                                          (idMacrotunel == macrotunel) &&
                                                          (cuadrante == idCuadrante);
                                                 }).map(td=>td.id);
-                         console.log('hay cuadrantes', bloque, macrotunel, idCuadrante);
+                          console.log('hay cuadrantes', bloque, macrotunel, idCuadrante);
                           console.log('elementos por cuadrante encontrados: ', elementosTdPorC);
                           areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                       })
@@ -2454,9 +2454,9 @@
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
               });
-            console.log('areas reportadas v3: ',areasReportadas)
+            console.log('areas encontradas v3: ',areasEncontradas)
             const areasUnicas = [...new Set(areasEncontradas)];
-            console.log('aread unicas: ', areasUnicas);
+            console.log('areas unicas: ', areasUnicas);
 
         }
     </script>
