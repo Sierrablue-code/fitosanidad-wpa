@@ -2306,7 +2306,7 @@
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor)).map(td => td.querySelector("input[type='checkbox']")); 
             }else if(tipo=="macrotunel" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==idArea[1].split(':')[1])){
               const mt = idArea[1].split(':')[1];
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mt,'Cuadrantes':""});
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mt,'Cuadrantes':[]});
               const valor1 = 'b:'+bloqueNum;
               const valor2 = valor1+'-mt:'+mt;
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor2) || td.id==valor1).map(td => td.querySelector("input[type='checkbox']"));
