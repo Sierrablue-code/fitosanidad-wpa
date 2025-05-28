@@ -2428,17 +2428,19 @@
                            elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque) && td.id.includes(macrotunel) && td.id.includes(idCuadrante)).map(td=>td.id);
                          console.log('hay cuadrantes', bloque, macrotunel, idCuadrante);
                           console.log('elementos por cuadrante encontrados: ', elementosTdPorC);
+                          areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                       })
                   }else if(macrotunel !== ""){
                       elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque) && td.id.includes(macrotunel)).map(td=>td.id);
                       console.log('hay macrotunel', bloque, macrotunel);
                        console.log('elementos por macrotunel: ', elementosTdPorC);
+                      areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque)).map(td=>td.id);
                       console.log('solo hay bloque', bloque);
                      console.log('elementos por bloque: ', elementosTdPorC);
+                      areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
-                 areasEncontradas = areasEncontradas.concat(elementosTdPorC)
               });
             console.log('areas reportadas: ',areasReportadas)
             console.log('areas encontradas: ', areasEncontradas);
