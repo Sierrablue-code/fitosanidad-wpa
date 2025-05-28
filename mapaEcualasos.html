@@ -2306,29 +2306,29 @@
             if(cb.checked ==true){
             if(tipo=="bloque" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque)){
               const cuadrantes = [];
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':"",'Cuadrantes':[].join(','),'Comentarios':"prueba"});
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':"",'Cuadrantes':[],'Comentarios':"prueba"});
               const valor = 'b:'+idArea[0].split(':')[1];
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor)).map(td => td.querySelector("input[type='checkbox']")); 
             }else if(tipo=="macrotunel" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==idArea[1].split(':')[1])){
               const mt = idArea[1].split(':')[1];
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mt,'Cuadrantes':[].join(','),'Comentarios':"prueba"});
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mt,'Cuadrantes':[],'Comentarios':"prueba"});
               const valor1 = 'b:'+bloqueNum;
               const valor2 = valor1+'-mt:'+mt;
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor2) || td.id==valor1).map(td => td.querySelector("input[type='checkbox']"));
             }else if(tipo=="cuadrante"){
               const mtTc = idArea[1].split(':')[1];
-              const cuadrante = idArea[3].split(':')[1];
+              const cuadrante = Number(idArea[3].split(':')[1]);
               const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc)
               if(areaFiltrada.length>0){
                 areaFiltrada.forEach(dato=>{
-                  const cuadrantes = Array.from(dato["Cuadrantes"]);
+                  const cuadrantes = dato["Cuadrantes"];
                   if (!cuadrantes.includes(cuadrante)){
                       cuadrantes.push(cuadrante);
                   }
-                  dato["Cuadrantes"]= cuadrantes.join(',');
+                  dato["Cuadrantes"]= cuadrantes;
                 })
               }else{
-                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante].join(','),'Comentarios':"prueba"});
+                 areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante],'Comentarios':"prueba"});
               }
               const valor1 = 'b:'+bloqueNum;
               const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
@@ -2350,15 +2350,15 @@
               if(areasAgregadas.filter(reg=>reg["Bloque"]==bloque && reg["Macrotunel"]==mt).length==0) checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor2) || td.id==valor1).map(td => td.querySelector("input[type='checkbox']"));
             }else if(tipo=="cuadrante"){
               const mtTc = idArea[1].split(':')[1];
-              const cuadrante = idArea[3].split(':')[1];
+              const cuadrante = Number(idArea[3].split(':')[1]);
               const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc && rg["Cuadrantes"].includes(cuadrante));
               areaFiltrada.forEach(dato =>{
-                  const cuadrantes = Array.from(dato["Cuadrantes"]);
+                  const cuadrantes = dato["Cuadrantes"];
                   indiceDato = cuadrantes.indexOf(cuadrante);
                   if(indiceDato !==-1){
                       cuadrantes.splice(indiceDato,1);
                   }
-                  dato["Cuadrantes"]= cuadrantes.join(',');
+                  dato["Cuadrantes"]= cuadrantes;
                   if(cuadrantes.length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
               });
               if(!areasAgregadas.some(reg=>reg["Bloque"]==bloque)){
