@@ -1694,28 +1694,30 @@
                 });
             });
 
-       function abrirFormulario(id){
-              modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
-              const componentesId=id.split('-');
-              const bloque = "BLOQUE "+ componentesId[0].split(':')[1];
-              const macrotunel = componentesId[1].split(':')[1];
-              const hilera = componentesId[2].split(':')[1];
-              const cuadrante = componentesId[3].split(':')[1];
-              document.getElementById('valorBloque').value=bloque;
-              document.getElementById('valorMacrotunel').value= macrotunel;
-              document.getElementById('valorCuadrante').value=cuadrante;
-              document.getElementById('valorHilera').value = hilera;
-              modalContent.style.display = "block";
-              document.getElementById('fechaRegistro').value = hoy;
-              //fechaRegistro.value=hoy;
-              estructuraMapa.setAttribute("disabled", "true");
-              estructuraMapa.classList.add("disabled");
-              paletaColores.setAttribute("disabled", "true");
-              header.setAttribute("disabled", "true");
-              paletaColores.classList.add("disabled");
-              header.classList.add("disabled");
-              cargarOpciones();
-              actualizarBotones();
+           function abrirFormulario(id){
+                 if(id){
+                      modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
+                      const componentesId=id.split('-');
+                      const bloque = "BLOQUE "+ componentesId[0].split(':')[1];
+                      const macrotunel = componentesId[1].split(':')[1];
+                      const hilera = componentesId[2].split(':')[1];
+                      const cuadrante = componentesId[3].split(':')[1];
+                      document.getElementById('valorBloque').value=bloque;
+                      document.getElementById('valorMacrotunel').value= macrotunel;
+                      document.getElementById('valorCuadrante').value=cuadrante;
+                      document.getElementById('valorHilera').value = hilera;
+                      modalContent.style.display = "block";
+                      document.getElementById('fechaRegistro').value = hoy;
+                      //fechaRegistro.value=hoy;
+                      estructuraMapa.setAttribute("disabled", "true");
+                      estructuraMapa.classList.add("disabled");
+                      paletaColores.setAttribute("disabled", "true");
+                      header.setAttribute("disabled", "true");
+                      paletaColores.classList.add("disabled");
+                      header.classList.add("disabled");
+                      cargarOpciones();
+                      actualizarBotones();
+                 }
             }
             function closeModal() {
              const confirmacion = confirm("¿Estás seguro de que deseas cerrar el formulario? Se perderán los datos no guardados.");
