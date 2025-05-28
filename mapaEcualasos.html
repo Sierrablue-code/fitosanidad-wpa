@@ -2322,7 +2322,10 @@
               if(areaFiltrada.length>0){
                 areaFiltrada.forEach(dato=>{
                   const cuadrantes = Array.from(dato["Cuadrantes"]);
-                  if (!cuadrantes.includes(cuadrante)) dato["Cuadrantes"]= (cuadrantes.push(cuadrante)).join(',');
+                  if (!cuadrantes.includes(cuadrante)){
+                      cuadrantes.push(cuadrante);
+                  }
+                  dato["Cuadrantes"]= cuadrantes.join(',');
                 })
               }else{
                  areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante].join(','),'Comentarios':"prueba"});
@@ -2352,7 +2355,10 @@
               areaFiltrada.forEach(dato =>{
                   const cuadrantes = Array.from(dato["Cuadrantes"]);
                   indiceDato = cuadrantes.indexOf(cuadrante);
-                  dato["Cuadrantes"]= (cuadrantes.splice(indiceDato)).join(',');
+                  if(indiceDato !==-1){
+                      cuadrantes.splice(indiceDato,1);
+                  }
+                  dato["Cuadrantes"]= cuadrantes.join(',');
                   if(cuadrantes.length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
               });
               if(!areasAgregadas.some(reg=>reg["Bloque"]==bloque)){
