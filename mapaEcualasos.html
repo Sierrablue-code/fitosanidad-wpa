@@ -1573,9 +1573,8 @@
               });
               inputMuestraTotal.addEventListener('change',actualizarBotones);
           recorrerCS();
-          cargarDatos('Ecualasos');
+          cargarDatos('Ecualasos').then(()=>{encontrarCuadrantesConReportes()});
           hayConexion()?enviarPendientes():actualizarContador();
-          encontrarCuadrantesConReportes()
        });
           //fin cod aux
       /** online y offlien*/
