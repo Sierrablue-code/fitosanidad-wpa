@@ -2316,7 +2316,7 @@
               const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc)
               if(areaFiltrada.length>0){
                 areaFiltrada.forEach(dato=>{
-                  if (!dato["Cuadrante"].includes(cuadrante)) dato["Cuadrante"].push(cuadrante);
+                  if (!dato["Cuadrantes"].includes(cuadrante)) dato["Cuadrantes"].push(cuadrante);
                 })
               }else{
                  areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':mtTc,'Cuadrantes':[cuadrante].join(',')});
@@ -2342,11 +2342,11 @@
             }else if(tipo=="cuadrante"){
               const mtTc = idArea[1].split(':')[1];
               const cuadrante = idArea[3].split(':')[1];
-              const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc && rg["Cuadrante"].includes(cuadrante));
+              const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc && rg["Cuadrantes"].includes(cuadrante));
               areaFiltrada.forEach(dato =>{
                   indiceDato = dato["Cuadrante"].indexOf(cuadrante);
                   dato["Cuadrante"].splice(indiceDato);
-                  if(dato["Cuadrante"].length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
+                  if(dato["Cuadrantes"].length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
               });
               if(!areasAgregadas.some(reg=>reg["Bloque"]==bloque)){
                 const valor1 = 'b:'+bloqueNum;
