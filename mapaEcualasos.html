@@ -2344,8 +2344,8 @@
               const cuadrante = idArea[3].split(':')[1];
               const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc && rg["Cuadrantes"].includes(cuadrante));
               areaFiltrada.forEach(dato =>{
-                  indiceDato = dato["Cuadrante"].indexOf(cuadrante);
-                  dato["Cuadrante"].splice(indiceDato);
+                  indiceDato = dato["Cuadrantes"].indexOf(cuadrante);
+                  dato["Cuadrantes"].splice(indiceDato);
                   if(dato["Cuadrantes"].length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
               });
               if(!areasAgregadas.some(reg=>reg["Bloque"]==bloque)){
