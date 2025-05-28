@@ -2426,10 +2426,10 @@
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+cuadrante;
                            elementosTdPorC = tdsFiltrados.filter(td => {
-                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                                                 const [idBloque, idMacrotunel, idHilera,cuadrante]= td.id.split('-');
                                                   return (idBloque == bloque) &&
                                                          (idMacrotunel == macrotunel) &&
-                                                         (idCuadrante ==cuadrante);
+                                                         (cuadrante == idCuadrante);
                                                 }).map(td=>td.id);
                          console.log('hay cuadrantes', bloque, macrotunel, idCuadrante);
                           console.log('elementos por cuadrante encontrados: ', elementosTdPorC);
