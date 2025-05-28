@@ -2257,7 +2257,7 @@
            const tipo = td.textContent.includes('MT')?"macrotunel":td.textContent.includes('BLOQUE')?"bloque":"cuadrante";
             const agregarCb =  td.id.includes('h:1') && tipo=="cuadrante"?true:tipo=="macrotunel"|| tipo=="bloque"?true:false;
              
-              if (agregarCb){
+              if (agregarCb &&  !td.querySelector('input[type="checkbox"]')){
               const checkbox = document.createElement('input');
               checkbox.type = 'checkbox';
               checkbox.className = tipo=='cuadrante'?'dynamic-corner-checkbox': tipo=='macrotunel'?'dynamic-corner-checkbox2':'dynamic-corner-checkbox3'; // <-- ¡AQUÍ LA CLASE ESPECÍFICA!
