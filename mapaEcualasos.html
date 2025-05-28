@@ -1886,7 +1886,8 @@
               if (!r.encabezado['Row ID']) total += 1;
               total += (r.detallesPlagas?.length || 0) + (r.detallesEnfermedades?.length || 0) ;
             });
-            total=total +plasticosPendientes.length
+            console.log('pendientes', plasticosPendientes.length);
+            total=total + plasticosPendientes.length
             document.getElementById('contador').textContent = total;
           }
            async function enviarPendientes() {
