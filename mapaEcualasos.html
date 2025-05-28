@@ -2304,7 +2304,7 @@
             if(cb.checked ==true){
             if(tipo=="bloque" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque)){
               const cuadrantes = [];
-              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':"",'Cuadrantes':""});
+              areasAgregadas.push({'Fecha':hoy,'Productor':"Ecualasos",'Observación':"Rotura de plástico",'Bloque':bloque,'Macrotunel':"",'Cuadrantes':[]});
               const valor = 'b:'+idArea[0].split(':')[1];
               checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id.includes(valor)).map(td => td.querySelector("input[type='checkbox']")); 
             }else if(tipo=="macrotunel" && !areasAgregadas.some(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==idArea[1].split(':')[1])){
@@ -2361,6 +2361,7 @@
            desactivaroActivarCheck(checkboxes,false);
           }
           cb.disabled=false;
+          console.log(areasAgregadas)
           activarBotonesReporte();
         }
         function desactivaroActivarCheck(checks,valor){
