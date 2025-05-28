@@ -2425,18 +2425,30 @@
                   if(cuadrantes.length>0){
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+cuadrante;
-                           elementosTdPorC = tdsFiltrados.filter(td=> td.id.split('-')[0].split(':')[1]==bloque && td.id.split('-')[1].split(':')[1]==macrotunel && td.id.split('-')[3].split(':')[1]== idCuadrante).map(td=>td.id);
+                           elementosTdPorC = tdsFiltrados.filter(td => {
+                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                                                  return (!bloque || idBloque === bloque) &&
+                                                         (!macrotunel || idMacrotunel === macrotunel) &&
+                                                         (!cuadrante || idCuadrante === cuadrante);
+                                                }).map(td=>td.id);
                          console.log('hay cuadrantes', bloque, macrotunel, idCuadrante);
                           console.log('elementos por cuadrante encontrados: ', elementosTdPorC);
                           areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                       })
                   }else if(macrotunel !== ""){
-                      elementosTdPorC = tdsFiltrados.filter(td=> td.id.split('-')[0].split(':')[1]==bloque && td.id.split('-')[1].split(':')[1]==macrotunel).map(td=>td.id)
+                      elementosTdPorC = tdsFiltrados.filter(td => {
+                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                                                  return (!bloque || idBloque === bloque) &&
+                                                         (!macrotunel || idMacrotunel === macrotunel)
+                                                }).map(td=>td.id);
                       console.log('hay macrotunel', bloque, macrotunel);
                        console.log('elementos por macrotunel: ', elementosTdPorC);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }else{ 
-                      elementosTdPorC = tdsFiltrados.filter(td=> td.id.split('-')[0].split(':')[1]==bloque).map(td=>td.id)
+                      elementosTdPorC = tdsFiltrados.filter(td => {
+                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                                                  return (!bloque || idBloque === bloque)
+                                                }).map(td=>td.id);
                       console.log('solo hay bloque', bloque);
                      console.log('elementos por bloque: ', elementosTdPorC);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
