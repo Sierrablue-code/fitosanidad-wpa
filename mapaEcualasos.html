@@ -2090,7 +2090,7 @@
                     }
                 }
             }
-            if(nuevosReportes.length>0)localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes))
+            localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes))
             activarBotonesReporte();
             actualizarContador();
         }
