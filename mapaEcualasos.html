@@ -1575,6 +1575,7 @@
           recorrerCS();
           cargarDatos('Ecualasos');
           hayConexion()?enviarPendientes():actualizarContador();
+          encontrarCuadrantesConReportes()
        });
           //fin cod aux
       /** online y offlien*/
@@ -2379,6 +2380,65 @@
           checks.forEach(check=>{
               if (check) check.disabled = valor;
           });
+        }
+        function agruparPorVariosCampos(datos, campos) {
+          return datos.reduce((acumulador, item) => {
+              // Crea una clave compuesta basada en los campos especificados
+              const clave = campos.map(campo => item[campo]).join('|');
+              
+              if (!acumulador[clave]) {
+                  acumulador[clave] = [];
+              }
+              
+              acumulador[clave].push(item);
+              return acumulador;
+          }, {});
+        }
+        function encontrarCuadrantesConReportes(){
+            const fecha = document.getElementById('fecha').value.toString();
+              let fechaInicio = "";
+              let fechaFin = "";
+
+              if (fecha.includes("to")) {
+                // Es un rango
+                [fechaInicio, fechaFin] = fecha.split(" to ");
+              } else {
+                // Es una sola fecha
+                fechaInicio = fecha;
+                fechaFin = fecha;
+              }
+              const [anioInicio, mesInicio, diaInicio] = fechaInicio.split("-");
+              const [anioFin, mesFin, diaFin] = fechaFin.split("-");
+
+              const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
+              const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
+              const regex = /^b:\d+-mt:\d+-h:\d+-c:\d+$/;
+              const tds = Array.from(document.querySelectorAll("td"));
+              const tdsFiltrados = tds.filter(td => regex.test(td.id));
+              const areasReportadas = fecha? areasConReportes.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReportes;
+              let areasEncontradas = [];
+              areasReportadas.forEach(area=>{
+                  const bloque = 'b:'+area["N° Bloque"];
+                  const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
+                  const cuadrantes = Array.from(area["Cuadrantes"]);
+                  let elementosTdPorC = [];
+                  if(cuadrantes.length>0){
+                      cuadrantes.forEach(cuadrante=>{
+                          const idCuadrante = 'c:'+cuadrante;
+                           elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque) && td.id.includes(macrotunel) && td.id.includes(idCuadrante)).map(td=>td.id);
+                      })
+                  }else if(macrotunel !== ""){
+                      elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque) && td.id.includes(macrotunel)).map(td=>td.id);
+                  }else{ 
+                      elementosTdPorC = tdsFiltrados.filter(td=> td.id.includes(bloque)).map(td=>td.id);
+                  }
+                 areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+              });
+            console.log('areas encontradas: ', areasEncontradas);
+            const areasUnicas = [...new Set(areasEncontradas)];
+            console.log('aread unicas: ', areasUnicas);
+            
+            console.log(tdsFiltrados);
         }
     </script>
 </body>
