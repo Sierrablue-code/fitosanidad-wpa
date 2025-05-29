@@ -1487,14 +1487,17 @@
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
-                                   console.log('clic detectado v3')
+                                   console.log('clic detectado v4')
                                      event.stopPropagation();
+                                     const rect = colorOption.getBoundingClientRect();
                                     const yaVisible = popup.style.display === 'block';
                                     document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
                                     /*if (!yaVisible) {
                                         popup.style.display = 'block';
                                         console.log('popup visible',popup.style.display)
                                     }*/
+                                    popup.style.left = `${rect.right + 10}px`; 
+                                    popup.style.top = `${rect.top + rect.height / 2 - popup.offsetHeight / 2}px`;
                                     console.log('diplay inicial', popup.style.display);
                                     popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
                                     console.log('diplay final', popup.style.display);
