@@ -2461,7 +2461,7 @@
                 const idAreas = elemento.ids;
                 const intensidad = elemento.repeticiones;
                 const color = Math.floor(50 + 205 * (intensidad / repeticionMaxima));
-                idAreas.forEarch(id=>{
+                idAreas.forEach(id=>{
                     const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
                     tdEncontrado.style.backgroundColor = `rgb(${color}, 0, 0)`;
                 })
