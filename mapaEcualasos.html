@@ -1339,212 +1339,144 @@
       fecha.addEventListener('change',(event)=>{
         actualizarItems();
       })
-      function actualizarItems(){
-            lista.innerHTML='';
-            itemsDiv.innerHTML='';
-            const filtroPlagas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
-            const filtroEnfermedades =Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
-            const selectPlagasNombres = filtroPlagas.filter(checkbox => checkbox.checked==true).map(checkbox => checkbox.closest('div')?.getAttribute('data-option')).filter(dataOption => dataOption !== undefined);
-            const selectEnfermedadesNombres = filtroEnfermedades.filter(checkbox => checkbox.checked==true).map(checkbox => checkbox.closest('div')?.getAttribute('data-option')).filter(dataOption => dataOption !== undefined);
-            const plagasSinSeleccionar = filtroPlagas.filter(checkbox => checkbox.checked==false);
-            const enfermedadesSinSeleccionar = filtroEnfermedades.filter(checkbox => checkbox.checked==false);
-            const plagasSeleccionadas = filtroPlagas.filter(checkbox => checkbox.checked==true);
-            const enfermedadesSeleccionadas = filtroEnfermedades.filter(checkbox => checkbox.checked==true);
-            const filtrosNoSeleccionados = [...plagasSinSeleccionar, ...enfermedadesSinSeleccionar];
-            const filtrosSeleccionados = [...plagasSeleccionadas, ...enfermedadesSeleccionadas];
-            const fecha = document.getElementById('fecha').value.toString();
-            let fechaInicio = "";
-              let fechaFin = "";
+       
+     function actualizarItems() {
+  lista.innerHTML = '';
+  itemsDiv.innerHTML = '';
 
-              if (fecha.includes("to")) {
-                // Es un rango
-                [fechaInicio, fechaFin] = fecha.split(" to ");
-              } else {
-                // Es una sola fecha
-                fechaInicio = fecha;
-                fechaFin = fecha;
-              }
-              const [anioInicio, mesInicio, diaInicio] = fechaInicio.split("-");
-              const [anioFin, mesFin, diaFin] = fechaFin.split("-");
+  const filtroPlagas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]'))
+    .filter(cb => cb.closest('div').getAttribute('data-option') !== 'todo');
 
-              const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
-              const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
-              const areasAfectadasPPlagas = auxPests.length > 0
-                ? fecha
-                  ? auxPests.filter(pest => 
-                      selectPlagasNombres.includes(pest.Plaga) && 
-                      pest.Fecha >= fechaInicioString && pest.Fecha <= fechaFinString
-                    )
-                  : auxPests.filter(pest => selectPlagasNombres.includes(pest.Plaga))
-                : [];
+  const filtroEnfermedades = Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]'))
+    .filter(cb => cb.closest('div').getAttribute('data-option') !== 'todo');
 
-              const areasAfectadasPEnfermedades = auxDiseases.length > 0
-                ? fecha
-                  ? auxDiseases.filter(disease => 
-                      selectEnfermedadesNombres.includes(disease.Enfermedad) && 
-                      disease.Fecha >= fechaInicio && disease.Fecha <= fechaFin
-                    )
-                  : auxDiseases.filter(disease => selectEnfermedadesNombres.includes(disease.Enfermedad))
-                : [];
-            const idAreasConPlagas = [...new Set(areasAfectadasPPlagas.map(item => item["id"]))];
-            const idAreasConEnfermedades = [...new Set(areasAfectadasPEnfermedades.map(item => item["id"]))];
-            const ids = [...idAreasConEnfermedades, ...idAreasConPlagas];
-            const areasAfectadas = [...new Set(ids)];
-            const coloresNoSeleccionados = filtrosNoSeleccionados.map(cb=>cb.closest('div').getAttribute('data-color'));
-            const cuadrantesConDanios = document.querySelectorAll('td[id]:has(span)');
-            if (cuadrantesConDanios.length > 0) {
-                cuadrantesConDanios.forEach(td => {
-                    const shadow = td.style.boxShadow;
-                    td.innerHTML='';
-                    if(td.querySelectorAll('span').length==0){
-                        const idCelda= td.getAttribute('id');
-                        const tdAux = document.createElement('td');
-                        tdAux.className='txt-1';
-                        tdAux.id= idCelda;
-                        tdAux.style.boxShadow= shadow;
-                        agregarCheckbox(tdAux);
-                        tdAux.addEventListener('click', function(event) {
-                            const id = event.target.id;
-                            abrirFormulario(id);
-                            
-                        });
-                        td.replaceWith(tdAux);
-                    }
-                });
-            }
+  const selectPlagasNombres = filtroPlagas.filter(cb => cb.checked)
+    .map(cb => cb.closest('div')?.getAttribute('data-option')).filter(Boolean);
 
-            const coloresPintadosPorArea = {}; // Objeto para rastrear colores por área
+  const selectEnfermedadesNombres = filtroEnfermedades.filter(cb => cb.checked)
+    .map(cb => cb.closest('div')?.getAttribute('data-option')).filter(Boolean);
 
-            if(areasAfectadas.length>0){
-                areasAfectadas.forEach(areaId=>{
-                    const plagasEnArea = areasAfectadasPPlagas.filter(area => area.id == areaId);
-                    const enfermedadesEnArea = areasAfectadasPEnfermedades.filter(area => area.id == areaId);
-                    const plagasUnicasEnArea = [...new Set(plagasEnArea.map(p => p.Plaga))];
-                    const enfermedadesUnicasEnArea = [...new Set(enfermedadesEnArea.map(e => e.Enfermedad))];
-                    const filtrosSeleccionadosParaArea = filtrosSeleccionados.filter(cb =>
-                    plagasUnicasEnArea.includes(cb.closest('div')?.getAttribute('data-option')) ||
-                    enfermedadesUnicasEnArea.includes(cb.closest('div')?.getAttribute('data-option'))
-                    );
-                    const coloresUnicosParaArea = [...new Set(filtrosSeleccionadosParaArea.map(cb => cb.closest('div')?.getAttribute('data-color')))].filter(color => color !== null);
+  const filtrosNoSeleccionados = [...filtroPlagas, ...filtroEnfermedades].filter(cb => !cb.checked);
+  const filtrosSeleccionados = [...filtroPlagas, ...filtroEnfermedades].filter(cb => cb.checked);
 
-                    const plagasOEnfermedadesEnArea = [...plagasEnArea, ...enfermedadesEnArea];
-                    const itemData = document.createElement('li');
-                    const elementoA =  document.createElement('a');
-                    const parrafo = document.createElement('p');
-                    const texto= plagasUnicasEnArea.length > 0 && enfermedadesUnicasEnArea.length > 0 ?
-                                'Plagas: ' + plagasUnicasEnArea.toString() + '\n' + 'Enfermedades: ' + enfermedadesUnicasEnArea.toString() :
-                                plagasUnicasEnArea.length > 0 ? 'Plagas: ' + plagasUnicasEnArea.toString() :
-                                enfermedadesUnicasEnArea.length > 0 ? 'Enfermedades: ' + enfermedadesUnicasEnArea.toString() : '';
-                    elementoA.textContent= areaId;
-                    elementoA.href="#"+areaId;
-                    const celdaConProblemas = document.getElementById(areaId);
-                    
-                    if (!coloresPintadosPorArea[areaId]) {
-                        coloresPintadosPorArea[areaId] = [];
-                    }
-                    
-                    coloresUnicosParaArea.forEach(color => {
-                        if (celdaConProblemas && !coloresPintadosPorArea[areaId].includes(color)) {
-                            const tamaño= celdaConProblemas.offsetHeight -3;
-                            const filtroNombre = filtrosSeleccionadosParaArea.find(cb => cb.closest('div')?.getAttribute('data-color') === color)?.closest('div')?.getAttribute('data-option');
-                            if (filtroNombre) {
-                                const registrosFiltrados = plagasOEnfermedadesEnArea.filter(dato => (dato.Plaga === filtroNombre || dato.Enfermedad === filtroNombre) && dato.id==areaId);
-                                let incidencia = 0;
-                                let severidad = 0;
-                                const nivelesInfestacion = [...new Set(registrosFiltrados.map(dato => dato["Nivel de infestación"]))];
+  const fecha = document.getElementById('fecha').value;
+  let [fechaInicio, fechaFin] = fecha.includes('to') ? fecha.split(' to ') : [fecha, fecha];
+  const [anioInicio, mesInicio, diaInicio] = fechaInicio.split('-');
+  const [anioFin, mesFin, diaFin] = fechaFin.split('-');
+  const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
+  const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
 
-                                if (registrosFiltrados.length > 0) {
-                                    incidencia = registrosFiltrados.map(dato => parseFloat(dato["Incidencia"] || 0)).reduce((sum, val) => sum + val, 0) / registrosFiltrados.length;
-                                    severidad = registrosFiltrados.map(dato => parseFloat(dato["Severidad"] || 0)).reduce((sum, val) => sum + val, 0) / registrosFiltrados.length;
-                                }
-                                const shadowActual =  celdaConProblemas.style.boxShadow || '';
-                                const colorOption = document.createElement('span');
-                                colorOption.style.backgroundColor = color;
-                                colorOption.style.width = tamaño+'px';
-                                colorOption.style.height = tamaño+'px';
-                                colorOption.style.borderRadius = '50%';
-                                colorOption.style.display = 'inline-block';
-                                colorOption.style.cursor = 'pointer';
-                                colorOption.style.position = 'relative';
-                                colorOption.setAttribute('data-color', color);
-                                celdaConProblemas.style.justifyContent = 'center';
-                                celdaConProblemas.style.alignItems = 'center';
-                                celdaConProblemas.style.alignContent='center';
-                                celdaConProblemas.style.padding='0px';
-                                celdaConProblemas.style.margin='0px';
-                                celdaConProblemas.style.boxShadow = shadowActual;
+  const areasAfectadasPPlagas = auxPests.length > 0 ?
+    auxPests.filter(p => selectPlagasNombres.includes(p.Plaga) && p.Fecha >= fechaInicioString && p.Fecha <= fechaFinString) : [];
 
-                                const popup = document.createElement('div');
-                                popup.classList.add('popup');
-                                popup.style.display = 'none';
-                                popup.style.position = 'absolute';
-                                popup.style.backgroundColor = '#fff';
-                                //popup.style.border = '1px solid #ccc';
-                                //popup.style.padding = '5px';
-                                popup.style.zIndex = '1000';
-                               // popup.style.left = '30px';
-                                //popup.style.top = '0';
-                                popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
-                                colorOption.appendChild(popup);
-                                colorOption.addEventListener('click', function (event) {
-                                   console.log('clic detectado v4')
-                                     event.stopPropagation();
-                                     const rect = colorOption.getBoundingClientRect();
-                                    const yaVisible = popup.style.display === 'block';
-                                    document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
-                                    /*if (!yaVisible) {
-                                        popup.style.display = 'block';
-                                        console.log('popup visible',popup.style.display)
-                                    }*/
-                                    popup.style.left = `${rect.right + 10}px`; 
-                                    popup.style.top = `${rect.top + rect.height / 2 - popup.offsetHeight / 2}px`;
-                                    console.log('diplay inicial', popup.style.display);
-                                    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-                                    console.log('diplay final', popup.style.display);
-                                });
-                                celdaConProblemas.appendChild(colorOption);
-                                coloresPintadosPorArea[areaId].push(color); // Registrar el color pintado para esta área
+  const areasAfectadasPEnfermedades = auxDiseases.length > 0 ?
+    auxDiseases.filter(e => selectEnfermedadesNombres.includes(e.Enfermedad) && e.Fecha >= fechaInicio && e.Fecha <= fechaFin) : [];
 
-                                const countSpan = celdaConProblemas.querySelectorAll('span');
-                                const size = tamaño/countSpan.length;
-                                celdaConProblemas.querySelectorAll('span').forEach(span => {
-                                    span.style.width = size+'px';
-                                    span.style.height = size+'px';
-                                });
-                            }
-                        }
-                    });
+  const idAreasConPlagas = [...new Set(areasAfectadasPPlagas.map(i => i.id))];
+  const idAreasConEnfermedades = [...new Set(areasAfectadasPEnfermedades.map(i => i.id))];
+  const areasAfectadas = [...new Set([...idAreasConPlagas, ...idAreasConEnfermedades])];
 
-                    elementoA.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        const celdaDestino = document.getElementById(areaId);
-                        const celdasMarcadas = document.querySelectorAll('.celda-resaltada');
-                        celdasMarcadas.forEach(celda => {
-                            celda.classList.remove('celda-resaltada');
-                        });
-                        if (celdaDestino) {
-                            celdaDestino.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-                            celdaDestino.classList.add('celda-resaltada');
+  const coloresNoSeleccionados = filtrosNoSeleccionados.map(cb => cb.closest('div').getAttribute('data-color'));
+  const cuadrantesConDanios = document.querySelectorAll('td[id]:has(span)');
 
-                            // Opcionalmente, remover la clase después de un tiempo
-                            setTimeout(() => {
-                                celdaDestino.classList.remove('celda-resaltada');
-                            }, 5000); // Remover después de 1.5 segundos
-                        }
-                        
-                    });
-                    parrafo.textContent= texto;
-                    itemData.appendChild(elementoA);
-                    itemData.appendChild(parrafo);
-                    lista.appendChild(itemData);
-                });
-                itemsDiv.appendChild(lista);
-            } else {
-                const divNoDatos = document.createElement('p');
-                divNoDatos.textContent="No hay datos";
-                itemsDiv.appendChild(divNoDatos);
-            }
+  cuadrantesConDanios.forEach(td => {
+    const shadow = td.style.boxShadow;
+    td.innerHTML = '';
+    const idCelda = td.id;
+    const tdAux = document.createElement('td');
+    tdAux.className = 'txt-1';
+    tdAux.id = idCelda;
+    tdAux.style.boxShadow = shadow;
+    agregarCheckbox(tdAux);
+    tdAux.addEventListener('click', e => abrirFormulario(e.target.id));
+    td.replaceWith(tdAux);
+  });
+
+  const coloresPintadosPorArea = {};
+
+  areasAfectadas.forEach(areaId => {
+    const plagasEnArea = areasAfectadasPPlagas.filter(p => p.id == areaId);
+    const enfermedadesEnArea = areasAfectadasPEnfermedades.filter(e => e.id == areaId);
+    const plagasUnicasEnArea = [...new Set(plagasEnArea.map(p => p.Plaga))];
+    const enfermedadesUnicasEnArea = [...new Set(enfermedadesEnArea.map(e => e.Enfermedad))];
+    const filtrosSeleccionadosParaArea = filtrosSeleccionados.filter(cb =>
+      plagasUnicasEnArea.includes(cb.closest('div')?.getAttribute('data-option')) ||
+      enfermedadesUnicasEnArea.includes(cb.closest('div')?.getAttribute('data-option')));
+
+    const coloresUnicosParaArea = [...new Set(filtrosSeleccionadosParaArea.map(cb => cb.closest('div')?.getAttribute('data-color')))].filter(Boolean);
+    const plagasOEnfermedadesEnArea = [...plagasEnArea, ...enfermedadesEnArea];
+
+    const itemData = document.createElement('li');
+    const elementoA = document.createElement('a');
+    const parrafo = document.createElement('p');
+    const texto = plagasUnicasEnArea.length && enfermedadesUnicasEnArea.length ?
+      `Plagas: ${plagasUnicasEnArea}\nEnfermedades: ${enfermedadesUnicasEnArea}` :
+      plagasUnicasEnArea.length ? `Plagas: ${plagasUnicasEnArea}` :
+      enfermedadesUnicasEnArea.length ? `Enfermedades: ${enfermedadesUnicasEnArea}` : '';
+
+    elementoA.textContent = areaId;
+    elementoA.href = `#${areaId}`;
+    const celdaConProblemas = document.getElementById(areaId);
+
+    if (!coloresPintadosPorArea[areaId]) coloresPintadosPorArea[areaId] = [];
+
+    coloresUnicosParaArea.forEach(color => {
+      if (celdaConProblemas && !coloresPintadosPorArea[areaId].includes(color)) {
+        const tamaño = celdaConProblemas.offsetHeight - 3;
+        const filtroNombre = filtrosSeleccionadosParaArea.find(cb => cb.closest('div')?.getAttribute('data-color') === color)?.closest('div')?.getAttribute('data-option');
+        const registrosFiltrados = plagasOEnfermedadesEnArea.filter(d => (d.Plaga === filtroNombre || d.Enfermedad === filtroNombre) && d.id == areaId);
+
+        let incidencia = 0, severidad = 0;
+        const nivelesInfestacion = [...new Set(registrosFiltrados.map(d => d["Nivel de infestación"]))];
+
+        if (registrosFiltrados.length) {
+          incidencia = registrosFiltrados.reduce((sum, d) => sum + parseFloat(d.Incidencia || 0), 0) / registrosFiltrados.length;
+          severidad = registrosFiltrados.reduce((sum, d) => sum + parseFloat(d.Severidad || 0), 0) / registrosFiltrados.length;
         }
+
+        const colorOption = document.createElement('span');
+        colorOption.style.cssText = `background-color:${color};width:${tamaño}px;height:${tamaño}px;border-radius:50%;display:inline-block;cursor:pointer;position:relative;`;
+        colorOption.setAttribute('data-color', color);
+
+        const popup = document.createElement('div');
+        popup.className = 'popup';
+        popup.style.cssText = 'display:none;position:absolute;background:#fff;z-index:1000;';
+        popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
+
+        colorOption.appendChild(popup);
+        colorOption.addEventListener('click', e => {
+          e.stopPropagation();
+          const rect = colorOption.getBoundingClientRect();
+          popup.style.left = `${rect.right + 10}px`;
+          popup.style.top = `${rect.top + rect.height / 2 - popup.offsetHeight / 2}px`;
+          popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+        });
+
+        celdaConProblemas.appendChild(colorOption);
+        coloresPintadosPorArea[areaId].push(color);
+
+        const size = tamaño / celdaConProblemas.querySelectorAll('span').length;
+        celdaConProblemas.querySelectorAll('span').forEach(span => {
+          span.style.width = `${size}px`;
+          span.style.height = `${size}px`;
+        });
+      }
+    });
+
+    elementoA.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelectorAll('.celda-resaltada').forEach(c => c.classList.remove('celda-resaltada'));
+      const celdaDestino = document.getElementById(areaId);
+      if (celdaDestino) celdaDestino.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    parrafo.textContent = texto;
+    itemData.appendChild(elementoA);
+    itemData.appendChild(parrafo);
+    lista.appendChild(itemData);
+  });
+}
+
       
       function setScale(factor) {
         currentScale = Math.min(2, Math.max(0.5, factor));
