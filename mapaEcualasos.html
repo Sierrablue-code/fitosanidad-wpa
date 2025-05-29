@@ -1481,13 +1481,13 @@
                                 popup.style.backgroundColor = '#fff';
                                 popup.style.border = '1px solid #ccc';
                                 popup.style.padding = '5px';
-                               // popup.style.zIndex = '1000';
+                                popup.style.zIndex = '1000';
                                 popup.style.left = '30px';
                                 popup.style.top = '0';
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
-                                   console.log('clic detectado v1')
+                                   console.log('clic detectado v2')
                                      event.stopPropagation();
                                     const yaVisible = popup.style.display === 'block';
                                     document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
@@ -2375,10 +2375,10 @@
               }
                
             }
+           console.log('activar checkboxes: ', checkboxes)
            desactivaroActivarCheck(checkboxes,false);
           }
           cb.disabled=false;
-          console.log(areasAgregadas)
           activarBotonesReporte();
         }
         function desactivaroActivarCheck(checks,valor){
@@ -2427,7 +2427,6 @@
                   const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
                   const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => Number(cuadrante)>0);
                   let elementosTdPorC = [];
-                  console.log('cuadrantres afectados: ', cuadrantes, cuadrantes.length)
                   if(cuadrantes.length>0){
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+cuadrante;
@@ -2437,8 +2436,6 @@
                                                          (idMacrotunel == macrotunel) &&
                                                          (cuadrante == idCuadrante);
                                                 }).map(td=>td.id);
-                          console.log('hay cuadrantes', bloque, macrotunel, idCuadrante);
-                          console.log('elementos por cuadrante encontrados: ', elementosTdPorC);
                           areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                       })
                   }else if(macrotunel !== ""){
@@ -2447,16 +2444,12 @@
                                                   return (idBloque == bloque) &&
                                                          (idMacrotunel == macrotunel)
                                                 }).map(td=>td.id);
-                      console.log('hay macrotunel', bloque, macrotunel);
-                       console.log('elementos por macrotunel: ', elementosTdPorC);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
                                                   return (idBloque == bloque)
                                                 }).map(td=>td.id);
-                      console.log('solo hay bloque', bloque);
-                     console.log('elementos por bloque: ', elementosTdPorC);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
               });
