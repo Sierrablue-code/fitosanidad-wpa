@@ -2459,11 +2459,12 @@
             for(let clave in areasUnicas){
                 const elemento=areasUnicas[clave];
                 const idAreas = elemento.ids;
-                const intensidad = elemento.repeticiones;
-                const color = Math.floor(50 + 205 * (intensidad / repeticionMaxima));
+                const porcentaje = elemento.repeticiones/repeticionMaxima;
+                const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
+                const color = `rgb(255, ${intensidad }, ${intensidad})`;
                 idAreas.forEach(id=>{
                     const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
-                    tdEncontrado.style.backgroundColor = `rgb(${color}, 0, 0)`;
+                    tdEncontrado.style.boxShadow = `inset 0 0 10px ${color}`;
                 })
             }
         }
