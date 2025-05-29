@@ -2364,8 +2364,8 @@
                   dato["Cuadrantes"]= cuadrantes.join(',');
                   if(cuadrantes.length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
               });
-                 console.log('no hay datos del bloque v3: ',areasAgregadas.filter(reg=>reg["Bloque"]==bloque && rg["Macrotunel"]==mtTc))
-              if(areasAgregadas.filter(reg=>reg["Bloque"]==bloque && rg["Macrotunel"]==mtTc).length ==0){
+                 console.log('no hay datos del bloque v4: ',areasAgregadas.filter(reg=>reg["Bloque"]==bloque && reg["Macrotunel"]==mtTc))
+              if(areasAgregadas.filter(reg=>reg["Bloque"]==bloque && reg["Macrotunel"]==mtTc).length ==0){
                 const valor1 = 'b:'+bloqueNum;
                 const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
                 checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => (td.id==valor1 || td.id == valor2)).map(td => td.querySelector("input[type='checkbox']"));
