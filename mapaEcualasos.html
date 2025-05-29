@@ -2358,6 +2358,7 @@
               areaFiltrada.forEach(dato =>{
                   const cuadrantes = Array.from(dato["Cuadrantes"]);
                   indiceDato = cuadrantes.indexOf(cuadrante);
+                  console.log('indice: ', indiceDato, cuadrante)
                   if(indiceDato !==-1){
                       cuadrantes.splice(indiceDato,1);
                   }
