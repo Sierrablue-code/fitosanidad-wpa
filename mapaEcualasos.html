@@ -1394,12 +1394,14 @@
             const cuadrantesConDanios = document.querySelectorAll('td[id]:has(span)');
             if (cuadrantesConDanios.length > 0) {
                 cuadrantesConDanios.forEach(td => {
+                    const shadow = td.style.boxShadow;
                     td.innerHTML='';
                     if(td.querySelectorAll('span').length==0){
                         const idCelda= td.getAttribute('id');
                         const tdAux = document.createElement('td');
                         tdAux.className='txt-1';
                         tdAux.id= idCelda;
+                        tdAux.style.boxShadow= shadow;
                         agregarCheckbox(tdAux);
                         tdAux.addEventListener('click', function(event) {
                             const id = event.target.id;
@@ -1455,7 +1457,7 @@
                                     incidencia = registrosFiltrados.map(dato => parseFloat(dato["Incidencia"] || 0)).reduce((sum, val) => sum + val, 0) / registrosFiltrados.length;
                                     severidad = registrosFiltrados.map(dato => parseFloat(dato["Severidad"] || 0)).reduce((sum, val) => sum + val, 0) / registrosFiltrados.length;
                                 }
-
+                                const shadowActual =  celdaConProblemas.style.boxShadow || '';
                                 const colorOption = document.createElement('span');
                                 colorOption.style.backgroundColor = color;
                                 colorOption.style.width = tamaño+'px';
@@ -1470,6 +1472,7 @@
                                 celdaConProblemas.style.alignContent='center';
                                 celdaConProblemas.style.padding='0px';
                                 celdaConProblemas.style.margin='0px';
+                                celdaConProblemas.style.boxShadow = shadowActual;
 
                                 const popup = document.createElement('div');
                                 popup.classList.add('popup');
