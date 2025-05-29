@@ -1481,13 +1481,13 @@
                                 popup.style.backgroundColor = '#fff';
                                 popup.style.border = '1px solid #ccc';
                                 popup.style.padding = '5px';
-                                popup.style.zIndex = '1000';
+                               // popup.style.zIndex = '1000';
                                 popup.style.left = '30px';
                                 popup.style.top = '0';
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
-                                   console.log('clic detectado')
+                                   console.log('clic detectado v1')
                                      event.stopPropagation();
                                     const yaVisible = popup.style.display === 'block';
                                     document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
