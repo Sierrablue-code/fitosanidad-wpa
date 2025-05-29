@@ -135,7 +135,7 @@
      text-align: center; 
     }
     .dynamic-corner-checkbox {
-        position: flex;
+        
         top: 0px;             
         right: -8px;           
         z-index: 20;          
@@ -1479,15 +1479,15 @@
                                 popup.style.display = 'none';
                                 popup.style.position = 'absolute';
                                 popup.style.backgroundColor = '#fff';
-                                //popup.style.border = '1px solid #ccc';
-                                //popup.style.padding = '5px';
+                                popup.style.border = '1px solid #ccc';
+                                popup.style.padding = '5px';
                                 popup.style.zIndex = '1000';
-                               // popup.style.left = '30px';
-                                //popup.style.top = '0';
+                                popup.style.left = '30px';
+                                popup.style.top = '0';
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
-                                   console.log('clic detectado v4')
+                                   console.log('clic detectado v7')
                                      event.stopPropagation();
                                      const rect = colorOption.getBoundingClientRect();
                                     const yaVisible = popup.style.display === 'block';
