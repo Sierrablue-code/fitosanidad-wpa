@@ -1470,7 +1470,7 @@
                                 celdaConProblemas.style.boxShadow = shadowActual;
 
                                 const popup = document.createElement('div');
-                                const rect = colorOption.getBoundingClientRect();
+                                const rect = celdaConProblemas.getBoundingClientRect();
                                 popup.classList.add('popup');
                                 popup.style.display = 'none';
                                 popup.style.position = 'fixed';
@@ -1484,7 +1484,7 @@
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
-                                   console.log('clic detectado v11')
+                                   console.log('clic detectado v12')
                                      event.stopPropagation();
                                      const rect = colorOption.getBoundingClientRect();
                                     const yaVisible = popup.style.display === 'block';
@@ -2364,11 +2364,13 @@
                   dato["Cuadrantes"]= cuadrantes.join(',');
                   if(cuadrantes.length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
               });
+                 console.log('no hay datos del bloque',!areasAgregadas.some(reg=>reg["Bloque"]==bloque))
               if(!areasAgregadas.some(reg=>reg["Bloque"]==bloque)){
                 const valor1 = 'b:'+bloqueNum;
                 const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
                 checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => (td.id==valor1 || td.id == valor2)).map(td => td.querySelector("input[type='checkbox']"));
               }
+             console.log('checks por cuadrantes a activar',checkboxes)
                
             }
            console.log('activar checkboxes: ', checkboxes)
