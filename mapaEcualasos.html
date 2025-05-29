@@ -1470,6 +1470,7 @@
                                 celdaConProblemas.style.boxShadow = shadowActual;
 
                                 const popup = document.createElement('div');
+                                const rect = colorOption.getBoundingClientRect();
                                 popup.classList.add('popup');
                                 popup.style.display = 'none';
                                 popup.style.position = 'fixed';
@@ -1477,12 +1478,13 @@
                                 popup.style.border = '1px solid #ccc';
                                 popup.style.padding = '5px';
                                 popup.style.zIndex = '1000';
-                                popup.style.left = '30px';
-                                popup.style.top = '0';
+                                popup.style.top = `${rect.top}px`;
+                                popup.style.left = `${rect.right + 10}px`;
+                                
                                 popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
-                                   console.log('clic detectado v10')
+                                   console.log('clic detectado v11')
                                      event.stopPropagation();
                                      const rect = colorOption.getBoundingClientRect();
                                     const yaVisible = popup.style.display === 'block';
