@@ -1488,13 +1488,14 @@
                                 colorOption.appendChild(popup);
                                 colorOption.addEventListener('click', function (event) {
                                    console.log('clic detectado')
+                                     event.stopPropagation();
                                     const yaVisible = popup.style.display === 'block';
                                     document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
-                                    if (!yaVisible) {
+                                    /*if (!yaVisible) {
                                         popup.style.display = 'block';
                                         console.log('popup visible',popup.style.display)
-                                    }
-                                    event.stopPropagation();
+                                    }*/
+                                    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
                                 });
                                 celdaConProblemas.appendChild(colorOption);
                                 coloresPintadosPorArea[areaId].push(color); // Registrar el color pintado para esta área
@@ -1701,7 +1702,7 @@
 
             // Asignamos el event listener a cada uno de los <td> con un id
             tds.forEach(td => {
-                //agregarCheckbox(td);
+                agregarCheckbox(td);
                 td.addEventListener('click', function(event) {
                     // Aquí va el código que deseas ejecutar cuando se haga clic
                     const id =td.id;
