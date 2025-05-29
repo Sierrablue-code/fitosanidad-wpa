@@ -2324,7 +2324,7 @@
               const areaFiltrada = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]==mtTc)
               if(areaFiltrada.length>0){
                 areaFiltrada.forEach(dato=>{
-                  const cuadrantes = Array.from(dato["Cuadrantes"]);
+                  const cuadrantes = dato["Cuadrantes"]? dato["Cuadrantes"].split(',').map(Number).filter(n => !isNaN(n)): [];
                   if (!cuadrantes.includes(cuadrante)){
                       cuadrantes.push(cuadrante);
                   }
@@ -2358,24 +2358,18 @@
               areaFiltrada.forEach(dato =>{
                   const cuadrantes = dato["Cuadrantes"]? dato["Cuadrantes"].split(',').map(Number).filter(n => !isNaN(n)): [];
                   indiceDato = cuadrantes.indexOf(cuadrante);
-                  console.log('indice: ', indiceDato, cuadrante)
                   if(indiceDato !==-1){
                       cuadrantes.splice(indiceDato,1);
                   }
                   dato["Cuadrantes"]= cuadrantes.join(',');
-                  console.log('total cuadrantes: ',cuadrantes);
                   if(cuadrantes.length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]!=bloque && rg["Macrotunel"]!=mtTc)
               });
-                 console.log(' v7: ',areasAgregadas.filter(reg=>reg["Bloque"]==bloque && reg["Macrotunel"]==mtTc))
               if(areasAgregadas.filter(reg=>reg["Bloque"]==bloque && reg["Macrotunel"]==mtTc).length ==0){
                 const valor1 = 'b:'+bloqueNum;
                 const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
                 checkboxes = Array.from(document.querySelectorAll("td[id]")).filter(td => (td.id==valor1 || td.id == valor2)).map(td => td.querySelector("input[type='checkbox']"));
               }
-             console.log('checks por cuadrantes a activar',checkboxes)
-               
             }
-           console.log('activar checkboxes: ', checkboxes)
            desactivaroActivarCheck(checkboxes,false);
           }
           cb.disabled=false;
