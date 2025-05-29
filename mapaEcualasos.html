@@ -1495,7 +1495,9 @@
                                         popup.style.display = 'block';
                                         console.log('popup visible',popup.style.display)
                                     }*/
+                                    console.log('diplay inicial', popup.style.display);
                                     popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+                                    console.log('diplay final', popup.style.display);
                                 });
                                 celdaConProblemas.appendChild(colorOption);
                                 coloresPintadosPorArea[areaId].push(color); // Registrar el color pintado para esta área
