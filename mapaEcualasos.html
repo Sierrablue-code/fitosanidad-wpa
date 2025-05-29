@@ -2495,7 +2495,7 @@
           const resultado = {};
           for (const clave in grupos) {
             resultado[clave] = {
-              repeticiones = grupos[clave].ids.length /grupos[clave].hUnicos.size,
+              repeticiones : grupos[clave].ids.length /grupos[clave].hUnicos.size,
               ids: [...new Set(grupos[clave].ids)], // copia del array original
             };
           }
