@@ -2454,9 +2454,17 @@
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
               });
-            console.log('areas encontradas v5: ',areasEncontradas)
-            const areasUnicas = agruparIds(areasEncontradas);
-            console.log('areas unicas: ', areasUnicas);
+            const repeticionMaxima = const maxOcurrencias = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
+            for(let clave in areasUnicas){
+                const elemento=areasUnicas[clave];
+                const idAreas = elemento.ids;
+                const intensidad = elemento.repeticiones;
+                const color = Math.floor(50 + 205 * (intensidad / repeticionMaxima));
+                idAreas.forEarch(id=>{
+                    const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
+                    tdEncontrado.style.backgroundColor = `rgb(${color}, 0, 0)`;
+                })
+            }
         }
        function agruparIds(idsValidos) {
           const grupos = {};
@@ -2487,8 +2495,7 @@
           const resultado = {};
           for (const clave in grupos) {
             resultado[clave] = {
-              totalIds: grupos[clave].ids.length,
-              cantidadHUnicos: grupos[clave].hUnicos.size,
+              repeticiones = grupos[clave].ids.length /grupos[clave].hUnicos.size,
               ids: [...new Set(grupos[clave].ids)], // copia del array original
             };
           }
