@@ -2454,7 +2454,7 @@
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
               });
-            const repeticionMaxima = const maxOcurrencias = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
+            const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
             for(let clave in areasUnicas){
                 const elemento=areasUnicas[clave];
                 const idAreas = elemento.ids;
