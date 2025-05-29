@@ -135,7 +135,7 @@
      text-align: center; 
     }
     .dynamic-corner-checkbox {
-        
+        position:inline-block
         top: 0px;             
         right: -8px;           
         z-index: 20;          
@@ -1395,21 +1395,16 @@
             if (cuadrantesConDanios.length > 0) {
                 cuadrantesConDanios.forEach(td => {
                     const shadow = td.style.boxShadow;
-                    td.innerHTML='';
-                    if(td.querySelectorAll('span').length==0){
-                        const idCelda= td.getAttribute('id');
-                        const tdAux = document.createElement('td');
-                        tdAux.className='txt-1';
-                        tdAux.id= idCelda;
-                        tdAux.style.boxShadow= shadow;
-                        agregarCheckbox(tdAux);
-                        tdAux.addEventListener('click', function(event) {
-                            const id = event.target.id;
-                            abrirFormulario(id);
-                            
-                        });
-                        td.replaceWith(tdAux);
+                    //td.innerHTML='';
+                     const spans = td.querySelectorAll('span');
+                     spans.forEach(span => span.remove());
+                    if (!td.querySelector('input[type="checkbox"]')) {
+                            agregarCheckbox(td);
                     }
+                    td.onclick = (event) => {
+                        abrirFormulario(td.id);
+                    };
+                    //td.style.boxShadow = shadow;
                 });
             }
 
