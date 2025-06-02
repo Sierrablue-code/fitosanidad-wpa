@@ -2510,7 +2510,7 @@
                   const porcentaje = id.repeticiones/ maxReporte ;
                   const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
                   const color = `rgb(255, ${intensidad }, ${intensidad})`;
-                  const td = tdsFiltrados.find(registro=>registro.id==id.);
+                  const td = tdsFiltrados.find(registro=>registro.id==id);
                   td.style.boxShadow=`inset 0 0 10px ${color}`;
                 })
                }
