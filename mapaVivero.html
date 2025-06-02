@@ -2446,19 +2446,6 @@
               if (check) check.disabled = valor;
           });
         }
-        function agruparPorVariosCampos(datos, campos) {
-          return datos.reduce((acumulador, item) => {
-              // Crea una clave compuesta basada en los campos especificados
-              const clave = campos.map(campo => item[campo]).join('|');
-              
-              if (!acumulador[clave]) {
-                  acumulador[clave] = [];
-              }
-              
-              acumulador[clave].push(item);
-              return acumulador;
-          }, {});
-        }
         function encontrarCuadrantesConReportes(){
             const fecha = document.getElementById('fecha').value.toString();
               let fechaInicio = "";
@@ -2513,15 +2500,18 @@
                   }
                   areasAgregadas[tipo].ids=areasAgregadas[tipo].ids.concat(elementosTdPorC);
                 });
-            console.log(areasEncontradas);
             const areasAgrupadas = agruparIds(areasEncontradas);
+            console.log('areas agrupadas',areasAgrupadas);
             for (const tipo in areasAgrupadas){
                if(tipo=="area"){
                 const ids = areasAgregadas[tipo];
                 const maxReporte = Math.max(...Object.values(ids).map(entry => entry.repeticiones));
                 ids.forEach(id =>{
-                  const td = tdsFiltrados.find(registro=>registro.id==id);
-                  td.style.boxShadow='red';
+                  const porcentaje = id.repeticiones/ maxReporte ;
+                  const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
+                  const color = `rgb(255, ${intensidad }, ${intensidad})`;
+                  const td = tdsFiltrados.find(registro=>registro.id==id.);
+                  td.style.boxShadow=`inset 0 0 10px ${color}`;
                 })
                }
             }
