@@ -1,0 +1,2520 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <title>Vivero</title>
+    <style>
+    :root {
+      --scale-factor: 1;
+      --top-spacing: 100px;
+      --side-padding: 10px;
+    }
+    body{
+      vertical-align: top;
+      align-items: center;
+      text-align: center;
+      align-content: center;
+      height: 100vh;
+      width: 100vw;
+      margin: 0;
+      
+    }
+    .disabled {
+      opacity: 0.5; /* Baja la opacidad para indicar que el elemento está deshabilitado */
+      pointer-events: none; /* Desactiva los eventos de clic, hover, etc. */
+    }
+    .header{
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: auto;
+      z-index: 1;
+    }
+    .titulo {
+      background-color: blue;
+      color: white;
+      padding: 15px;
+      font-size: 20px;
+      text-align: center;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .sync-btn {
+      background-color: white;
+      color: blue;
+      border: 2px solid white;
+      border-radius: 5px;
+      padding: 6px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: bold;
+    }
+
+    .sync-btn:hover {
+      background-color: #f0f0f0;
+    }
+
+    #contador {
+      color: red;
+    }
+    .container {
+      position: absolute;
+      top: 0px; /* debajo del header */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: auto; /* Scroll aquí */
+    }
+    #bloques {
+      transform-origin: center center; /* El zoom se aplica desde el centro */
+    }
+    table, td {
+        border: 0px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        vertical-align: middle;
+        text-align: center;
+    }
+    .principal{
+      transform: scale(var(--scale-factor));
+      transform-origin: top left;
+      transition: transform 0.3s ease-in-out;
+        border: 1px solid #000;
+        background-color: white;
+        padding: 10px;
+        max-width: 100%;
+        min-width: 25%;
+        overflow: auto;
+        display: inline-block;
+        
+    }
+    th{
+        border: 1px solid black;
+        padding: 8.5px;
+    }
+   .txt-1{
+        border: 1px solid black;
+        text-align: center;
+        width: 18px;
+        height: 14px;
+        vertical-align: middle;
+        max-height: 14px;
+        min-height: 14px;
+        max-width: 18px;
+        min-width:18px;
+        font-size: xx-small;
+        font-weight: 700;
+    }
+    .txt-1-1{
+        border: 1px solid black;
+        text-align: center;
+        width: 18px;
+        height: 14px;
+        vertical-align: middle;
+        max-height: 14px;
+        min-height: 14px;
+        max-width: 18px;
+        min-width:18px;
+        font-size: xx-small;
+        font-weight: 700;
+        position: relative; 
+    }
+    td.txt-1[id] {
+      position: relative;   
+      overflow: hidden;     
+      padding-top: 17px;  
+      padding-right: 15px;
+     text-align: center; 
+    }
+    .dynamic-corner-checkbox2 {
+        position:absolute;
+        top: 0px;             
+        right: -8px;           
+        z-index: 20;          
+        margin: 0;           
+        padding: 0;          
+        width: 35%;          
+        height: 35%;         
+        cursor: pointer;     
+    }
+    .dynamic-corner-checkbox {                    
+      cursor: pointer; 
+      width: 30%;  
+      height: 30%;     
+      float: inline-end; 
+      padding: 0;
+      margin: 0;
+    }
+    .dynamic-corner-checkbox3{
+      vertical-align: middle;
+      cursor: pointer;
+      width: 10%;          
+      height: 10%;
+    }
+    .txt-2{
+        border: 0px solid rgb(248, 243, 243);
+        text-align: center;
+        width: 10px;
+        max-width: 10px;
+        min-width:10px;
+        height: 10px;
+        min-height: 10px;
+        max-height: 10px;
+        font-size: small;
+        vertical-align: middle;
+    
+    }
+    .mapa{
+      width: fit-content;
+      height: fit-content;
+      position: relative;
+    }
+    .filtros{
+        display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .filtros label, .filters select, .filters input {
+            font-size: 16px;
+    }
+    .custom-select {
+      position: relative;
+      width: 200px;
+      margin: 1px;
+      cursor: pointer;
+      color: #000;
+      font-size: small;
+    }
+    .select-box {
+    padding: 2px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    }
+    .options-container {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 999; 
+    }
+    .options-container div {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: small;
+    }
+    .color-box {
+    width: 10px;
+    height: 10px;
+    margin-right: 3px;
+    border: 1px solid #000;
+    }
+
+    input[type="checkbox"] {
+    margin-right: 5px;
+    }
+
+    .custom-select.active .options-container {
+    display: block;
+    }
+    
+    .acciones-extra button {
+      margin-right: 10px;
+      padding: 4px 5px;
+      background-color: #0069d9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .controles {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .zoom-button {
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        border: none;
+        background-color: blue;
+        color: white;
+        font-size: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .zoom-button:hover {
+        background-color: darkblue;
+    }
+    .container-tabla {
+      position: relative;
+    }
+
+    .tabla {
+      border: 1px solid #ccc;
+      padding: 1px;
+      cursor: pointer;
+      background-color: white;
+      z-index: 1;
+      display: flex; /* Para alinear el texto y el icono */
+      justify-content: space-between; /* Espacio entre el texto y el icono */
+      align-items: center; /* Alineación vertical */
+    }
+
+    .tabla b {
+      display: flex; /* Para alinear texto e icono dentro del negrita */
+      align-items: center; /* Alineación vertical */
+      gap: 5px; /* Espacio entre texto e icono */
+      flex-grow: 1; /* El texto ocupa la mayor parte del espacio */
+    }
+
+    .arrow-icon {
+      font-size: 1em;
+      transition: transform 0.2s ease-in-out;
+      flex-shrink: 0; /* Evita que el icono se encoja */
+    }
+
+    .arrow-down {
+      transform: rotate(0deg);
+    }
+
+    .arrow-up {
+      transform: rotate(180deg);
+    }
+
+    .items {
+      display: none;
+      margin-top: 5px;
+      padding-left: 15px;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-top: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 1;
+      max-height: 250px;
+      min-height: 250px;
+      overflow-y: auto;
+    }
+    .celda-resaltada {
+      border: 2px solid blue !important; /* Usa !important para asegurar la prioridad si es necesario */
+      /* Otros estilos de resaltado que desees */
+    }
+    .formulario-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .formulario-table th, .formulario-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .formulario-table input {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+     .formulario-tablePlastico {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .formulario-tablePlastico th, .formulario-tablePlastico td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .formulario-tablePlastico input {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+
+    .btn:disabled {
+        background: #888;
+        cursor: not-allowed;
+    }
+
+    .modal-content {
+      position: fixed;
+      top: 90px; 
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      display: none;
+      z-index: 1000;
+      transition: all 0.3s ease-in-out;
+      width: 50%;
+      height: 50%;
+      left: 50%;
+      transform: translate(-50%);
+      overflow: auto;
+    }
+    .modal-reporte {
+      position: fixed;
+      top: 90px; 
+      background-color: white;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      display: none;
+      z-index: 1000;
+      transition: all 0.3s ease-in-out;
+      width: 50%;
+      height: 50%;
+      left: 50%;
+      transform: translate(-50%);
+      overflow: auto;
+    }
+
+    .close {
+        float: right;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+     /* Estilos para móviles */
+     @media (max-width: 768px) {
+        .filtros {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        td {
+        border: 0px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        vertical-align: middle;
+        text-align: center;
+        }
+        .modal-content {
+          width: 60%;
+          overflow: auto;
+        }
+        .modal-reporte {
+          width: 60%;
+          overflow: auto;
+        }
+        .controles {
+            right: 10px;
+            bottom: 10px;
+        }
+
+        .zoom-button {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+        }
+    }
+    #flotante {
+    position: fixed;
+    top: 90px; /* Posición desde la parte superior */
+    right: 20px;
+    width: 250px;
+    max-width: 90%;
+    height: 50%;
+    overflow: auto;
+    padding: 15px;
+    background-color: #fefefe;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+        }
+
+        #botonToggle {
+          position: fixed;
+          right: 20px;
+          padding: 2px 5px;
+          background-color: #033264;
+          color: white;
+          border: none;
+          border-radius: 10px;
+          font-size: 25px;
+          cursor: pointer;
+          z-index: 1001;
+          transition: background-color 0.3s ease;
+        }
+
+        #botonToggle:hover {
+          background-color: #0056b3;
+        }
+
+        @media (max-width: 480px) {
+          #flotante {
+            top: 80px;
+            right: 10px;
+            font-size: 14px;
+            padding: 12px;
+          }
+             .titulo {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .sync-btn {
+          margin-top: 10px;
+          align-self: flex-end;
+        }
+          #botonToggle {
+            top: 20px;
+            right: 10px;
+            font-size: 14px;
+            padding: 10px 16px;
+          }
+          .grid-colores {
+            grid-template-columns: 1fr;
+          }
+          .modal-content {
+            width: 90%;
+            overflow: auto;
+          }
+          .modal-reporte {
+            width: 90%;
+            overflow: auto;
+          }
+        }
+        .grid-colores {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+          margin-top: 0px;
+        }
+
+        .columna {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .columna h4 {
+          margin: 0;
+          font-size: 16px;
+          text-align: center;
+          border-bottom: 1px solid #ccc;
+          padding-bottom: 4px;
+        }
+
+        .item-color {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+        }
+
+        .cuadro {
+          width: 16px;
+          height: 16px;
+          border-radius: 3px;
+          border: 1px solid #000;
+        }
+  
+      /* Estilos específicos solo para el formulario dentro del modal */
+      .formulario-table td input {
+        width: 90%;
+        max-width: 95%;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+      .formulario-table td {
+        vertical-align: top;
+      }
+      .formulario-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+       .formularioPlastico-table td input {
+        width: 90%;
+        max-width: 95%;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+      .formularioPlastico-table td {
+        vertical-align: top;
+      }
+      .formularioPlastico-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+
+      .btn:disabled {
+        background: #888;
+        cursor: not-allowed;
+      }
+
+      /* Estilos del formulario flotante para no interferir con la tabla del mapa */
+      .modal-content input,
+      .modal-content select {
+        width: 90%;
+        max-width: 90%;
+        padding: 4px;
+        margin-bottom: 5px;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+      .modal-reporte input,
+      .modal-reporte select {
+        width: 90%;
+        max-width: 90%;
+        padding: 4px;
+        margin-bottom: 5px;
+        box-sizing: border-box;
+        font-size: 14px;
+      }
+
+       .nivelesInfestacion label {
+          display: inline-flex;
+          align-items: center;
+          margin-right: 10px; /* Espacio entre cada checkbox */
+        }
+
+        .nivelesInfestacion input[type="checkbox"] {
+          margin-right: 4px; /* Espacio entre el checkbox y el texto */
+        }
+        .btnEliminar {
+          background-color: #dc3545;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          padding: 4px 8px;
+          cursor: pointer;
+        }
+        .btnEliminar:hover {
+          background-color: #c82333;
+        }
+        .btnAgregar {
+          background-color: #1a17d4;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          padding: 4px 6px;
+          cursor: pointer;
+        }
+        .btnAgregar:hover {
+          background-color: #110e92;
+        }
+
+  </style>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registrado:', reg.scope))
+        .catch(err => console.error('SW error:', err));
+    });
+  }
+</script>
+</head>
+<body>
+     <div class="header">
+        <div class="titulo">
+          Mapa vivero
+          <button class="sync-btn" onclick="enviarPendientes()" title="Sincronizar">
+      🔄 <span id="contador">0</span></button>
+        </div>
+        <div class="filtros">
+          <label for="plaga">Plaga:</label>
+          <div class="custom-select custom-select-1" >
+              <div class="select-box">Seleccione la(s) plaga(s)</div>
+              <div class="options-container">
+                <div data-color="" data-option="todo">
+                  <input type="checkbox" id="todo" />
+                  <label for="todo">
+                    Todo
+                  </label>
+                </div>
+                <div data-color="#abfb15" data-option="Ácaros">
+                  <input type="checkbox" id="acaros" />
+                  <span class="color-box" style="background-color: #abfb15;"></span>
+                  <label for="acaros">
+                    Ácaros
+                  </label>
+                </div>
+                <div data-color="#1a8504" data-option="Áfidos (Pulgón)">
+                  <input type="checkbox" id="afido" />
+                  <span class="color-box" style="background-color: #1a8504;"></span>
+                  <label for="afidos">
+                    Áfidos (Pulgón)
+                  </label>
+                </div>
+                <div data-color="#f50914" data-option="Arañita roja">
+                  <input type="checkbox" id="arañita" />
+                  <span class="color-box" style="background-color: #f50914;"></span>
+                  <label for="arañita">
+                    Arañita roja
+                  </label>
+                </div>
+                <div data-color="#855a03" data-option="Babosa">
+                  <input type="checkbox" id="babosa" />
+                  <span class="color-box" style="background-color: #855a03;"></span>
+                  <label for="babosa">
+                    Babosa
+                  </label>
+                </div>
+                <div data-color="#c2c507" data-option="Cochinilla">
+                  <input type="checkbox" id="cochinilla" />
+                  <span class="color-box" style="background-color: #c2c507;"></span>
+                  <label for="cochinilla">
+                    Cochinilla
+                  </label>
+                </div>
+                <div data-color="#7b9b7b" data-option="Cuzo (Anómala sp)">
+                  <input type="checkbox" id="cuzo" />
+                  <span class="color-box" style="background-color: #7b9b7b;"></span>
+                  <label for="cuzo">
+                    Cuzo (Anómala sp)
+                  </label>
+                </div>
+                <div data-color="#d56caa" data-option="Trips">
+                  <input type="checkbox" id="trips" />
+                  <span class="color-box" style="background-color: #d56caa;"></span>
+                  <label for="trips">
+                    Trips
+                  </label>
+                </div>
+                <div data-color="#e9ed8f" data-option="Lobesia botrana">
+                  <input type="checkbox" id="lobesia" />
+                  <span class="color-box" style="background-color: #e9ed8f;"></span>
+                  <label for="lobesia">
+                    Lobesia botrana
+                  </label>
+                </div>
+                <div data-color="#d1f5ee" data-option="Mosca blanca">
+                  <input type="checkbox" id="mosca" />
+                  <span class="color-box" style="background-color: #d1f5ee;"></span>
+                  <label for="mosca">
+                    Mosca blanca
+                  </label>
+                </div>
+                <div data-color="#413714" data-option=" Polilla">
+                  <input type="checkbox" id="polilla" />
+                  <span class="color-box" style="background-color: #413714;"></span>
+                  <label for="polilla">
+                    Polilla
+                  </label>
+                </div>
+                <div data-color="#6ba04c" data-option="Trozador (Heliothis virescens)">
+                  <input type="checkbox" id="trozador" />
+                  <span class="color-box" style="background-color: #6ba04c;"></span>
+                  <label for="trozador">
+                    Trozador (Heliothis virescens)
+                  </label>
+                </div>  
+              </div>
+          </div>
+          <label for="enfermedad">Enfermedad:</label>
+          <div class="custom-select custom-select-2" >
+            <div class="select-box">Seleccione la(s) enfermedades</div>
+            <div class="options-container">
+              <div data-color="" data-option="todo">
+                <input type="checkbox" id="todo" />
+                <label for="todo">
+                  Todo
+                </label>
+              </div>
+              <div data-color="#5d62c4" data-option="Agrobacterium">
+                <input type="checkbox" id="agrobacterium" />
+                <span class="color-box" style="background-color: #5d62c4;"></span>
+                <label for="agrobacterium">
+                  Agrobacterium
+                </label>
+              </div>
+              <div data-color="#34d193" data-option="Alternaria">
+                <input type="checkbox" id="alternaria" />
+                <span class="color-box" style="background-color: #34d193;"></span>
+                <label for="alternaria">
+                  Alternaria
+                </label>
+              </div>
+              <div data-color="#ad0c40" data-option="Antracnosis">
+                <input type="checkbox" id="antracnosis" />
+                <span class="color-box" style="background-color: #ad0c40;"></span>
+                <label for="antracnosis">
+                  Antracnosis
+                </label>
+              </div>
+              <div data-color="#fa7524" data-option="Botrytis">
+                <input type="checkbox" id="botrytis" />
+                <span class="color-box" style="background-color: #fa7524;"></span>
+                <label for="botrytis">
+                  Botrytis
+                </label>
+              </div>
+              <div data-color="#7224fa" data-option="Dumping off">
+                <input type="checkbox" id="dumping-off" />
+                <span class="color-box" style="background-color: #7224fa;"></span>
+                <label for="dumping-off">
+                  Dumping off
+                </label>
+              </div>
+              <div data-color="#fef607" data-option="Fusarium">
+                <input type="checkbox" id="fusarium" />
+                <span class="color-box" style="background-color: #fef607;"></span>
+                <label for="fusarium">
+                  Fusarium
+                </label>
+              </div>
+              <div data-color="#e9bd50" data-option="Hongo de la madera">
+                <input type="checkbox" id="hongo" />
+                <span class="color-box" style="background-color: #e9bd50;"></span>
+                <label for="hongo">
+                  Hongo de la madera
+                </label>
+              </div>
+              <div data-color="#8bb1cf" data-option="Oidio">
+                <input type="checkbox" id="oidio" />
+                <span class="color-box" style="background-color: #8bb1cf;"></span>
+                <label for="oidio">
+                  Oidio
+                </label>
+              </div>
+              <div data-color="#cf8e8b" data-option="Pestalotiopsis">
+                <input type="checkbox" id="pestalotiopsis" />
+                <span class="color-box" style="background-color: #cf8e8b;"></span>
+                <label for="pestalotiopsis">
+                  Pestalotiopsis
+                </label>
+              </div>
+              <div data-color="#9c003cb6" data-option="Phytium">
+                <input type="checkbox" id="phytium" />
+                <span class="color-box" style="background-color: #9c003cb6;"></span>
+                <label for="phytium">
+                  Phytium
+                </label>
+              </div>
+              <div data-color="#cfb53e" data-option="Pudrición radicular (Phytophtora cinnamoni)">
+                <input type="checkbox" id="pudricion" />
+                <span class="color-box" style="background-color: #cfb53e;"></span>
+                <label for="pudricion">
+                  Pudrición radicular (Phytophtora cinnamoni)
+                </label>
+              </div>
+              <div data-color="#f700ff" data-option="Roya">
+                <input type="checkbox" id="roya" />
+                <span class="color-box" style="background-color: #f700ff;"></span>
+                <label for="roya">
+                  Roya
+                </label>
+              </div>
+              <div data-color="#f8ff99" data-option="Tizón bacteriano">
+                <input type="checkbox" id="tizon" />
+                <span class="color-box" style="background-color: #f8ff99;"></span>
+                <label for="tizon">
+                  Tizón bacteriano
+                </label>
+              </div>
+              <div data-color="#99f3ff" data-option="Verticilosis">
+                <input type="checkbox" id="verticilosis" />
+                <span class="color-box" style="background-color: #99f3ff;"></span>
+                <label for="verticilosis">
+                  Verticilosis
+                </label>
+              </div>
+              <div data-color="#92e7c4" data-option="Virosis">
+                <input type="checkbox" id="virosis" />
+                <span class="color-box" style="background-color: #92e7c4;"></span>
+                <label for="virosis">
+                  Virosis
+                </label>
+              </div>
+            </div>
+          </div>
+          <label for="fecha">Fecha:</label>
+          <input id="fecha" type="date" placeholder="Selecciona fecha o rango de fechas">
+          <div class="container-tabla">
+            <div class="tabla">
+              <b>Cuadrantes con problemas <span class="arrow-icon arrow-down">&#9660;</span></b>
+              <div class="items">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+         <div class="acciones-extra" id="botonesReportar" style="display: none;">
+          <button onclick="guardarRegistros(event,'no')">💾 Guardar</button>
+          <button onclick="abrirFormularioReporte()" style="display: none;">📋 Ver registros</button>
+        </div>
+        <div class="controles" >
+            <button class="zoom-button" onclick="zoomIn()">+</button>
+            <button class="zoom-button" onclick="zoomOut()">−</button>
+        </div>   
+     </div>
+    
+    <div class="container">
+     <div class="mapa" id="bloques">
+      <table  id="estructura" >
+        <tr >
+            <td style="border-width: 0;" class="principal">
+            <table class="principal" style="border-width: 0;">
+               <tr>
+                   <td><table> <tr><td colspan="10" class="txt-1"><br><br><br><br><br><b>RESERVORIO</b> <br><br><br><br><br></td></tr>
+                               <tr><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td></tr>
+                               <tr><td class="txt-2"></td></tr>
+                               <tr><td class="txt-2"></td></tr>
+                               <tr><td class="txt-2"></td></tr>
+                               <tr><td class="txt-2"></td></tr>
+                               <tr><td class="txt-2"></td></tr>
+                               <tr><td class="txt-2"></td></tr>
+                               <tr><td class="txt-2"></td></tr>
+                              
+                        </table>
+                    </td>
+                    <td></td>
+                   <td>
+                    <table>
+                       <tr><th colspan="7" id="b:a"> Aclimatación </th> <th colspan="3" class="txt-2"></th><th colspan="43" id="b:e"><b>Endurecimiento</b></th></tr>
+                       <tr><td></td></tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:8-c:4"></td><td ></td><td class="txt-1" id="b:a-n:1-mi:7-c:4"></td><td></td><td class="txt-1" id="b:a-n:1-mi:6-c:4"></td><td></td><td class="txt-1" id="b:a-n:1-mi:5-c:4"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> <td class="txt-1" id="b:e-n:1-ca:1-c:6"></td><td></td><td class="txt-1" id="b:e-n:1-ca:2-c:6"></td><td></td><td class="txt-1" id="b:e-n:1-ca:3-c:6"></td><td></td><td class="txt-1" id="b:e-n:1-ca:4-c:6"></td><td></td><td></td><td class="txt-1" id="b:e-n:2-ca:1-c:6"></td><td></td><td class="txt-1" id="b:e-n:2-ca:2-c:6"></td><td></td><td class="txt-1" id="b:e-n:2-ca:3-c:6"></td><td></td><td class="txt-1" id="b:e-n:2-ca:4-c:6"></td><td></td><td></td><td class="txt-1" id="b:e-n:3-ca:1-c:6"></td><td></td><td class="txt-1" id="b:e-n:3-ca:2-c:6"></td><td></td><td class="txt-1" id="b:e-n:3-ca:3-c:6"></td><td></td><td class="txt-1" id="b:e-n:3-ca:4-c:6"></td><td></td><td></td><td class="txt-1" id="b:e-n:4-ca:1-c:6"></td><td></td><td class="txt-1" id="b:e-n:4-ca:2-c:6"></td><td></td><td class="txt-1" id="b:e-n:4-ca:3-c:6"></td><td></td><td class="txt-1" id="b:e-n:4-ca:4-c:6"></td><td></td><td></td><td class="txt-1" id="b:e-n:5-ca:1-c:6"></td><td></td><td class="txt-1" id="b:e-n:5-ca:2-c:6"></td><td></td><td class="txt-1" id="b:e-n:5-ca:3-c:6"></td><td></td><td class="txt-1" id="b:e-n:5-ca:4-c:6"></td></tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:8-c:3"></td><td></td><td class="txt-1" id="b:a-n:1-mt:7-c:3"></td><td></td><td class="txt-1" id="b:a-n:1-mi:6-c:3"></td><td></td><td class="txt-1" id="b:a-n:1-mi:5-c:3"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> <td class="txt-1" id="b:e-n:1-ca:1-c:5"></td><td></td><td class="txt-1" id="b:e-n:1-ca:2-c:5"></td><td></td><td class="txt-1" id="b:e-n:1-ca:3-c:5"></td><td></td><td class="txt-1" id="b:e-n:1-ca:4-c:5"></td><td></td><td></td><td class="txt-1" id="b:e-n:2-ca:1-c:5"></td><td></td><td class="txt-1" id="b:e-n:2-ca:2-c:5"></td><td></td><td class="txt-1" id="b:e-n:2-ca:3-c:5"></td><td></td><td class="txt-1" id="b:e-n:2-ca:4-c:5"></td><td></td><td></td><td class="txt-1" id="b:e-n:3-ca:1-c:5"></td><td></td><td class="txt-1" id="b:e-n:3-ca:2-c:5"></td><td></td><td class="txt-1" id="b:e-n:3-ca:3-c:5"></td><td></td><td class="txt-1" id="b:e-n:3-ca:4-c:5"></td><td></td><td></td><td class="txt-1" id="b:e-n:4-ca:1-c:5"></td><td></td><td class="txt-1" id="b:e-n:4-ca:2-c:5"></td><td></td><td class="txt-1" id="b:e-n:4-ca:3-c:5"></td><td></td><td class="txt-1" id="b:e-n:4-ca:4-c:5"></td><td></td><td></td><td class="txt-1" id="b:e-n:5-ca:1-c:5"></td><td></td><td class="txt-1" id="b:e-n:5-ca:2-c:5"></td><td></td><td class="txt-1" id="b:e-n:5-ca:3-c:5"></td><td></td><td class="txt-1" id="b:e-n:5-ca:4-c:5"></td></tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:8-c:2"></td><td></td><td class="txt-1" id="b:a-n:1-mt:7-c:2"></td><td></td><td class="txt-1" id="b:a-n:1-mi:6-c:2"></td><td></td><td class="txt-1" id="b:a-n:1-mi:5-c:2"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> <td class="txt-1" id="b:e-n:1-ca:1-c:4"></td><td></td><td class="txt-1" id="b:e-n:1-ca:2-c:4"></td><td></td><td class="txt-1" id="b:e-n:1-ca:3-c:4"></td><td></td><td class="txt-1" id="b:e-n:1-ca:4-c:4"></td><td></td><td></td><td class="txt-1" id="b:e-n:2-ca:1-c:4"></td><td></td><td class="txt-1" id="b:e-n:2-ca:2-c:4"></td><td></td><td class="txt-1" id="b:e-n:2-ca:3-c:4"></td><td></td><td class="txt-1" id="b:e-n:2-ca:4-c:4"></td><td></td><td></td><td class="txt-1" id="b:e-n:3-ca:1-c:4"></td><td></td><td class="txt-1" id="b:e-n:3-ca:2-c:4"></td><td></td><td class="txt-1" id="b:e-n:3-ca:3-c:4"></td><td></td><td class="txt-1" id="b:e-n:3-ca:4-c:4"></td><td></td><td></td><td class="txt-1" id="b:e-n:4-ca:1-c:4"></td><td></td><td class="txt-1" id="b:e-n:4-ca:2-c:4"></td><td></td><td class="txt-1" id="b:e-n:4-ca:3-c:4"></td><td></td><td class="txt-1" id="b:e-n:4-ca:4-c:4"></td><td></td><td></td><td class="txt-1" id="b:e-n:5-ca:1-c:4"></td><td></td><td class="txt-1" id="b:e-n:5-ca:2-c:4"></td><td></td><td class="txt-1" id="b:e-n:5-ca:3-c:4"></td><td></td><td class="txt-1" id="b:e-n:5-ca:4-c:4"></td></tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:8-c:1"></td><td></td><td class="txt-1" id="b:a-n:1-mt:7-c:1"></td><td></td><td class="txt-1" id="b:a-n:1-mi:6-c:1"></td><td></td><td class="txt-1" id="b:a-n:1-mi:5-c:1"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> <td class="txt-1" id="b:e-n:1-ca:1-c:3"></td><td></td><td class="txt-1" id="b:e-n:1-ca:2-c:3"></td><td></td><td class="txt-1" id="b:e-n:1-ca:3-c:3"></td><td></td><td class="txt-1" id="b:e-n:1-ca:4-c:3"></td><td></td><td></td><td class="txt-1" id="b:e-n:2-ca:1-c:3"></td><td></td><td class="txt-1" id="b:e-n:2-ca:2-c:3"></td><td></td><td class="txt-1" id="b:e-n:2-ca:3-c:3"></td><td></td><td class="txt-1" id="b:e-n:2-ca:4-c:3"></td><td></td><td></td><td class="txt-1" id="b:e-n:3-ca:1-c:3"></td><td></td><td class="txt-1" id="b:e-n:3-ca:2-c:3"></td><td></td><td class="txt-1" id="b:e-n:3-ca:3-c:3"></td><td></td><td class="txt-1" id="b:e-n:3-ca:4-c:3"></td><td></td><td></td><td class="txt-1" id="b:e-n:4-ca:1-c:3"></td><td></td><td class="txt-1" id="b:e-n:4-ca:2-c:3"></td><td></td><td class="txt-1" id="b:e-n:4-ca:3-c:3"></td><td></td><td class="txt-1" id="b:e-n:4-ca:4-c:3"></td><td></td><td></td><td class="txt-1" id="b:e-n:5-ca:1-c:3"></td><td></td><td class="txt-1" id="b:e-n:5-ca:2-c:3"></td><td></td><td class="txt-1" id="b:e-n:5-ca:3-c:3"></td><td></td><td class="txt-1" id="b:e-n:5-ca:4-c:3"></td></tr>
+                       <tr><td class="txt-1-1" id="b:a-mi:8"><b>MI:8</b></td><td></td><td class="txt-1-1" id="b:a-mi:7"><b>MI:7</b></td><td></td><td class="txt-1-1" id="b:a-mi:6"><b>MI:6</b></td><td></td><td class="txt-1-1" id="b:a-mi:5"><b>MI:5</b></td><td colspan="3"></td><td class="txt-1" id="b:e-n:1-ca:1-c:2"></td><td></td><td class="txt-1" id="b:e-n:1-ca:2-c:2"></td><td></td><td class="txt-1" id="b:e-n:1-ca:3-c:2"></td><td></td><td class="txt-1" id="b:e-n:1-ca:4-c:2"></td><td></td><td></td><td class="txt-1" id="b:e-n:2-ca:1-c:2"></td><td><td class="txt-1" id="b:e-n:2-ca:2-c:2"></td><td></td></td><td class="txt-1" id="b:e-n:2-ca:3-c:2"></td><td></td><td class="txt-1" id="b:e-n:2-ca:4-c:2"></td><td></td><td></td><td class="txt-1" id="b:e-n:3-ca:1-c:2"></td><td></td><td class="txt-1" id="b:e-n:3-ca:2-c:2"></td><td></td><td class="txt-1" id="b:e-n:3-ca:3-c:2"></td><td></td><td class="txt-1" id="b:e-n:3-ca:4-c:2"></td><td></td><td></td><td class="txt-1" id="b:e-n:4-ca:1-c:2"></td><td></td><td class="txt-1" id="b:e-n:4-ca:2-c:2"></td><td></td><td class="txt-1" id="b:e-n:4-ca:3-c:2"></td><td></td><td class="txt-1" id="b:e-n:4-ca:4-c:2"></td><td></td><td></td><td class="txt-1" id="b:e-n:5-ca:1-c:2"></td><td></td><td class="txt-1" id="b:e-n:5-ca:2-c:2"></td><td></td><td class="txt-1" id="b:e-n:5-ca:3-c:2"></td><td></td><td class="txt-1" id="b:e-n:5-ca:4-c:2"></td></tr>
+                       <tr><td colspan="7"></td><td colspan="3"></td> <td class="txt-1" id="b:e-n:1-ca:1-c:1"></td><td></td><td class="txt-1" id="b:e-n:1-ca:2-c:1"></td><td></td><td class="txt-1" id="b:e-n:1-ca:3-c:1"></td><td></td><td class="txt-1" id="b:e-n:1-ca:4-c:1"></td><td></td><td></td><td class="txt-1" id="b:e-n:2-ca:1-c:1"></td><td></td><td class="txt-1" id="b:e-n:2-ca:2-c:1"></td><td></td><td class="txt-1" id="b:e-n:2-ca:3-c:1"></td><td></td><td class="txt-1" id="b:e-n:2-ca:4-c:1"></td><td></td><td></td><td class="txt-1" id="b:e-n:3-ca:1-c:1"></td><td></td><td class="txt-1" id="b:e-n:3-ca:2-c:1"></td><td></td><td class="txt-1" id="b:e-n:3-ca:3-c:1"></td><td></td><td class="txt-1" id="b:e-n:3-ca:4-c:1"></td><td></td><td></td><td class="txt-1" id="b:e-n:4-ca:1-c:1"></td><td></td><td class="txt-1" id="b:e-n:4-ca:2-c:1"></td><td></td><td class="txt-1" id="b:e-n:4-ca:3-c:1"></td><td></td><td class="txt-1" id="b:e-n:4-ca:4-c:1"></td><td></td><td></td><td class="txt-1" id="b:e-n:5-ca:1-c:1"></td><td></td><td class="txt-1" id="b:e-n:5-ca:2-c:1"></td><td></td><td class="txt-1" id="b:e-n:5-ca:3-c:1"></td><td></td><td class="txt-1" id="b:e-n:5-ca:4-c:1"></td></tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:1-c:4"></td><td ></td><td class="txt-1" id="b:a-n:1-mi:2-c:4"></td><td></td><td class="txt-1" id="b:a-n:1-mi:3-c:4"></td><td></td><td class="txt-1" id="b:a-n:1-mi:4-c:4"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> <td class="txt-1-1"><b>Cm:1</b></td><td></td><td class="txt-1-1"><b>Cm:2</b></td><td></td><td class="txt-1-1"><b>Cm:3</b></td><td></td><td class="txt-1-1"><b>Cm:4</b></td><td></td><td></td><td class="txt-1-1"><b>Cm:1</b></td><td></td><td class="txt-1-1"><b>Cm:2</b></td><td></td><td class="txt-1-1"><b>Cm:3</b></td><td></td><td class="txt-1-1"><b>Cm:4</b></td><td></td><td></td><td class="txt-1-1"><b>Cm:1</b></td><td></td><td class="txt-1-1"><b>Cm:2</b></td><td></td><td class="txt-1-1"><b>Cm:3</b></td><td></td><td class="txt-1-1"><b>Cm:4</b></td><td></td><td><td class="txt-1-1"><b>Cm:1</b></td><td></td><td class="txt-1-1"><b>Cm:2</b></td><td></td><td class="txt-1-1"><b>Cm:3</b></td><td></td><td class="txt-1-1"><b>Cm:4</b></td><td></td><td></td><td class="txt-1-1"><b>Cm:1</b></td><td></td><td class="txt-1-1"><b>Cm:2</b></td><td></td><td class="txt-1-1"><b>Cm:3</b></td><td></td><td class="txt-1-1"><b>Cm:4</b></td></tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:1-c:3"></td><td></td><td class="txt-1" id="b:a-n:1-mi:2-c:3"></td><td></td><td class="txt-1" id="b:a-n:1-mi:3-c:3"></td><td></td><td class="txt-1" id="b:a-n:1-mi:4-c:3"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> </tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:1-c:2"></td><td></td><td class="txt-1" id="b:a-n:1-mi:2-c:2"></td><td></td><td class="txt-1" id="b:a-n:1-mi:3-c:2"></td><td></td><td class="txt-1" id="b:a-n:1-mi:4-c:2"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> </tr>
+                       <tr><td class="txt-1" id="b:a-n:1-mi:1-c:1"></td><td></td><td class="txt-1" id="b:a-n:1-mi:2-c:1"></td><td></td><td class="txt-1" id="b:a-n:1-mi:3-c:1"></td><td></td><td class="txt-1" id="b:a-n:1-mi:4-c:1"></td> <td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td> </tr>
+                       <tr><td class="txt-1-1" id="b:a-mi:1"><b>MI:1</b></td><td></td><td class="txt-1-1" id="b:a-mi:2"><b>MI:2</b></td><td></td><td class="txt-1-1" id="b:a-mi:3"><b>MI:3</b></td><td></td><td class="txt-1-1" id="b:a-mi:4"><b>MI:4</b></td></tr>
+                       <tr><td  colspan="7"><b>NAVE 1</b></td><td class="txt-2"></td><td class="txt-2"></td><td class="txt-2"></td><td colspan="7" id="b:e-n:1"><b>NAVE 1</b></td><td></td><td></td><td colspan="7" id="b:e-n:2"><b>NAVE 2</b></td><td></td><td></td><td colspan="7" id="b:e-n:3"><b>NAVE 3</b></td><td></td><td></td><td colspan="7" id="b:e-n:4"><b>NAVE 4</b></td><td></td><td></td><td colspan="7" id="b:e-n:5"><b>NAVE 5</b></td></tr>
+                    </table>
+                   </td>
+               </tr>
+            </table>
+            </td>
+        </tr>
+      </table>
+     </div> 
+    </div>
+    <button id="botonToggle" >🎨</button>
+
+    <div id="flotante">
+      <div class="grid-colores">
+        <!-- Columna Plaga -->
+        <div class="columna">
+          <h4>Plagas</h4>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #abfb15;"></div><span>Ácaros</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #1a8504;"></div><span>Áfidos (Pulgón)</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #f50914;"></div><span>Arañita roja</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #855a03;"></div><span>Babosa</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #c2c507;"></div><span>Cochinilla</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #7b9b7b;"></div><span>Cuzo (Anómala sp)</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #e9ed8f;"></div><span>Lobesia botrana</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #d1f5ee;"></div><span>Mosca blanca</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #413714;"></div><span>Polilla</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #6ba04c;"></div><span>Trazador (Heliothis virescens)</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color:#d56caa ;"></div><span>Trips</span>
+          </div>
+        </div>
+    
+        <!-- Columna Enfermedad -->
+        <div class="columna">
+          <h4>Enfermedades</h4>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #5d62c4;"></div><span>Agrobacterium</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #34d193;"></div><span>Alternaria</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #ad0c40;"></div><span>Antracnosis</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #fa7524;"></div><span>Botrytis</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #7224fa;"></div><span>Dumping off</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #fef607;"></div><span>Fusarium</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #e9bd50;"></div><span>Hongo de la madera</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #8bb1cf;"></div><span>Oidio</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #cf8e8b;"></div><span>Pestalotiopsis</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #9c003cb6;"></div><span>Phytium</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #cfb53e;"></div><span>Pudrición radicular (Phytophtora cinnamoni)</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #f700ff;"></div><span>Roya</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #f8ff99;"></div><span>Tizón bacteriano</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #99f3ff;"></div><span>Verticilosis</span>
+          </div>
+          <div class="item-color">
+            <div class="cuadro" style="background-color: #92e7c4;"></div><span>Virosis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modal-content" class="modal-content" style="display: none;">
+      <div class="close" onclick="closeModal()"><b>x</b></div>
+      <h2>Registro de plagas y enfermedades</h2>
+      <form id="formulario" onsubmit="submitForm(event)">
+      <table class="formulario-table" id="encabezado-registro">
+          <thead>
+              <tr>
+                <td class="disabled"><label for="Hilera">Área:</label><input type="text" readonly id="valorArea"/></td>
+                <td class="disabled"><label for="Bloque">Nave:</label><input type="text" readonly id="valorNave" /></td>
+                <td class="disabled"><label for="Macrotunel">Microtunel o cama:</label><input type="text" readonly id="valorMicroCama"/></td>
+                <td class="disabled"><label for="Cuadrante">Cuadrante o Microcuadrante:</label><input type="text" readonly id="valorCuadrante"/></td>
+                <td><label for="Fecha de registro">Fecha de registro:</label><input type="date"  id="fechaRegistro" required/></td>
+              
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+               <td>
+                  <label for="muestraPrincipal">Muestra:</label>
+                  <input type="number" id="muestra" placeholder="Ingrese el valor" min=1 required />
+                  <span id="error-messageMuestra" class="error-message"></span>
+                </td>
+                <td colspan="2">
+                  <label for="imagenPrincipal">Imagen general:</label>
+                  <input type="file" id="imagenPrincipal" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenPrincipal64')">
+                  <input type="hidden" id="imagenPrincipal64" />
+                </td>
+                <td colspan="2">
+                  <label for="observacionPrincipal">Observación:</label>
+                  <input type="text" id="observacionPrincipal" placeholder="Observación..." />
+                </td>
+           </tr>
+          </tbody>
+        </table>
+      <table class="formulario-table" >
+          <thead>
+              <tr>
+                  <th>Plaga/Enfermedad</th>
+                    <th>Nivel de infestación</th>
+                    <th>Severidad</th>
+                    <th>Muestras infectadas</th>
+                    <th>Imagen (Deficiencia)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="detalle">
+                <tr id="fila-1">
+                    <td><select class="miSelect" required></select></td>
+                    <td class="nivelesInfestacion">
+                          <label><input type="checkbox" value="Alto"> Alto</label>
+                          <label><input type="checkbox" value="Medio"> Medio</label>
+                          <label><input type="checkbox" value="Bajo"> Bajo</label>
+                    </td>
+                    <td><select class="severidad" required>
+                          <option value="" selected="true" disabled="true">Seleccione una opción</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option></select>
+                    </td>
+                    <td class="muestrasInfectadas"><input type="number" min="0" placeholder="Ingresa valor" required /></td>
+                    <td class="foto">
+                      <input type="file" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenDetalle-1-fila-1')">
+                      <input type="hidden" id="imagenDetalle-fila-1" />
+                    </td>
+                    <td><button class="btnEliminar" onclick="eliminarFila('fila-1')">-</button> <button class="btnAgregar" type="button" onclick="agregarFila()" >+</button></td>
+           
+                </tr>
+            </tbody>
+      </table>
+        <button class="btn" type="submit">Enviar</button>
+      </form>
+    </div>
+    <div class="modal-reporte" id="modal-reporte" style="display: none;">
+       <div class="close" onclick="closeModal('plasticos')"><b>x</b></div>
+       <h2>Registro de rotura de plástico</h2>
+      <form id="formularioPlastico" onsubmit="guardarRegistros(event,'si')">
+        <table class="formulario-tablePlastico" >
+          <thead>
+              <tr>
+                  <th>Fecha</th>
+                    <th>Bloque</th>
+                    <th>Macrotunel</th>
+                    <th>Cuadrantes</th>
+                    <th>Comentario</th>
+                </tr>
+            </thead>
+            <tbody id="detallePlasticos">
+                <tr id="filaR-1">
+                    <td class="fechaReporte"><input type="date" required></td>
+                    <td class="bloqueReporte"><select required></select></td>
+                    <td class="marotunelReporte"><select></select></td>
+                    <td class="cuadranteReporte"><select></select></td>
+                    <td class="comentarioReporte"><input type="text"/></td>
+                    <td><button class="btnEliminarReporte" onclick="eliminarFilaReporte('filaR-1')">-</button> <button class="btnAgregar" type="button" onclick="agregarFilaReporte()" >+</button></td>
+                </tr>
+            </tbody>
+      </table>
+      <button type="submit" class="btn">Guardar</button>
+      </form> 
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+    const URL_APPSCRIPT = "https://sweet-voice-1412.ecuablue-ec.workers.dev/";
+    const URL_APPSCRIPT_UPLOAD_IMAGE = 'https://script.google.com/macros/s/AKfycbw5e9OdskfETF8h6zILJ3lsZQP2S7wFhuN-kZu76MpoemWfl9Wkwy27EuYGzcLRpQ-pNw/exec';
+    const GOOGLE_DRIVE_FOLDER_ID = '1uAyXHrJ8SHVkpGTHvQ8DqnzqZN-2FkQd';
+    const fechaRegistro = document.getElementById("fechaRegistro");
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaRegistro.value = hoy;
+    const inputMuestraTotal = document.getElementById('muestra');
+    const customSelects = document.querySelectorAll('.custom-select');
+    const tablaDiv = document.querySelector('.tabla');
+    const itemsDiv = tablaDiv.querySelector('.items');
+    const arrowIcon = tablaDiv.querySelector('.arrow-icon');
+    const lista = document.createElement('ul');
+    const fecha = document.getElementById('fecha');
+    const sinSeleccionar = document.createElement('p');
+    const boton = document.getElementById("botonToggle");
+    const flotante = document.getElementById("flotante");
+    const listaEnfermedades =["Agrobacterium","Alternaria","Antracnosis","Botrytis","Dumping off","Fusarium","Hongo de la madera","Oidio","Pestalotiopsis","Phytium","Pudrición redicular (Phytophtora cinnamoni)","Roya","Tizón bacteriano","Verticilosis","Virosis"];
+    const listaPlagas =["Ácaros","Áfidos (Pulgón)","Arañita roja","Babosa","Cochinilla","Cuzo (Anómslo sp)","Trips","Lobesia botrana","Mosca blanca","Polilla","Trozador (Heliothis virescens)"];
+    const opciones =[...listaEnfermedades,...listaPlagas];
+    const modalContent =  document.getElementById("modal-content");
+    const htmlModalIncial = modalContent.innerHTML;
+    const modalReporte = document.getElementById("modal-reporte");
+    const htmlModalReporte = modalReporte.innerHTML;
+    const botonesReporte = document.getElementById('botonesReportar');
+    const header = document.querySelector('.header');
+    const container = document.querySelector('.container');
+    const estructuraMapa= document.getElementById('estructura');
+    const paletaColores = document.getElementById('botonToggle');
+    let enfermedadesAgregadas =[];
+    let plagasAgregadas =[];
+    let areasAgregadas =[];
+    let areasConReportes = [];
+    var filas =1;
+    var filasReporte =1;
+    let currentScale = 1;
+    sinSeleccionar.textContent="No ha seleccionado ninguna opción";
+    itemsDiv.appendChild(sinSeleccionar);
+    let diseases = [];
+    let pests = [];
+    let auxDiseases = [];
+    let auxPests = [];
+    var jsonDiseases,jsonPests;
+    window.addEventListener('load', () => {
+            const header = document.querySelector('.header');
+            const container = document.querySelector('.container');
+            const headerHeight = header.offsetHeight;
+            const heightBoton = boton.offsetHeight;
+            container.style.paddingTop = headerHeight + 'px';
+            boton.style.top = headerHeight+5+'px';
+            flotante.style.top = (headerHeight+heightBoton-10)+'px';
+    });
+  
+    window.addEventListener('resize', () => {
+            const header = document.querySelector('.header');
+            const container = document.querySelector('.container');
+            const headerHeight = header.offsetHeight;
+            const heightBoton = boton.offsetHeight;
+            container.style.paddingTop = headerHeight + 'px';
+            boton.style.top = headerHeight+5+'px';
+            flotante.style.top = (headerHeight+heightBoton-10)+'px';
+    });
+    // inicia cod aux
+     function recorrerCS(){
+         customSelects.forEach(customSelect => {
+            const selectBox = customSelect.querySelector('.select-box');
+            let selectedOptions = customSelect.classList.contains('custom-select-1') ? pests : diseases;
+            let jsonData = customSelect.classList.contains('custom-select-1') ? jsonPests : jsonDiseases;
+            
+            selectBox.addEventListener('click', () => {
+                customSelect.classList.toggle('active');
+            });
+            
+            customSelect.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (event) => {
+                    actualizarItems();
+                    const selectedOption = event.target.closest('div');
+                    const selectedItem = selectedOption.getAttribute('data-option');
+                    const selectedColor = selectedOption.getAttribute('data-color');
+                    const allCheckboxes = customSelect.querySelectorAll('input[type="checkbox"]');
+                    const opcionesSeleccionadasTotal = [...allCheckboxes].filter(cb => cb.closest('div').getAttribute('data-option') !== "todo" &&  cb.checked==true).length;
+                    const individualCheckboxes = [...allCheckboxes].filter(cb => cb.closest('div').getAttribute('data-option') !== "todo");
+                    if (event.target.checked) {
+                        // Agregar la plaga/enfermedad seleccionada
+                        if(selectedItem=="todo"){
+                          individualCheckboxes.forEach(checkboxActual=>{
+                            const elemento = checkboxActual.closest('div');
+                            checkboxActual.checked=true;
+                            checkboxActual.dispatchEvent(new Event('change'));
+                          })
+                        }else{
+                          const opcionesTotal = individualCheckboxes.length;
+                          const todoSeleccionado = [...allCheckboxes].filter(cb=>cb.closest('div').getAttribute('data-option') == "todo" )[0];
+                          if(todoSeleccionado.checked==false && opcionesTotal == opcionesSeleccionadasTotal){
+                            todoSeleccionado.checked=true;
+                          }
+                        }
+                        if(!selectedOptions.some(data=>data['option']==selectedItem)){
+                          selectedOptions.push({ option: selectedItem, color: selectedColor });
+                        }  
+                    } else {
+                        // Eliminar la plaga/enfermedad deseleccionada
+                        if(selectedItem=="todo"){
+                          individualCheckboxes.forEach(checkboxActual=>{
+                            const elemento = checkboxActual.closest('div');
+                            checkboxActual.checked=false;
+                            checkboxActual.dispatchEvent(new Event('change'));
+                          });
+                        }else{
+                          const todoSeleccionado = [...allCheckboxes].filter(cb=>cb.closest('div').getAttribute('data-option') == "todo" );
+
+                          todoSeleccionado.forEach(elementoActual=>{
+                            if(elementoActual.checked==true){
+                                elementoActual.checked=false;
+                            }
+                          })
+                          
+                        }
+                        
+                        selectedOptions = selectedOptions.filter(e => e.option !== selectedItem);
+                    }
+    
+                    // Actualizar el contenido del select-box
+                    selectBox.innerHTML = '';  // Limpiamos el contenido actual
+                    const opcionesSinTodo = selectedOptions.filter(op=>op['option']!="todo");
+                    if (opcionesSinTodo.length > 0) {
+                        const text = opcionesSinTodo.length === 1 ? 'seleccionada' : 'seleccionadas';
+                        customSelect.classList.contains('custom-select-1') ?selectBox.append(`${opcionesSinTodo.length}  plaga(s) ${text}`):selectBox.append(`${opcionesSinTodo.length} enfermedad(es) ${text}`);
+                    } else {
+                        selectBox.innerText = 'Seleccione la(s) enfermedade(s)';
+                    }
+    
+                    // Actualizamos el array global de seleccionados
+                    if (customSelect.classList.contains('custom-select-1')) {
+                        pests = selectedOptions;
+                    } else {
+                        diseases = selectedOptions;
+                    }
+                    
+              });
+            });
+            });
+     }
+        // Cerrar el menú si se hace clic fuera del custom-select
+      document.addEventListener('click', (event) => {
+            customSelects.forEach(customSelect => {
+                if (!customSelect.contains(event.target)) {
+                    customSelect.classList.remove('active');
+                }
+            });
+        });
+      tablaDiv.addEventListener('click', function(event) {
+        if (!event.target.closest('.items')) {
+          if (itemsDiv.style.display === 'none' || itemsDiv.style.display === '') {
+            itemsDiv.style.display = 'block';
+            arrowIcon.classList.remove('arrow-down');
+            arrowIcon.classList.add('arrow-up');
+          } else {
+            itemsDiv.style.display = 'none';
+            arrowIcon.classList.remove('arrow-up');
+            arrowIcon.classList.add('arrow-down');
+          }
+        }
+      });
+      fecha.addEventListener('change',(event)=>{
+        actualizarItems();
+      })
+        function actualizarItems(){
+            lista.innerHTML='';
+            itemsDiv.innerHTML='';
+            const filtroPlagas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
+            const filtroEnfermedades =Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
+            const selectPlagasNombres = filtroPlagas.filter(checkbox => checkbox.checked==true).map(checkbox => checkbox.closest('div')?.getAttribute('data-option')).filter(dataOption => dataOption !== undefined);
+            const selectEnfermedadesNombres = filtroEnfermedades.filter(checkbox => checkbox.checked==true).map(checkbox => checkbox.closest('div')?.getAttribute('data-option')).filter(dataOption => dataOption !== undefined);
+            const plagasSinSeleccionar = filtroPlagas.filter(checkbox => checkbox.checked==false);
+            const enfermedadesSinSeleccionar = filtroEnfermedades.filter(checkbox => checkbox.checked==false);
+            const plagasSeleccionadas = filtroPlagas.filter(checkbox => checkbox.checked==true);
+            const enfermedadesSeleccionadas = filtroEnfermedades.filter(checkbox => checkbox.checked==true);
+            const filtrosNoSeleccionados = [...plagasSinSeleccionar, ...enfermedadesSinSeleccionar];
+            const filtrosSeleccionados = [...plagasSeleccionadas, ...enfermedadesSeleccionadas];
+            const fecha = document.getElementById('fecha').value.toString();
+            let fechaInicio = "";
+              let fechaFin = "";
+
+              if (fecha.includes("to")) {
+                // Es un rango
+                [fechaInicio, fechaFin] = fecha.split(" to ");
+              } else {
+                // Es una sola fecha
+                fechaInicio = fecha;
+                fechaFin = fecha;
+              }
+              const [anioInicio, mesInicio, diaInicio] = fechaInicio.split("-");
+              const [anioFin, mesFin, diaFin] = fechaFin.split("-");
+
+              const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
+              const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
+              const areasAfectadasPPlagas = auxPests.length > 0
+                ? fecha
+                  ? auxPests.filter(pest => 
+                      selectPlagasNombres.includes(pest.Plaga) && 
+                      pest.Fecha >= fechaInicioString && pest.Fecha <= fechaFinString
+                    )
+                  : auxPests.filter(pest => selectPlagasNombres.includes(pest.Plaga))
+                : [];
+
+              const areasAfectadasPEnfermedades = auxDiseases.length > 0
+                ? fecha
+                  ? auxDiseases.filter(disease => 
+                      selectEnfermedadesNombres.includes(disease.Enfermedad) && 
+                      disease.Fecha >= fechaInicio && disease.Fecha <= fechaFin
+                    )
+                  : auxDiseases.filter(disease => selectEnfermedadesNombres.includes(disease.Enfermedad))
+                : [];
+            const idAreasConPlagas = [...new Set(areasAfectadasPPlagas.map(item => item["id"]))];
+            const idAreasConEnfermedades = [...new Set(areasAfectadasPEnfermedades.map(item => item["id"]))];
+            const ids = [...idAreasConEnfermedades, ...idAreasConPlagas];
+            const areasAfectadas = [...new Set(ids)];
+            const coloresNoSeleccionados = filtrosNoSeleccionados.map(cb=>cb.closest('div').getAttribute('data-color'));
+            const cuadrantesConDanios = document.querySelectorAll('td[id]:has(span)');
+            if (cuadrantesConDanios.length > 0) {
+                cuadrantesConDanios.forEach(td => {
+                    const shadow = td.style.boxShadow;
+                    //td.innerHTML='';
+                     const spans = td.querySelectorAll('span');
+                     spans.forEach(span => span.remove());
+                    if (!td.querySelector('input[type="checkbox"]')) {
+                            agregarCheckbox(td);
+                    }
+                    td.onclick = (event) => {
+                        abrirFormulario(td.id);
+                    };
+                    //td.style.boxShadow = shadow;
+                });
+            }
+
+            const coloresPintadosPorArea = {}; // Objeto para rastrear colores por área
+
+            if(areasAfectadas.length>0){
+                areasAfectadas.forEach(areaId=>{
+                    const plagasEnArea = areasAfectadasPPlagas.filter(area => area.id == areaId);
+                    const enfermedadesEnArea = areasAfectadasPEnfermedades.filter(area => area.id == areaId);
+                    const plagasUnicasEnArea = [...new Set(plagasEnArea.map(p => p.Plaga))];
+                    const enfermedadesUnicasEnArea = [...new Set(enfermedadesEnArea.map(e => e.Enfermedad))];
+                    const filtrosSeleccionadosParaArea = filtrosSeleccionados.filter(cb =>
+                    plagasUnicasEnArea.includes(cb.closest('div')?.getAttribute('data-option')) ||
+                    enfermedadesUnicasEnArea.includes(cb.closest('div')?.getAttribute('data-option'))
+                    );
+                    const coloresUnicosParaArea = [...new Set(filtrosSeleccionadosParaArea.map(cb => cb.closest('div')?.getAttribute('data-color')))].filter(color => color !== null);
+
+                    const plagasOEnfermedadesEnArea = [...plagasEnArea, ...enfermedadesEnArea];
+                    const itemData = document.createElement('li');
+                    const elementoA =  document.createElement('a');
+                    const parrafo = document.createElement('p');
+                    const texto= plagasUnicasEnArea.length > 0 && enfermedadesUnicasEnArea.length > 0 ?
+                                'Plagas: ' + plagasUnicasEnArea.toString() + '\n' + 'Enfermedades: ' + enfermedadesUnicasEnArea.toString() :
+                                plagasUnicasEnArea.length > 0 ? 'Plagas: ' + plagasUnicasEnArea.toString() :
+                                enfermedadesUnicasEnArea.length > 0 ? 'Enfermedades: ' + enfermedadesUnicasEnArea.toString() : '';
+                    elementoA.textContent= areaId;
+                    elementoA.href="#"+areaId;
+                    const celdaConProblemas = document.getElementById(areaId);
+                    
+                    if (!coloresPintadosPorArea[areaId]) {
+                        coloresPintadosPorArea[areaId] = [];
+                    }
+                    
+                    coloresUnicosParaArea.forEach(color => {
+                        if (celdaConProblemas && !coloresPintadosPorArea[areaId].includes(color)) {
+                            const tamaño= celdaConProblemas.offsetHeight -3;
+                            const filtroNombre = filtrosSeleccionadosParaArea.find(cb => cb.closest('div')?.getAttribute('data-color') === color)?.closest('div')?.getAttribute('data-option');
+                            if (filtroNombre) {
+                                const registrosFiltrados = plagasOEnfermedadesEnArea.filter(dato => (dato.Plaga === filtroNombre || dato.Enfermedad === filtroNombre) && dato.id==areaId);
+                                let incidencia = 0;
+                                let severidad = 0;
+                                const nivelesInfestacion = [...new Set(registrosFiltrados.map(dato => dato["Nivel de infestación"]))];
+
+                                if (registrosFiltrados.length > 0) {
+                                    incidencia = registrosFiltrados.map(dato => parseFloat(dato["Incidencia"] || 0)).reduce((sum, val) => sum + val, 0) / registrosFiltrados.length;
+                                    severidad = registrosFiltrados.map(dato => parseFloat(dato["Severidad"] || 0)).reduce((sum, val) => sum + val, 0) / registrosFiltrados.length;
+                                }
+                                const shadowActual =  celdaConProblemas.style.boxShadow || '';
+                                const colorOption = document.createElement('span');
+                                colorOption.style.backgroundColor = color;
+                                colorOption.style.width = tamaño+'px';
+                                colorOption.style.height = tamaño+'px';
+                                colorOption.style.borderRadius = '50%';
+                                colorOption.style.display = 'inline-block';
+                                colorOption.style.cursor = 'pointer';
+                                colorOption.style.position = 'relative';
+                                colorOption.setAttribute('data-color', color);
+                                celdaConProblemas.style.justifyContent = 'center';
+                                celdaConProblemas.style.alignItems = 'center';
+                                celdaConProblemas.style.alignContent='center';
+                                celdaConProblemas.style.padding='0px';
+                                celdaConProblemas.style.margin='0px';
+                                celdaConProblemas.style.boxShadow = shadowActual;
+
+                                const popup = document.createElement('div');
+                                const rect = celdaConProblemas.getBoundingClientRect();
+                                popup.classList.add('popup');
+                                popup.style.display = 'none';
+                                popup.style.position = 'fixed';
+                                popup.style.backgroundColor = '#fff';
+                                popup.style.border = '1px solid #ccc';
+                                popup.style.padding = '5px';
+                                popup.style.zIndex = '1000';
+                                popup.style.top = `${rect.top-10}px`;
+                                popup.style.left = `${rect.right + 10}px`;
+                                
+                                popup.innerHTML = `<b>${filtroNombre}</b><br>Incidencia: ${(incidencia * 100).toFixed(2)}%<br>Severidad: ${severidad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
+                                colorOption.appendChild(popup);
+                                colorOption.addEventListener('click', function (event) {
+                                   console.log('clic detectado v14')
+                                     event.stopPropagation();
+                                     const rect = colorOption.getBoundingClientRect();
+                                    const yaVisible = popup.style.display === 'block';
+                                    document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+                                    if (!yaVisible) {
+                                        popup.style.display = 'block';
+                                        console.log('popup visible',popup.style.display)
+                                    }
+                                });
+                                celdaConProblemas.appendChild(colorOption);
+                                coloresPintadosPorArea[areaId].push(color); // Registrar el color pintado para esta área
+
+                                const countSpan = celdaConProblemas.querySelectorAll('span');
+                                const size = tamaño/countSpan.length;
+                                celdaConProblemas.querySelectorAll('span').forEach(span => {
+                                    span.style.width = size+'px';
+                                    span.style.height = size+'px';
+                                });
+                            }
+                        }
+                    });
+
+                    elementoA.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const celdaDestino = document.getElementById(areaId);
+                        const celdasMarcadas = document.querySelectorAll('.celda-resaltada');
+                        celdasMarcadas.forEach(celda => {
+                            celda.classList.remove('celda-resaltada');
+                        });
+                        if (celdaDestino) {
+                            celdaDestino.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                            celdaDestino.classList.add('celda-resaltada');
+
+                            // Opcionalmente, remover la clase después de un tiempo
+                            setTimeout(() => {
+                                celdaDestino.classList.remove('celda-resaltada');
+                            }, 5000); // Remover después de 1.5 segundos
+                        }
+                        
+                    });
+                    parrafo.textContent= texto;
+                    itemData.appendChild(elementoA);
+                    itemData.appendChild(parrafo);
+                    lista.appendChild(itemData);
+                });
+                itemsDiv.appendChild(lista);
+            } else {
+                const divNoDatos = document.createElement('p');
+                divNoDatos.textContent="No hay datos";
+                itemsDiv.appendChild(divNoDatos);
+            }
+        }
+     
+      
+      function setScale(factor) {
+        currentScale = Math.min(2, Math.max(0.5, factor));
+          document.documentElement.style.setProperty('--scale-factor', currentScale.toFixed(2));
+      }
+      
+      function zoomIn() {
+          setScale(currentScale + 0.1);
+      }
+      
+      function zoomOut() {
+          setScale(currentScale - 0.1);
+      }
+      boton.addEventListener("click", () => {
+            flotante.style.display = flotante.style.display === "block" ? "none" : "block";
+      });
+      document.addEventListener('DOMContentLoaded', function() {
+            flatpickr("#fecha", {
+              mode: "range",
+              dateFormat: "Y-m-d",
+              allowInput: true,
+              animate: false
+            });
+         modalContent.addEventListener('keydown',(e)=>{
+            if (e.key === 'Escape') {
+            closeModal();
+          }
+         });
+          const formulario = document.getElementById("formulario");
+              formulario.addEventListener("keydown", function (event) {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  return false;
+                }
+              });
+              inputMuestraTotal.addEventListener('change',actualizarBotones);
+          recorrerCS();
+          cargarDatos('Ecualasos').then(()=>{encontrarCuadrantesConReportes()});
+          hayConexion()?enviarPendientes():actualizarContador();
+       });
+          //fin cod aux
+      /** online y offlien*/
+      function guardarEnCache(clave, datos) {
+        localStorage.setItem(clave, JSON.stringify(datos));
+      }
+      function cargarDesdeCache(clave) {
+        const datos = localStorage.getItem(clave);
+        return datos ? JSON.parse(datos) : [];
+      }
+      async function obtenerDesdeBase(productor,tabla, claveCache) {
+        if (!navigator.onLine) {
+            console.warn(`⚠ Sin conexión: intentando cargar desde caché para ${claveCache}`);
+            const cachedData = cargarDesdeCache(claveCache);
+            if (cachedData) {
+                return cachedData;
+            } else {
+                // Si no hay conexión y no hay caché, lanza un error
+                throw new Error(`No hay conexión a internet y no hay datos en caché para ${claveCache}.`);
+            }
+        }
+
+    // 2. Si hay conexión, siempre intenta obtener los datos frescos del Worker
+     try {
+        // *** CAMBIO CLAVE AQUÍ: Usamos URL_APPSCRIPT en lugar de una nueva constante ***
+        const filtro = claveCache.includes('reportes')? `Filter(${tabla}, AND([Productor] = "${productor}",IN("Rotura de plástico",[Observación])))`:`Filter(${tabla}, [Productor] = "${productor}")`
+        const response = await fetch(URL_APPSCRIPT, {
+            method: "POST", // Tu Worker espera POST
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // Estructura que espera tu Cloudflare Worker
+                actionType: "Find",
+                tableName: tabla,
+                // El payload es el filtro para la API de AppSheet
+                payload: filtro // **¡Ajusta este filtro!**
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error HTTP del Worker: ${response.status} - ${errorData.error || 'Mensaje desconocido'}`);
+        }
+
+        const data = await response.json();
+
+        // **Ajusta esta línea si tu Worker devuelve la lista de filas dentro de otra propiedad**
+        // Por ejemplo, si devuelve { success: true, rows: [...] }, sería: const rows = data.rows;
+        const rows = data;
+        // Guarda los datos frescos en caché
+        guardarEnCache(claveCache, rows);
+        return rows;
+
+    } catch (err) {
+        // 3. Si falla la llamada al Worker (por red o error del Worker), intenta cargar desde la caché
+        console.error(`Error al obtener ${claveCache} del Worker:`, err);
+        const fallbackData = cargarDesdeCache(claveCache);
+        if (fallbackData) {
+            console.warn(`⚠ Fallback: Cargando desde caché debido a error de red/Worker para ${claveCache}`);
+            return fallbackData;
+        }
+        // Si no hay caché como fallback, propaga el error original
+        throw err;
+    }
+}
+      function cargarDatos(productor) {
+        const cacheP = `plagas-${productor.replace(/\s+/g, "-")}`;
+        const cacheD = `enfermedades-${productor.replace(/\s+/g, "-")}`;
+        const cacheR = `reportes-${productor.replace(/\s+/g, "-")}`;
+        return Promise.all([
+            obtenerDesdeBase(productor, "Detalle: Plagas vivero", cacheP)
+            .then(datos => { auxPests = datos; jsonPests=auxPests; }),
+            obtenerDesdeBase(productor, "Detalle: Enfermedades vivero", cacheD)
+            .then(datos => { auxDiseases = datos; jsonDiseases=auxDiseases }),
+            obtenerDesdeBase(productor,"Reporte plásticos",cacheR)
+            .then(datos => { areasConReporte = datos;  console.log('reportes obtenidos: ', areasConReporte);})
+        ]);
+        
+       }
+       /* Enviar datos*/
+    async function runServerFunction(tablaN, filaJson) {
+        try {
+        const response = await fetch(URL_APPSCRIPT, { // <--- CAMBIO AQUÍ: Usar WORKER_URL
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                // CAMBIO AQUÍ: La estructura del body debe coincidir con lo que espera tu Worker
+                // Tu Worker espera: { actionType, tableName, payload }
+                actionType: "Add", // La acción que el Worker debe realizar en AppSheet
+                tableName: tablaN, // El nombre de la tabla
+                payload: filaJson // Los datos de la fila a agregar
+            })
+        });
+
+        if (!response.ok) {
+            // Si el Worker devuelve un error (ej. 400, 500)
+            const errorData = await response.json(); // Intentamos leer el error JSON
+            throw new Error(`Error HTTP del Worker: ${response.status} - ${errorData.error || 'Mensaje desconocido'}`);
+        }
+
+        const data = await response.json(); // La respuesta del Worker
+
+        // Tu Worker para 'Add' devuelve { success: true, rowId: "...", rawResponse: {...} }
+        if (data.success) {
+            return data.rowId; // Devuelve directamente el ID
+        } else {
+            // Si el Worker devolvió success: false (ej. no encontró Row ID)
+            throw new Error(data.error || "Error al crear registro (Worker no obtuvo Row ID)");
+        }
+    } catch (err) {
+        console.error("Error en runServerFunction:", err);
+        throw err; // Propaga el error para manejo externo
+    }  
+    }
+
+       /*interaccion formulario de registro*/
+      const tds = document.querySelectorAll('td[id]');
+      // Asignamos el event listener a cada uno de los <td> con un id
+      tds.forEach(td => {
+                agregarCheckbox(td);
+                td.addEventListener('click', function(event) {
+                    // Aquí va el código que deseas ejecutar cuando se haga clic
+                    const id =td.id;
+                    // Llamar a tu función que maneja el clic
+                    abrirFormulario(id);
+                });
+            });
+      const ths = document.querySelectorAll('th[id]');
+      ths.forEach(th=>{
+         agregarCheckbox(th);
+      })
+           function abrirFormulario(id){
+                 if(id){
+                      modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
+                      const componentesId=id.split('-');
+                      const bloque = "BLOQUE "+ componentesId[0].split(':')[1];
+                      const macrotunel = componentesId[1].split(':')[1];
+                      const hilera = componentesId[2].split(':')[1];
+                      const cuadrante = componentesId[3].split(':')[1];
+                      document.getElementById('valorBloque').value=bloque;
+                      document.getElementById('valorMacrotunel').value= macrotunel;
+                      document.getElementById('valorCuadrante').value=cuadrante;
+                      document.getElementById('valorHilera').value = hilera;
+                      modalContent.style.display = "block";
+                      document.getElementById('fechaRegistro').value = hoy;
+                      //fechaRegistro.value=hoy;
+                      estructuraMapa.setAttribute("disabled", "true");
+                      estructuraMapa.classList.add("disabled");
+                      paletaColores.setAttribute("disabled", "true");
+                      header.setAttribute("disabled", "true");
+                      paletaColores.classList.add("disabled");
+                      header.classList.add("disabled");
+                      cargarOpciones();
+                      actualizarBotones();
+                 }
+            }
+            function closeModal() {
+             const confirmacion = confirm("¿Estás seguro de que deseas cerrar el formulario? Se perderán los datos no guardados.");
+             if (!confirmacion) return; 
+             modalContent.style.display = "none";
+             filas=1;
+             modalContent.innerHTML=htmlModalIncial;
+             fechaRegistro.value = hoy;
+             //actualizarBotones();
+             estructuraMapa.removeAttribute("disabled");
+             estructuraMapa.classList.remove("disabled");
+             header.removeAttribute("disabled");
+             header.classList.remove("disabled");
+             paletaColores.removeAttribute("disabled");
+             paletaColores.classList.remove("disabled");
+            }
+            function cargarOpciones(elemento) {
+                const select =elemento || document.querySelector('.miSelect');;
+                select.innerHTML = '';
+                  const optionPlaceholder = document.createElement('option');
+                  optionPlaceholder.value = '';  // Opción vacía
+                  optionPlaceholder.textContent = 'Seleccione una opción';  // Mensaje de placeholder
+                  optionPlaceholder.disabled = true;  // Desactivar la opción para que no sea seleccionable
+                  optionPlaceholder.selected = true;  // Marcarla como seleccionada
+                  select.appendChild(optionPlaceholder); 
+                  const valoresSeleccionados=  Array.from(document.querySelectorAll('.miSelect'))
+                                                        .map(s => s.value)
+                                                        .filter(val => val !== "");
+                  const opcionesDisponibles = opciones.filter(op=>!valoresSeleccionados.includes(op));
+              
+                  opcionesDisponibles.forEach(op => {
+                    const option = document.createElement('option');
+                    option.value = op;
+                    option.textContent = op;
+                    select.appendChild(option);
+                  });
+                   $('.miSelect').select2({
+                  placeholder: "Seleccione una opción",
+                 
+                  dropdownAutoWidth: true
+                });
+                
+            }
+            function agregarFila() {
+                filas=filas+1;
+                const identificador = 'fila-'+filas;
+                const tbody = document.getElementById("detalle");
+                const nuevaFila = document.createElement("tr");
+                nuevaFila.innerHTML = `
+                    <td><select class="miSelect" required></select></td>
+                    <td class="nivelesInfestacion">
+                          <label><input type="checkbox" value="Alto"> Alto</label>
+                          <label><input type="checkbox" value="Medio"> Medio</label>
+                          <label><input type="checkbox" value="Bajo"> Bajo</label>
+                    </td>
+                    <td><select class="severidad"  required>
+                          <option value="" selected="true" disabled="true">Seleccione una opción</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option></select></td>
+                    <td class="foto"><input type="number" min="0" placeholder="Ingresa valor" required /></td>
+                        <input type="file" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenDetalle-1-${identificador}')">
+                       <input type="hidden" id="imagenDetalle-${identificador}" />
+                    </td>
+                    <td><button class="btnEliminar" onclick="eliminarFila('${identificador}')">-</button> <button class="btnAgregar" type="button" onclick="agregarFila()" >+</button></td>
+                `;
+                
+                nuevaFila.id=identificador;
+                tbody.appendChild(nuevaFila);
+                agregarListenersUltimoCampo(nuevaFila)
+                // Puedes rellenar el select dinámicamente si ya tienes datos disponibles:
+                cargarOpciones(nuevaFila.querySelector(".miSelect"));
+                actualizarBotones();
+                 
+            }
+            function actualizarBotones() {
+                const filasTr = Array.from(document.getElementById("detalle").querySelectorAll("tr"));
+                
+               filasTr.forEach((fila, i) => {
+                  const btnEliminar = fila.querySelector(".btnEliminar");
+                  const btnAgregar = fila.querySelector(".btnAgregar");
+                  const camposValidos = validarCamposFila(fila);
+                  // Mostrar "Eliminar" solo si hay más de una fila
+                  btnEliminar.style.display = filasTr.length > 1 ? "inline-block" : "none";
+                  // Mostrar "Agregar" solo en la última fila
+                  btnAgregar.style.display = i >= filasTr.length-1 && camposValidos ? "inline-block" : "none";
+                });
+              }
+            function eliminarFila(id) {
+              
+              const fila = document.getElementById(id);
+              fila.remove();
+              // Verifica si hay más de una fila
+              actualizarBotones();
+            
+            }
+            function validarCamposFila(fila) {
+              const totalMuesta= document.getElementById('muestra').value;
+              const select = fila.querySelector(".miSelect");
+              const muestras = fila.querySelector("input[type='number']");
+              const severidad = fila.querySelector(".severidad");
+              const tdMuestrasInfectadas = fila.querySelector(".muestrasInfectadas");
+              const tdNivelInfestacion= fila.querySelector(".nivelesInfestacion");
+              const checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
+              const selectValido = select && select.value !== "";
+              const muestrasValidas = muestras && muestras.value !== "" && Number(muestras.value)<= Number(totalMuesta);
+                console.log(totalMuesta,muestrasValidas);
+              const severidadValida = severidad && severidad.value !== "";
+              const alMenosUnCheckbox = Array.from(checkboxes).some(cb => cb.checked);
+              return selectValido && muestrasValidas && severidadValida && alMenosUnCheckbox;
+            }
+            function agregarListenersUltimoCampo(fila) {
+                const select = fila.querySelector(".miSelect");
+                const muestras = fila.querySelector("input[type='number']");
+                const severidad = fila.querySelector(".severidad");
+                const checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
+
+                if (select) {
+                  select.addEventListener("change", actualizarBotones);
+                }
+
+                if (muestras) {
+                  muestras.addEventListener("input", actualizarBotones);
+                }
+
+                if (severidad) {
+                  severidad.addEventListener("change", actualizarBotones);
+                }
+
+                checkboxes.forEach(chk => {
+                  chk.addEventListener("change", actualizarBotones);
+                });
+            }
+            agregarListenersUltimoCampo(document.getElementById('fila-1'))
+            function  hayConexion(){
+              return navigator.onLine;
+            }
+           function guardarDatosLocalmente(jsonPrincipal, array1, array2) {
+              let pendientes = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+              
+              pendientes.push({ 'encabezado':jsonPrincipal, 'detallesPlagas':array1, 'detallesEnfermedades':array2 });
+              
+              localStorage.setItem('registrosPendientes', JSON.stringify(pendientes));
+              console.log("Guardado local:",pendientes);
+              actualizarContador();
+            }
+
+          function actualizarContador() {
+             const registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+            const plasticosPendientes = JSON.parse(localStorage.getItem('reportesPendientes')) || [];
+
+            let total = 0;
+            registros.forEach(r => {
+              if (!r.encabezado['Row ID']) total += 1;
+              total += (r.detallesPlagas?.length || 0) + (r.detallesEnfermedades?.length || 0) ;
+            });
+            console.log('pendientes', plasticosPendientes.length, plasticosPendientes, registros);
+            total=total + plasticosPendientes.length
+            document.getElementById('contador').textContent = total;
+          }
+           async function enviarPendientes() {
+            let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+            let nuevosPendientes = [];
+            let reportes = JSON.parse(localStorage.getItem('reportesPendientes')) ||[];
+            let nuevosReportes =[];
+            if (registros.length > 0) {
+                for (const registro of registros) {
+                    let idPrincipal = registro.encabezado['Row ID'];
+                    let encabezadoGuardadoExitosamente = false;
+
+                    // --- 1. Guardar encabezado si aún no tiene Row ID ---
+                    if (!idPrincipal) {
+                        try {
+                            const rawBase64 = registro.encabezado["Deficiencia (Foto 1)"];
+                            let imageUrl = "";
+
+                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
+                                let base64Pure = '';
+                                let mimeType = '';
+                                if (rawBase64.startsWith('data:')) {
+                                    [mimeType, base64Pure] = rawBase64.split(';');
+                                    mimeType = mimeType.split(':')[1];
+                                    base64Pure = base64Pure.split(',')[1];
+                                } else {
+                                    base64Pure = rawBase64;
+                                    mimeType = 'image/png'; // Asegúrate de que esto coincida con tu tipo de imagen por defecto si no hay prefijo
+                                }
+
+                                const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotune"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
+
+                                console.log("Subiendo imagen de encabezado:", nombreArchivoEncabezado);
+                                const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado, mimeType);
+
+                                if (uploadResult.success) {
+                                    imageUrl = uploadResult.url;
+                                    console.log("Imagen de encabezado subida. URL:", imageUrl);
+                                } else {
+                                    console.error("Error al subir la imagen del encabezado:", uploadResult.error);
+                                    // imageUrl permanece "", lo que luego convertiremos a null
+                                }
+                            } else {
+                                console.log("No hay Base64 para la imagen de encabezado o no es una cadena válida. El campo se enviará como null.");
+                            }
+
+                            // *** MODIFICACIÓN CLAVE AQUÍ PARA EL ENCABEZADO ***
+                            // Si imageUrl sigue siendo una cadena vacía, la convertimos a null
+                            registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl === "" ? null : imageUrl;
+
+                            console.log("Enviando encabezado a AppSheet:", registro.encabezado);
+                            const rowId = await runServerFunction('Encabezado: Plagas y enfermedades', registro.encabezado);
+
+                            if (rowId) {
+                                idPrincipal = rowId;
+                                registro.encabezado["Row ID"] = rowId;
+                                encabezadoGuardadoExitosamente = true;
+                                console.log("Encabezado guardado con Row ID:", rowId);
+                            } else {
+                                console.warn("No se pudo guardar el encabezado (no se recibió Row ID). Se reintentará.");
+                                encabezadoGuardadoExitosamente = false;
+                            }
+                        } catch (e) {
+                            console.error("Error crítico al intentar guardar encabezado o procesar su imagen:", e);
+                            encabezadoGuardadoExitosamente = false;
+                        }
+                    } else {
+                         encabezadoGuardadoExitosamente = true;
+                    }
+
+                    if (!encabezadoGuardadoExitosamente) {
+                        nuevosPendientes.push(registro);
+                        continue;
+                    }
+
+                    // --- 2. Guardar detalles de Plagas ---
+                    const fallidosPlagas = [];
+                    for (const item of registro.detallesPlagas) {
+                        item["IdPlagas y Enfermedades"] = idPrincipal;
+
+                        const rawBase64Plaga = item["Foto 1"];
+                        let imageUrlPlaga = "";
+
+                        if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
+                            let base64PurePlaga = '';
+                            let mimeTypePlaga = '';
+                            if (rawBase64Plaga.startsWith('data:')) {
+                                [mimeTypePlaga, base64PurePlaga] = rawBase64Plaga.split(';');
+                                mimeTypePlaga = mimeTypePlaga.split(':')[1];
+                                base64PurePlaga = base64PurePlaga.split(',')[1];
+                            } else {
+                                base64PurePlaga = rawBase64Plaga;
+                                mimeTypePlaga = 'image/png';
+                            }
+
+                            const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
+
+                            console.log("Subiendo imagen de detalle de plaga:", nombreFotoPlaga);
+                            const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga, mimeTypePlaga);
+
+                            if (uploadResultPlaga.success) {
+                                imageUrlPlaga = uploadResultPlaga.url;
+                                console.log("Imagen de plaga subida. URL:", imageUrlPlaga);
+                            } else {
+                                console.error("Error al subir la imagen de la plaga:", uploadResultPlaga.error);
+                            }
+                        } else {
+                            console.log("No hay Base64 para la imagen de plaga o no es una cadena válida. El campo se enviará como null.");
+                        }
+                        // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS PLAGAS ***
+                        item["Foto 1"] = imageUrlPlaga === "" ? null : imageUrlPlaga;
+
+                        try {
+                            console.log("Enviando detalle de plaga a AppSheet:", item);
+                            const id = await runServerFunction("Detalle: Plagas", item);
+                            if (!id) fallidosPlagas.push(item);
+                        } catch (e) {
+                            console.error("Error al guardar detalle de plaga:", e);
+                            fallidosPlagas.push(item);
+                        }
+                    }
+
+                    // --- 3. Guardar detalles de Enfermedades ---
+                    const fallidosEnfermedades = [];
+                    for (const item of registro.detallesEnfermedades) {
+                        item["IdPlagas y Enfermedades"] = idPrincipal;
+
+                        const rawBase64Enfermedad = item["Foto 1"];
+                        let imageUrlEnfermedad = "";
+
+                        if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
+                            let base64PureEnfermedad = '';
+                            let mimeTypeEnfermedad = '';
+                            if (rawBase64Enfermedad.startsWith('data:')) {
+                                [mimeTypeEnfermedad, base64PureEnfermedad] = rawBase64Enfermedad.split(';');
+                                mimeTypeEnfermedad = mimeTypeEnfermedad.split(':')[1];
+                                base64PureEnfermedad = base64PureEnfermedad.split(',')[1];
+                            } else {
+                                base64PureEnfermedad = rawBase64Enfermedad;
+                                mimeTypeEnfermedad = 'image/png';
+                            }
+
+                            const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
+
+                            console.log("Subiendo imagen de detalle de enfermedad:", nombreFotoEnfermedad);
+                            const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad, mimeTypeEnfermedad);
+
+                            if (uploadResultEnfermedad.success) {
+                                imageUrlEnfermedad = uploadResultEnfermedad.url;
+                                console.log("Imagen de enfermedad subida. URL:", imageUrlEnfermedad);
+                            } else {
+                                console.error("Error al subir la imagen de la enfermedad:", uploadResultEnfermedad.error);
+                            }
+                        } else {
+                            console.log("No hay Base64 para la imagen de enfermedad o no es una cadena válida. El campo se enviará como null.");
+                        }
+                        // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
+                        item["Foto 1"] = imageUrlEnfermedad === "" ? null : imageUrlEnfermedad;
+
+                        try {
+                            console.log("Enviando detalle de enfermedad a AppSheet:", item);
+                            const id = await runServerFunction("Detalle: Enfermedades", item);
+                            if (!id) fallidosEnfermedades.push(item);
+                        } catch (e) {
+                            console.error("Error al guardar detalle de enfermedad:", e);
+                            fallidosEnfermedades.push(item);
+                        }
+                    }
+
+                    // --- 4. Manejo de reintentos ---
+                    if (fallidosPlagas.length > 0 || fallidosEnfermedades.length > 0) {
+                        nuevosPendientes.push({
+                            encabezado: registro.encabezado,
+                            detallesPlagas: fallidosPlagas,
+                            detallesEnfermedades: fallidosEnfermedades
+                        });
+                        console.log("Registro con detalles fallidos añadido a la lista de reintentos.");
+                    } else {
+                        console.log("Registro completo enviado con éxito.");
+                    }
+                } // Fin del bucle for (const registro of registros)
+
+                // --- 5. Actualizar el Local Storage con los registros pendientes ---
+                localStorage.setItem('registrosPendientes', JSON.stringify(nuevosPendientes));
+            } else {
+                console.log("No hay registros pendientes para enviar.");
+            }
+            console.log('reportes pendientes: ', reportes)
+            if(reportes.length > 0){
+                for (const reporte of reportes) {
+                    try {
+                        console.log('enviando reporte: ', reporte)
+                        const id = await runServerFunction("Reporte plásticos", reporte);
+                        if (!id) {
+                            nuevosReportes.push(reporte);
+                        }
+                    } catch (e) {
+                        console.error("Error al guardar reporte pendiente:", e);
+                        nuevosReportes.push(reporte);
+                    }
+                }
+            }
+            localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes))
+            activarBotonesReporte();
+            actualizarContador();
+        }
+       
+
+          function submitForm(event){
+              event.preventDefault(); // Prevenir el envío del formulario por defecto
+              const muestraTotal = document.getElementById('muestra').value;
+              var formulario = document.getElementById('formulario');
+              var valid = true;
+              // Validar campos requeridos en la primera tabla
+              var muestraInput = document.getElementById('muestra');
+              var errorMessageMuestra = document.getElementById('error-messageMuestra');
+              if (muestraInput.value.trim() === '') {
+                  errorMessageMuestra.textContent = muestraInput.value.trim() === ''?'Este campo es obligatorio.':'El valor no debe ser mayor al de la muestra.';
+                  muestraInput.classList.add('error');
+                  valid = false;
+              } else {
+                  errorMessageMuestra.textContent = '';
+                  muestraInput.classList.remove('error');
+              }
+
+              // Validar campos requeridos en las filas de la segunda tabla
+              var filas = document.getElementById('detalle').rows;
+              Array.from(filas).forEach(function(fila) {
+                  var selects = fila.querySelectorAll('select');
+                  var inputs = fila.querySelectorAll('input[required]');
+                  var checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
+                  const valorMuestra = fila.querySelector("input[type='number']").value;
+                  var validFila = true;
+                  selects.forEach(function(select) {
+                      if (select.value === '') {
+                          select.classList.add('error');
+                          validFila = false;
+                      } else {
+                          select.classList.remove('error');
+                      }
+                  });
+
+                  inputs.forEach(function(input) {
+                      if (input.value.trim() === '') {
+                          input.classList.add('error');
+                          validFila = false;
+                      } else {
+                          input.classList.remove('error');
+                      }
+                  });
+                  // Validar que al menos un checkbox esté seleccionado
+                  const contenedorCheckboxes = fila.querySelector(".nivelesInfestacion");
+                  const algunoSeleccionado = Array.from(checkboxes).some(cb => cb.checked);
+                  let mensajeError = contenedorCheckboxes.querySelector(".error-message");
+                  if (!algunoSeleccionado) {
+                    if (!mensajeError) {
+                      mensajeError = document.createElement("span");
+                      mensajeError.classList.add("error-message");
+                      mensajeError.textContent = "Debe seleccionar al menos un nivel";
+                      contenedorCheckboxes.appendChild(mensajeError);
+    }
+                    validFila = false;
+                  } else {
+                    if (mensajeError) {
+                        mensajeError.remove();
+                    }
+                  }
+                  validFila= Number(valorMuestra)<=Number(muestraTotal)
+
+                  if (!validFila) {
+                      valid = false;
+                  }
+              });
+
+              if (valid) {
+                  //alert('Formulario enviado correctamente');
+                  //formulario.reset(); // Resetea el formulario si es válido
+                  const macrotunel = document.getElementById('valorMicroCama').value;
+                  const nave = document.getElementById('valorNave').value;
+                  const cuadrante= document.getElementById('valorCuadrante').value;
+                  const area = document.getElementById('valorArea').value;
+                  const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
+                  const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
+                  const fechaRegistrada = fechaRegistro.value;
+                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecuablue",'Area':'','Nave':bloque,'Microtunel /Cama':macrotunel,'Cuadrante /Microcuadrante':cuadrante,'# Plantas Muestreadas':muestraTotal,'Deficiencia (Foto 1)':"",'Observación':observacionesPrincipales}
+                  Array.from(filas).forEach(function(fila) {
+                    const selectAfeccion = fila.querySelector(".miSelect").value;
+                    const muestrasInfectadas = fila.querySelector("input[type='number']").value;
+                    const valorSeveridad = fila.querySelector(".severidad").value;
+                    const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
+                    const imagenHiden = fila.querySelector('.foto input[type=hidden]');
+                    const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal))*100;
+                    if(listaEnfermedades.includes(selectAfeccion)){
+                        const detalleEnfermedad = {'Enfermedad':selectAfeccion,'Plantas enfermas':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdEncabezado':" ",'Foto 1':imagenHiden};
+                        enfermedadesAgregadas.push(detalleEnfermedad);
+                      }else if(listaPlagas.includes(selectAfeccion)){
+                        const detallePlaga = {'Plaga':selectAfeccion,'Plantas con plagas':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdEncabezado':" ",'Foto 1':imagenHiden};
+                        plagasAgregadas.push(detallePlaga)
+                    }
+                  });
+                  guardarDatosLocalmente(filaEncabezado,plagasAgregadas,enfermedadesAgregadas);
+                  formulario.reset();
+                  filaEncabezado={};
+                  plagasAgregadas = [];
+                  enfermedadesAgregadas =[];
+                  if(hayConexion){
+                    enviarPendientes();
+                  }
+                } else {
+                 // alert('Por favor complete todos los campos requeridos');
+              }
+          }
+          
+          function convertirImagenA64(inputFile, idCampoOculto) {
+            console.log(idCampoOculto)
+            if (inputFile.files && inputFile.files[0]) {
+              const archivo = inputFile.files[0];
+              const lector = new FileReader();
+
+              lector.onload = function(e) {
+                // e.target.result es la imagen en base64
+                const base64String = e.target.result;
+
+                // Guardar el base64 en un campo oculto para enviar luego
+                document.getElementById(idCampoOculto).value = base64String;
+              };
+
+              lector.readAsDataURL(archivo); // lee el archivo como base64
+            }
+          }
+
+          async function subirImagenBase64DesdeCliente(base64Data, fileName, mimeType) {
+           if (!base64Data || !fileName || !mimeType) {
+                return Promise.reject({ success: false, error: "Faltan datos para subir la imagen (Base64, nombre o tipo MIME)." });
+            }
+        
+            try {
+                const response = await fetch(URL_APPSCRIPT_UPLOAD_IMAGE, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        base64: base64Data,
+                        fileName: fileName,
+                        mimeType: mimeType,
+                        folderId: GOOGLE_DRIVE_FOLDER_ID
+                    }),
+                });
+        
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error HTTP al subir imagen a Apps Script: ${response.status} - ${errorText}`);
+                }
+        
+                const result = await response.json();
+        
+                if (result.success) {
+                    return { success: true, url: result.url };
+                } else {
+                    throw new Error(`Apps Script reportó un error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error("Error en uploadImageToDrive (fetch/parsing):", error);
+                throw { success: false, error: error.message };
+            }
+          }
+          /*nuevas funciones*/
+          function agregarCheckbox(td){
+           const tipo = td.textContent.includes('MI')?"microtunel":td.textContent.includes('Aclimatación')||td.textContent.includes('Endurecimiento')?"area":"nave";
+            const agregarCb = td.textContent!==""?true:false;
+            //tipo=="area" ||tipo=="microtunel"|| tipo=="nave"?true:false;
+             
+              if (agregarCb &&  !td.querySelector('input[type="checkbox"]')){
+              const checkbox = document.createElement('input');
+              checkbox.type = 'checkbox';
+              checkbox.className = tipo=='microtunel'?'dynamic-corner-checkbox2': tipo=='area'?'dynamic-corner-checkbox3':''; // <-- ¡AQUÍ LA CLASE ESPECÍFICA!
+              checkbox.title = 'Seleccionar cuadrante';
+              td.prepend(checkbox);
+              checkbox.addEventListener('click', (event) => {
+                event.stopPropagation();
+                agregarAreaAfectada(td.id,tipo)
+              });
+              }
+          }
+           function guardarReportesLocalmente(array){
+           if (Array.isArray(array) && array.length > 0) {
+              localStorage.setItem('reportesPendientes', JSON.stringify(array));
+           }
+           actualizarContador();
+        }
+         function guardarRegistros(event,validar){
+          var enviar ='si';
+          if(validar=='si'){
+            event.preventDefault();
+            var formularioReporte = document.getElementById('formularioPlastico');
+            enviar = formularioReporte.valid?'si':'no';
+            if (enviar) formularioReporte.reset();
+          }
+          if(enviar){
+            guardarReportesLocalmente(areasAgregadas);
+            areasAgregadas =[];
+            if (hayConexion()) enviarPendientes();
+          }
+        }
+      function activarBotonesReporte(){
+       botonesReporte.style.display = areasAgregadas.length>0?'block':'none';
+      }
+  function agregarAreaAfectada(id, tipo) {
+  const elemento = document.getElementById(id);
+  const cb = elemento.querySelector("input[type='checkbox']");
+  const partesId = id.split('-');
+  const idenArea = partesId[0].split(':')[1];
+  const nombreArea = idenArea === "a" ? "Aclimatación" : "Endurecimiento";
+
+  if (cb.checked) {
+    // ✔️ SELECCIONADO
+
+    if (tipo === "area") {
+      const yaExiste = areasAgregadas.some(reg =>
+        reg.Area === nombreArea &&
+        reg.Nave === "" &&
+        reg.Microtunel === ""
+      );
+
+      if (!yaExiste) {
+        areasAgregadas.push({
+          Fecha: hoy,
+          Area: nombreArea,
+          Nave: "",
+          Microtunel: ""
+        });
+      }
+
+    } else if (tipo === "microtunel") {
+      const microtunel = Number(partesId[1]?.split(':')[1]);
+      if (isNaN(microtunel)) return;
+
+      let registro = areasAgregadas.find(reg =>
+        reg.Area === nombreArea && reg.Microtunel !== ""
+      );
+
+      if (registro) {
+        let lista = registro.Microtunel.split(',').map(Number).filter(n => !isNaN(n));
+        if (!lista.includes(microtunel)) {
+          lista.push(microtunel);
+          registro.Microtunel = lista.join(',');
+        }
+      } else {
+        areasAgregadas.push({
+          Fecha: hoy,
+          Area: nombreArea,
+          Nave: "",
+          Microtunel: [microtunel].join(',')
+        });
+      }
+
+    } else if (tipo === "nave") {
+      const nave = Number(partesId[1]?.split(':')[1]);
+      if (isNaN(nave)) return;
+
+      let registro = areasAgregadas.find(reg =>
+        reg.Area === nombreArea && reg.Nave !== ""
+      );
+
+      if (registro) {
+        let lista = registro.Nave.split(',').map(Number).filter(n => !isNaN(n));
+        if (!lista.includes(nave)) {
+          lista.push(nave);
+          registro.Nave = lista.join(',');
+        }
+      } else {
+        areasAgregadas.push({
+          Fecha: hoy,
+          Area: nombreArea,
+          Nave: [nave].join(','),
+          Microtunel: ""
+        });
+      }
+    }
+
+  } else {
+    // ❌ DESELECCIONADO
+
+    if (tipo === "area") {
+      areasAgregadas = areasAgregadas.filter(reg =>
+        !(reg.Area === nombreArea && reg.Nave === "" && reg.Microtunel === "")
+      );
+
+    } else if (tipo === "microtunel") {
+      const microtunel = Number(partesId[1]?.split(':')[1]);
+      if (isNaN(microtunel)) return;
+
+      areasAgregadas.forEach((reg, index) => {
+        if (reg.Area === nombreArea && reg.Microtunel) {
+          let lista = reg.Microtunel.split(',').map(Number).filter(n => n !== microtunel);
+          if (lista.length === 0) {
+            // eliminar registro si ya no quedan microtuneles
+            areasAgregadas.splice(index, 1);
+          } else {
+            reg.Microtunel = lista.join(',');
+          }
+        }
+      });
+
+    } else if (tipo === "nave") {
+      const nave = Number(partesId[1]?.split(':')[1]);
+      if (isNaN(nave)) return;
+
+      areasAgregadas.forEach((reg, index) => {
+        if (reg.Area === nombreArea && reg.Nave) {
+          let lista = reg.Nave.split(',').map(Number).filter(n => n !== nave);
+          if (lista.length === 0) {
+            areasAgregadas.splice(index, 1);
+          } else {
+            reg.Nave = lista.join(',');
+          }
+        }
+      });
+    }
+  }
+
+  console.log("Áreas afectadas:", areasAgregadas);
+  activarBotonesReporte();
+}
+
+
+      
+       function desactivaroActivarCheck(checks,valor){
+          checks.forEach(check=>{
+              if (check) check.disabled = valor;
+          });
+        }
+        function agruparPorVariosCampos(datos, campos) {
+          return datos.reduce((acumulador, item) => {
+              // Crea una clave compuesta basada en los campos especificados
+              const clave = campos.map(campo => item[campo]).join('|');
+              
+              if (!acumulador[clave]) {
+                  acumulador[clave] = [];
+              }
+              
+              acumulador[clave].push(item);
+              return acumulador;
+          }, {});
+        }
+        function encontrarCuadrantesConReportes(){
+            const fecha = document.getElementById('fecha').value.toString();
+              let fechaInicio = "";
+              let fechaFin = "";
+
+              if (fecha.includes("to")) {
+                // Es un rango
+                [fechaInicio, fechaFin] = fecha.split(" to ");
+              } else {
+                // Es una sola fecha
+                fechaInicio = fecha;
+                fechaFin = fecha;
+              }
+              const [anioInicio, mesInicio, diaInicio] = fechaInicio.split("-");
+              const [anioFin, mesFin, diaFin] = fechaFin.split("-");
+
+              const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
+              const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
+              const regex = /^b:\d+-mt:\d+-h:\d+-c:\d+$/;
+              const tds = Array.from(document.querySelectorAll("td"));
+              const tdsFiltrados = tds.filter(td => regex.test(td.id));
+              const areasReportadas = fecha? areasConReporte.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReporte;
+              let areasEncontradas = [];
+              areasReportadas.forEach(area=>{
+                  const bloque = 'b:'+area["N° Bloque"];
+                  const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
+                  const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => Number(cuadrante)>0);
+                  let elementosTdPorC = [];
+                  if(cuadrantes.length>0){
+                      cuadrantes.forEach(cuadrante=>{
+                          const idCuadrante = 'c:'+cuadrante;
+                           elementosTdPorC = tdsFiltrados.filter(td => {
+                                                 const [idBloque, idMacrotunel, idHilera,cuadrante]= td.id.split('-');
+                                                  return (idBloque == bloque) &&
+                                                         (idMacrotunel == macrotunel) &&
+                                                         (cuadrante == idCuadrante);
+                                                }).map(td=>td.id);
+                          areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+                      })
+                  }else if(macrotunel !== ""){
+                      elementosTdPorC = tdsFiltrados.filter(td => {
+                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                                                  return (idBloque == bloque) &&
+                                                         (idMacrotunel == macrotunel)
+                                                }).map(td=>td.id);
+                      areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+                  }else{ 
+                      elementosTdPorC = tdsFiltrados.filter(td => {
+                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                                                  return (idBloque == bloque)
+                                                }).map(td=>td.id);
+                      areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+                  }
+              });
+            const areasUnicas = agruparIds(areasEncontradas);
+            const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
+            for(let clave in areasUnicas){
+                const elemento=areasUnicas[clave];
+                const idAreas = elemento.ids;
+                const porcentaje = elemento.repeticiones/repeticionMaxima;
+                const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
+                const color = `rgb(255, ${intensidad }, ${intensidad})`;
+                idAreas.forEach(id=>{
+                    const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
+                    tdEncontrado.style.boxShadow = `inset 0 0 10px ${color}`;
+                })
+            }
+        }
+       function agruparIds(idsValidos) {
+          const grupos = {};
+        
+          idsValidos.forEach(id => {
+            // Extraemos las partes sin regex (ya sabemos que el formato es válido)
+            // Asumiendo que siempre es b:x-mt:y-h:z-c:w
+            const partes = id.split('-').reduce((acc, parte) => {
+              const [key, val] = parte.split(':');
+              acc[key] = val;
+              return acc;
+            }, {});
+        
+            const clave = `b:${partes.b}-mt:${partes.mt}-c:${partes.c}`;
+        
+            if (!grupos[clave]) {
+              grupos[clave] = {
+                ids: [],
+                hUnicos: new Set(),
+              };
+            }
+        
+            grupos[clave].ids.push(id);
+            grupos[clave].hUnicos.add(partes.h);
+          });
+        
+          // Formateamos el resultado para devolverlo limpio
+          const resultado = {};
+          for (const clave in grupos) {
+            resultado[clave] = {
+              repeticiones : grupos[clave].ids.length /grupos[clave].hUnicos.size,
+              ids: [...new Set(grupos[clave].ids)], // copia del array original
+            };
+          }
+          return resultado;
+        }
+
+    </script>
+</body>
+</html>
