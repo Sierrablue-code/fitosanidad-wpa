@@ -235,7 +235,48 @@
     .custom-select.active .options-container {
     display: block;
     }
+    .switch-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-family: sans-serif;
+      font-size: 16px;
+      user-select: none;
+    }
     
+    .switch-label input[type="checkbox"] {
+      display: none;
+    }
+    
+    .switch-slider {
+      width: 40px;
+      height: 20px;
+      background-color: #ccc;
+      border-radius: 20px;
+      position: relative;
+      transition: background-color 0.3s;
+    }
+    
+    .switch-slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: white;
+      border-radius: 50%;
+      top: 1px;
+      left: 1px;
+      transition: transform 0.3s;
+    }
+    
+    input[type="checkbox"]:checked + .switch-slider {
+      background-color: #4caf50;
+    }
+    
+    input[type="checkbox"]:checked + .switch-slider::before {
+      transform: translateX(20px);
+    }   
     .acciones-extra button {
       margin-right: 10px;
       padding: 4px 5px;
@@ -879,7 +920,13 @@
             </div>
           </div>
           <label for="fecha">Fecha:</label>
-          <input id="fecha" type="date" placeholder="Selecciona fecha o rango de fechas">
+            <label class="switch-label">
+              <input type="checkbox" id="checkReportesPlasticos" />
+              <span class="switch-slider"></span>
+              Ver reportes de plásticos
+            </label>
+
+          <input id="fecha" type="date" placeholder="Selecciona fecha o rango de fechas">    
           <div class="container-tabla">
             <div class="tabla">
               <b>Cuadrantes con problemas <span class="arrow-icon arrow-down">&#9660;</span></b>
@@ -1201,6 +1248,7 @@
     const container = document.querySelector('.container');
     const estructuraMapa= document.getElementById('estructura');
     const paletaColores = document.getElementById('botonToggle');
+    const checkReportes = document.getElementById("checkReportesPlasticos");
     let enfermedadesAgregadas =[];
     let plagasAgregadas =[];
     let areasAgregadas =[];
@@ -1575,7 +1623,7 @@
               });
               inputMuestraTotal.addEventListener('change',actualizarBotones);
           recorrerCS();
-          cargarDatos('Ecualasos').then(()=>{encontrarCuadrantesConReportes()});
+          cargarDatos('Ecualasos').then(()=>{ if(chechReportes.checked) encontrarCuadrantesConReportes()});
           hayConexion()?enviarPendientes():actualizarContador();
        });
           //fin cod aux
@@ -2505,7 +2553,13 @@
             td.removeAttribute('data-shadow-aplicado');
           });
         }
-
+       checkReportes.addEventListener("change", function () {
+          if (this.checked) {
+             encontrarCuadrantesConReportes();
+          } else {
+            eliminarShadows();
+          }
+        });
     </script>
 </body>
 </html>
