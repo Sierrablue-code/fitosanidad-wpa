@@ -2474,10 +2474,7 @@
                   const areaId = 'b:'+area["area id"];
                   let elementosTdPorC =[];
                   if(tipo=="area"){
-                    elementosTdPorC =  tdsFiltrados.filter(td => {
-                                                 const [idArea, idNave, idMicrotunel, idCuadrante]= td.id.split('-');
-                                                  return (idArea == areaId) 
-                                                }).map(td=>td.id);
+                    elementosTdPorC =  tdsFiltrados.filter(td => td.id==areaId).map(td=>td.id);
                   }else if(tipo=="microtunel"){
                      const microtuneles = Array.from(area["Microtunel"]).filter(valor => Number(valor)>0);
                      microtuneles.forEach(microtunel=>{
