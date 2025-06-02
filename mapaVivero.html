@@ -2398,8 +2398,6 @@
     }
 
   } else {
-    // ❌ DESELECCIONADO
-
     if (tipo === "area") {
       areasAgregadas = areasAgregadas.filter(reg =>
         !(reg.Area === nombreArea && reg.Nave === "" && reg.Microtunel === "")
@@ -2501,16 +2499,18 @@
                   areasAgregadas[tipo].ids=areasAgregadas[tipo].ids.concat(elementosTdPorC);
                 });
             const areasAgrupadas = agruparIds(areasEncontradas);
-            console.log('areas agrupadas', areasAgrupadas);
+            console.log('areas agrupadas v1', areasAgrupadas);
             
             for (const tipo in areasAgrupadas) {
+                console.log(tipo);
               if (tipo === "area") {
                 const ids = areasAgrupadas[tipo]; // esto ya es un array de objetos { tipo, id, repeticiones }
-            
+                console.log(ids);
                 // Obtener el máximo de repeticiones
                 const maxReporte = Math.max(...ids.map(entry => entry.repeticiones));
             
                 ids.forEach(entry => {
+                    console.log(entry);
                   const porcentaje = entry.repeticiones / maxReporte;
                   const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
                   const color = `rgb(255, ${intensidad}, ${intensidad})`;
