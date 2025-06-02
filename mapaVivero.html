@@ -1601,7 +1601,7 @@ td.sombreado {
     // 2. Si hay conexión, siempre intenta obtener los datos frescos del Worker
      try {
         // *** CAMBIO CLAVE AQUÍ: Usamos URL_APPSCRIPT en lugar de una nueva constante ***
-        const filtro = claveCache.includes('reportes')? `Filter(${tabla}, AND([Productor] = "${productor}",IN("Rotura de plástico",[Observación])))`:`Filter(${tabla}, [Productor] = "${productor}")`
+        const filtro = claveCache.includes('reportes')? `Filter(${tabla}, [Productor] = "${productor}")`:`Filter(${tabla}, [Productor] = "${productor}")`
         const response = await fetch(URL_APPSCRIPT, {
             method: "POST", // Tu Worker espera POST
             headers: {
