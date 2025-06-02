@@ -2328,23 +2328,23 @@
   const partesId = id.split('-');
   const idenArea = partesId[0].split(':')[1];
   const nombreArea = idenArea === "a" ? "Aclimatación" : "Endurecimiento";
-
+  const naveId = nombreArea =="Aclimatación"?1:"";
   if (cb.checked) {
-    // ✔️ SELECCIONADO
-
     if (tipo === "area") {
       const yaExiste = areasAgregadas.some(reg =>
         reg.Area === nombreArea &&
         reg.Nave === "" &&
-        reg.Microtunel === ""
+        reg.Microtunel === "" &&
+        reg["Tipo de daño"] == tipo
       );
 
       if (!yaExiste) {
         areasAgregadas.push({
-          Fecha: hoy,
-          Area: nombreArea,
-          Nave: "",
-          Microtunel: ""
+          'Fecha': hoy,
+          'Area': nombreArea,
+          'Nave': "",
+          'Microtunel': "",
+          'Tipo de daño':tipo
         });
       }
 
@@ -2353,7 +2353,7 @@
       if (isNaN(microtunel)) return;
 
       let registro = areasAgregadas.find(reg =>
-        reg.Area === nombreArea && reg.Microtunel !== ""
+        reg.Area === nombreArea && reg.Microtunel !== "" && reg["Tipo de daño"]==tipo
       );
 
       if (registro) {
@@ -2364,10 +2364,11 @@
         }
       } else {
         areasAgregadas.push({
-          Fecha: hoy,
-          Area: nombreArea,
-          Nave: "",
-          Microtunel: [microtunel].join(',')
+          'Fecha': hoy,
+          'Area': nombreArea,
+          'Nave': "",
+          'Microtunel': [microtunel].join(','),
+          'Tipo de daño':tipo
         });
       }
 
@@ -2376,7 +2377,7 @@
       if (isNaN(nave)) return;
 
       let registro = areasAgregadas.find(reg =>
-        reg.Area === nombreArea && reg.Nave !== ""
+        reg.Area === nombreArea && reg.Nave !== "" && reg["Tipo de daño"]== tipo
       );
 
       if (registro) {
@@ -2387,10 +2388,11 @@
         }
       } else {
         areasAgregadas.push({
-          Fecha: hoy,
-          Area: nombreArea,
-          Nave: [nave].join(','),
-          Microtunel: ""
+          'Fecha': hoy,
+          'Area': nombreArea,
+          'Nave': [nave].join(','),
+          'Microtunel': "",
+          'Tipo de daño':tipo
         });
       }
     }
@@ -2475,91 +2477,79 @@
 
               const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
               const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
-              const regex = /^b:\d+-mt:\d+-h:\d+-c:\d+$/;
+              const regex = /^b:[a-z]-n:\d+-(mi|ca):\d+-c:\d+$/;
               const tds = Array.from(document.querySelectorAll("td"));
               const tdsFiltrados = tds.filter(td => regex.test(td.id));
               const areasReportadas = fecha? areasConReporte.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReporte;
-              let areasEncontradas = [];
+              let areasEncontradas = {};
               areasReportadas.forEach(area=>{
-                  const bloque = 'b:'+area["N° Bloque"];
-                  const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
-                  const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => Number(cuadrante)>0);
-                  let elementosTdPorC = [];
-                  if(cuadrantes.length>0){
-                      cuadrantes.forEach(cuadrante=>{
-                          const idCuadrante = 'c:'+cuadrante;
-                           elementosTdPorC = tdsFiltrados.filter(td => {
-                                                 const [idBloque, idMacrotunel, idHilera,cuadrante]= td.id.split('-');
-                                                  return (idBloque == bloque) &&
-                                                         (idMacrotunel == macrotunel) &&
-                                                         (cuadrante == idCuadrante);
-                                                }).map(td=>td.id);
-                          areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                      })
-                  }else if(macrotunel !== ""){
+                  const tipo = area["Tipo de daño"];
+                  const areaId = 'b:'+area["area id"];
+                  let elementosTdPorC =[];
+                  if(tipo=="area"){
+                    elementosTdPorC = tdsFiltrados.filter(td => td.id == areaId).map(td=>td.id);
+                    
+                  }else if(tipo=="microtunel"){
+                     const microtuneles = Array.from(area["Microtunel"]).filter(valor => Number(valor)>0);
+                     microtuneles.forEach(microtunel=>{
+                      const microtunelId = 'mi:'+microtunel;
                       elementosTdPorC = tdsFiltrados.filter(td => {
-                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
-                                                  return (idBloque == bloque) &&
-                                                         (idMacrotunel == macrotunel)
+                                                 const [idArea, idNave, idMicrotunel, idCuadrante]= td.id.split('-');
+                                                  return (idArea == areaId && idMicrotunel == microtunelId) 
                                                 }).map(td=>td.id);
-                      areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                  }else{ 
+                     })
+                  }else if(tipo=="nave"){
+                    const naves = Array.from(area["Nave"]).filter(valor => Number(valor)>0);
+                    naver.forEach(nave=>{
+                      const naveId = 'n:'+nave;
                       elementosTdPorC = tdsFiltrados.filter(td => {
-                                                 const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
-                                                  return (idBloque == bloque)
+                                                 const [idArea, idNave, idCama, idCuadrante]= td.id.split('-');
+                                                  return (idArea == areaId && idNave == naveId) 
                                                 }).map(td=>td.id);
-                      areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+                    })
                   }
-              });
-            const areasUnicas = agruparIds(areasEncontradas);
-            const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
-            for(let clave in areasUnicas){
-                const elemento=areasUnicas[clave];
-                const idAreas = elemento.ids;
-                const porcentaje = elemento.repeticiones/repeticionMaxima;
-                const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
-                const color = `rgb(255, ${intensidad }, ${intensidad})`;
-                idAreas.forEach(id=>{
-                    const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
-                    tdEncontrado.style.boxShadow = `inset 0 0 10px ${color}`;
+                  if(!areasAgregadas[tipo]){
+                    areasAgregadas[tipo] = {tipo:tipo,ids:[]};
+                  }
+                  areasAgregadas[tipo].ids=areasAgregadas[tipo].ids.concat(elementosTdPorC);
+                });
+            console.log(areasEncontradas);
+            const areasAgrupadas = agruparIds(areasEncontradas);
+            for (const tipo in areasAgrupadas){
+               if(tipo=="area"){
+                const ids = areasAgregadas[tipo];
+                const maxReporte = Math.max(...Object.values(ids).map(entry => entry.repeticiones));
+                ids.forEach(id =>{
+                  const td = tdsFiltrados.find(registro=>registro.id==id);
+                  td.style.boxShadow='red';
                 })
+               }
             }
+            //const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
+            
         }
-       function agruparIds(idsValidos) {
-          const grupos = {};
-        
-          idsValidos.forEach(id => {
-            // Extraemos las partes sin regex (ya sabemos que el formato es válido)
-            // Asumiendo que siempre es b:x-mt:y-h:z-c:w
-            const partes = id.split('-').reduce((acc, parte) => {
-              const [key, val] = parte.split(':');
-              acc[key] = val;
-              return acc;
-            }, {});
-        
-            const clave = `b:${partes.b}-mt:${partes.mt}-c:${partes.c}`;
-        
-            if (!grupos[clave]) {
-              grupos[clave] = {
-                ids: [],
-                hUnicos: new Set(),
-              };
-            }
-        
-            grupos[clave].ids.push(id);
-            grupos[clave].hUnicos.add(partes.h);
-          });
-        
-          // Formateamos el resultado para devolverlo limpio
-          const resultado = {};
-          for (const clave in grupos) {
-            resultado[clave] = {
-              repeticiones : grupos[clave].ids.length /grupos[clave].hUnicos.size,
-              ids: [...new Set(grupos[clave].ids)], // copia del array original
-            };
-          }
-          return resultado;
-        }
+      function agruparIds(idsValidos) {
+      const resultado = {};
+
+      for (const tipo in idsValidos) {
+        const listaIds = idsValidos[tipo].ids;
+
+        // Contar cuántas veces se repite cada ID
+        const conteoPorId = listaIds.reduce((acc, id) => {
+          acc[id] = (acc[id] || 0) + 1;
+          return acc;
+        }, {});
+
+        // Convertir a array de objetos únicos con su cantidad
+        resultado[tipo] = Object.entries(conteoPorId).map(([id, repeticiones]) => ({
+          tipo,
+          id,
+          repeticiones
+        }));
+      }
+
+      return resultado;
+    }
 
     </script>
 </body>
