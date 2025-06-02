@@ -2506,6 +2506,7 @@
                if(tipo=="area"){
                 const ids = areasAgregadas[tipo];
                 const maxReporte = Math.max(...Object.values(ids).map(entry => entry.repeticiones));
+                console.log( clave, idAreas)
                 ids.forEach(id =>{
                   const porcentaje = id.repeticiones/ maxReporte ;
                   const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
