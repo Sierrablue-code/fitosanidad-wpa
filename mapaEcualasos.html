@@ -710,11 +710,7 @@
         <div class="titulo">
           Mapa de fitosanidad Ecualasos
           <button class="sync-btn" onclick="enviarPendientes()" title="Sincronizar">
-      🔄 <span id="contador">0</span></button>  <label class="switch-label">
-              <input type="checkbox" id="checkReportesPlasticos" />
-              <span class="switch-slider"></span>
-              Ver reportes de plásticos
-            </label>
+      🔄 <span id="contador">0</span></button> 
         </div>
         <div class="filtros">
           <label for="plaga">Plaga:</label>
@@ -929,10 +925,14 @@
             <div class="tabla">
               <b>Cuadrantes con problemas <span class="arrow-icon arrow-down">&#9660;</span></b>
               <div class="items">
-                
               </div>
             </div>
           </div>
+         <label class="switch-label">
+              <input type="checkbox" id="checkReportesPlasticos" />
+              <span class="switch-slider"></span>
+              Ver reportes de plásticos
+            </label>
         </div>
          <div class="acciones-extra" id="botonesReportar" style="display: none;">
           <button onclick="guardarRegistros(event,'no')">💾 Guardar</button>
@@ -1384,6 +1384,7 @@
       });
       fecha.addEventListener('change',(event)=>{
         actualizarItems();
+        if(chechReportes.checked) encontrarCuadrantesConReportes();
       })
         function actualizarItems(){
             lista.innerHTML='';
