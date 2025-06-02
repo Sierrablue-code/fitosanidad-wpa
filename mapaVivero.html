@@ -2472,13 +2472,11 @@
                   const tipo = area["Tipo de daño"];
                   const areaId = 'b:'+area["area id"];
                   let elementosTdPorC =[];
-                  console.log('encontrando area..:', tipo, areaId)
                   if(tipo=="area"){
                     elementosTdPorC =  tdsFiltrados.filter(td => {
                                                  const [idArea, idNave, idMicrotunel, idCuadrante]= td.id.split('-');
                                                   return (idArea == areaId) 
                                                 }).map(td=>td.id);
-                     console.log('encontrando elementos tds id:', elementosTdPorC)
                   }else if(tipo=="microtunel"){
                      const microtuneles = Array.from(area["Microtunel"]).filter(valor => Number(valor)>0);
                      microtuneles.forEach(microtunel=>{
@@ -2503,27 +2501,17 @@
                   }
                   areasEncontradas[tipo].ids=areasEncontradas[tipo].ids.concat(elementosTdPorC);
                 });
-            console.log('areas encontradas', areasEncontradas);
             const areasAgrupadas = agruparIds(areasEncontradas);
-            console.log('areas agrupadas v1', areasAgrupadas);
             
             for (const tipo in areasAgrupadas) {
-                console.log(tipo);
               if (tipo === "area") {
-                const ids = areasAgrupadas[tipo]; // esto ya es un array de objetos { tipo, id, repeticiones }
-                console.log(ids);
-                // Obtener el máximo de repeticiones
+                const ids = areasAgrupadas[tipo]; 
                 const maxReporte = Math.max(...ids.map(entry => entry.repeticiones));
-            
                 ids.forEach(entry => {
-                    console.log(entry);
                   const porcentaje = entry.repeticiones / maxReporte;
                   const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
                   const color = `rgb(255, ${intensidad}, ${intensidad})`;
-            
-                  // Buscar todos los td que coincidan con ese id
                   const tdsCoincidentes = tdsFiltrados.filter(td => td.id === entry.id);
-            
                   tdsCoincidentes.forEach(td => {
                     td.style.boxShadow = `inset 0 0 10px ${color}`;
                   });
