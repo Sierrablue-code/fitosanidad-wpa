@@ -255,6 +255,27 @@
         flex-direction: column;
         gap: 10px;
     }
+    .boton-estado {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #eee;
+  color: #333;
+  box-shadow: inset 0 0 5px #999;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.boton-estado.activo {
+  background-color: #4CAF50;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+td.sombreado {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+}
     .zoom-button {
         width: 50px;
         height: 50px;
@@ -881,6 +902,14 @@
             </div>
           </div>
           <label for="fecha">Fecha:</label>
+            <button id="btnEstado" class="boton-estado">Activar</button>
+            <table>
+              <tr>
+                <td class="sombreado">Celda 1</td>
+                <td>Celda 2</td>
+                <td class="sombreado">Celda 3</td>
+              </tr>
+            </table>
           <input id="fecha" type="date" placeholder="Selecciona fecha o rango de fechas">
           <div class="container-tabla">
             <div class="tabla">
@@ -1545,7 +1574,7 @@
               });
               inputMuestraTotal.addEventListener('change',actualizarBotones);
           recorrerCS();
-          cargarDatos('Ecualasos').then(()=>{encontrarCuadrantesConReportes()});
+          cargarDatos('Ecuablue').then(()=>{encontrarCuadrantesConReportes()});
           hayConexion()?enviarPendientes():actualizarContador();
        });
           //fin cod aux
