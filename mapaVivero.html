@@ -2493,10 +2493,10 @@
                                                 }).map(td=>td.id);
                     })
                   }
-                  if(!areasAgregadas[tipo]){
-                    areasAgregadas[tipo] = {tipo:tipo,ids:[]};
+                  if(!areasEncontradas[tipo]){
+                    areasEncontradas[tipo] = {tipo:tipo,ids:[]};
                   }
-                  areasAgregadas[tipo].ids=areasAgregadas[tipo].ids.concat(elementosTdPorC);
+                  areasEncontradas[tipo].ids=areasEncontradas[tipo].ids.concat(elementosTdPorC);
                 });
             console.log('areas encontradas', areasEncontradas);
             const areasAgrupadas = agruparIds(areasEncontradas);
