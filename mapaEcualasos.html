@@ -2394,6 +2394,7 @@
           }, {});
         }
         function encontrarCuadrantesConReportes(){
+            eliminarShadows();
             const fecha = document.getElementById('fecha').value.toString();
               let fechaInicio = "";
               let fechaFin = "";
@@ -2458,6 +2459,7 @@
                 idAreas.forEach(id=>{
                     const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
                     tdEncontrado.style.boxShadow = `inset 0 0 10px ${color}`;
+                    tdEncontrado.setAttribute('data-shadow-aplicado', 'true');
                 })
             }
         }
@@ -2495,6 +2497,13 @@
             };
           }
           return resultado;
+        }
+        function eliminarShadows(){
+          const tdsConSombra = document.querySelectorAll('td[data-shadow-aplicado="true"]');
+          tdsConSombra.forEach(td => {
+            td.style.boxShadow = 'none';
+            td.removeAttribute('data-shadow-aplicado');
+          });
         }
 
     </script>
