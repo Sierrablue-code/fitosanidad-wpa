@@ -2501,23 +2501,29 @@
                   areasAgregadas[tipo].ids=areasAgregadas[tipo].ids.concat(elementosTdPorC);
                 });
             const areasAgrupadas = agruparIds(areasEncontradas);
-            console.log('areas agrupadas',areasAgrupadas);
-            for (const tipo in areasAgrupadas){
-               if(tipo=="area"){
-                const ids = areasAgregadas[tipo];
-                const maxReporte = Math.max(...Object.values(ids).map(entry => entry.repeticiones));
-                console.log( clave, idAreas)
-                ids.forEach(id =>{
-                  const porcentaje = id.repeticiones/ maxReporte ;
-                  const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
-                  const color = `rgb(255, ${intensidad }, ${intensidad})`;
-                  const td = tdsFiltrados.find(registro=>registro.id==id);
-                  td.style.boxShadow=`inset 0 0 10px ${color}`;
-                })
-               }
-            }
-            //const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
+            console.log('areas agrupadas', areasAgrupadas);
             
+            for (const tipo in areasAgrupadas) {
+              if (tipo === "area") {
+                const ids = areasAgrupadas[tipo]; // esto ya es un array de objetos { tipo, id, repeticiones }
+            
+                // Obtener el máximo de repeticiones
+                const maxReporte = Math.max(...ids.map(entry => entry.repeticiones));
+            
+                ids.forEach(entry => {
+                  const porcentaje = entry.repeticiones / maxReporte;
+                  const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
+                  const color = `rgb(255, ${intensidad}, ${intensidad})`;
+            
+                  // Buscar todos los td que coincidan con ese id
+                  const tdsCoincidentes = tdsFiltrados.filter(td => td.id === entry.id);
+            
+                  tdsCoincidentes.forEach(td => {
+                    td.style.boxShadow = `inset 0 0 10px ${color}`;
+                  });
+                });
+              }
+            }
         }
       function agruparIds(idsValidos) {
       const resultado = {};
