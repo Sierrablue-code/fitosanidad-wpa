@@ -710,7 +710,11 @@
         <div class="titulo">
           Mapa de fitosanidad Ecualasos
           <button class="sync-btn" onclick="enviarPendientes()" title="Sincronizar">
-      🔄 <span id="contador">0</span></button>
+      🔄 <span id="contador">0</span></button>  <label class="switch-label">
+              <input type="checkbox" id="checkReportesPlasticos" />
+              <span class="switch-slider"></span>
+              Ver reportes de plásticos
+            </label>
         </div>
         <div class="filtros">
           <label for="plaga">Plaga:</label>
@@ -920,12 +924,6 @@
             </div>
           </div>
           <label for="fecha">Fecha:</label>
-            <label class="switch-label">
-              <input type="checkbox" id="checkReportesPlasticos" />
-              <span class="switch-slider"></span>
-              Ver reportes de plásticos
-            </label>
-
           <input id="fecha" type="date" placeholder="Selecciona fecha o rango de fechas">    
           <div class="container-tabla">
             <div class="tabla">
