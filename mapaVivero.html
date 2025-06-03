@@ -1222,6 +1222,7 @@
     const container = document.querySelector('.container');
     const estructuraMapa= document.getElementById('estructura');
     const paletaColores = document.getElementById('botonToggle');
+    const checkReporte = document.getElementById('checkReportesPlasticos');
     let enfermedadesAgregadas =[];
     let plagasAgregadas =[];
     let areasAgregadas =[];
@@ -1359,6 +1360,7 @@
       });
       fecha.addEventListener('change',(event)=>{
         actualizarItems();
+        if(checkReporte.checked) encontrarCuadrantesConReportes();
       })
         function actualizarItems(){
             lista.innerHTML='';
@@ -1596,7 +1598,7 @@
               });
               inputMuestraTotal.addEventListener('change',actualizarBotones);
           recorrerCS();
-          cargarDatos('Ecuablue').then(()=>{encontrarCuadrantesConReportes()});
+          cargarDatos('Ecuablue').then(()=>{if(checkReporte.checked)encontrarCuadrantesConReportes()});
           hayConexion()?enviarPendientes():actualizarContador();
        });
           //fin cod aux
