@@ -2465,7 +2465,7 @@
               const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
               const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
               const regex = /^b:[a-z]-n:\d+-(mi|ca):\d+-c:\d+$/;
-              const regexArea = /^b:[a-z]-l:\d;
+              const regexArea = /^b:[a-z]-l:\d+$/;
               const tds = Array.from(document.querySelectorAll("td"));
               const tdsFiltrados = tds.filter(td => regex.test(td.id) || regexArea.test(td.id));
               const areasReportadas = fecha? areasConReporte.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReporte;
