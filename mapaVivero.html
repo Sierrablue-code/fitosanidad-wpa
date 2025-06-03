@@ -2464,10 +2464,11 @@
 
               const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
               const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
-              const regex = /^b:[a-z]-n:\d+-(mi|ca):\d+-c:\d+$/;
+              const regex = /^b:[a-z]-n:\d+-mi:\d+-c:\d+$/;
               const regexArea = /^b:[a-z]-l:\d+$/;
+              const regexNave =  /^b:[a-z]-n:\d+-l:\d+$/
               const tds = Array.from(document.querySelectorAll("td"));
-              const tdsFiltrados = tds.filter(td => regex.test(td.id) || regexArea.test(td.id));
+              const tdsFiltrados = tds.filter(td => regex.test(td.id) || regexArea.test(td.id) || regexNave.test(td.id));
               const areasReportadas = fecha? areasConReporte.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReporte;
               let areasEncontradas = {};
              areasReportadas.forEach(area => {
@@ -2487,7 +2488,7 @@
                   const naveId = 'n:1';
                   const idArea = areaId+'-' + naveId + '-' + microtunelId;
                   if (!areasEncontradas[idArea]) {
-                    areasEncontradas[idArea] = { tipo: tipo, tdId: [idArea+'c:1',idArea+'c:2',idArea+'c:3',idArea+'c:4'], contador: 0 };
+                    areasEncontradas[idArea] = { tipo: tipo, tdId: [idArea], contador: 0 };
                   }
                   areasEncontradas[idArea].contador += 1;
                 });
@@ -2515,9 +2516,11 @@
                 const intensidad = Math.floor(220 * (1 - porcentaje)); 
                 const color = `rgb(255, ${intensidad }, ${intensidad})`;
                 idsTd.forEach(id=>{
-                    const tdEncontrado = document.getElementById(id);
-                    console.log(id,tdEncontrado);
-                    if (tdEncontrado) tdEncontrado.style.boxShadow = crearBoxShadow(id,color,tipo);         
+                    const tdsEncontrado = tipo=="micrtotunel"?tdsFiltrados.filter(td => td.id.includes(id)):[document.getElementById(id)].filter(Boolean);
+                    console.log(id,tdsEncontrado);
+                    tdsEncontrado.forEach(tdEncontrado=>{
+                        tdEncontrado.style.boxShadow = crearBoxShadow(id,color,tipo);
+                    })         
                 })
             }
             
