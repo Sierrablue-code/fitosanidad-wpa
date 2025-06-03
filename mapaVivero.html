@@ -2516,7 +2516,8 @@
                 const color = `rgb(255, ${intensidad }, ${intensidad})`;
                 idsTd.forEach(id=>{
                     const tdEncontrado = document.getElementById(id);
-                    tdEncontrado.style.boxShadow = crearBoxShadow(id,color,tipo);         
+                    console.log(id,tdEncontrado);
+                    if (tdEncontrado) tdEncontrado.style.boxShadow = crearBoxShadow(id,color,tipo);         
                 })
             }
             
