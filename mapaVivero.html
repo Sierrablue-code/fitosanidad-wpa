@@ -2517,7 +2517,7 @@
                 const intensidad = Math.floor(220 * (1 - porcentaje)); 
                 const color = `rgb(255, ${intensidad }, ${intensidad})`;
                 idsTd.forEach(id=>{
-                    const tdsEncontrado = tipo=="micrtotunel"?tdsFiltrados.filter(td => td.id.includes(id)):[document.getElementById(id)].filter(Boolean);
+                    const tdsEncontrado = tipo=="microtunel"?tdsFiltrados.filter(td => td.id.includes(id)):[document.getElementById(id)].filter(Boolean);
                     console.log(id,tdsEncontrado);
                     tdsEncontrado.forEach(tdEncontrado=>{
                         tdEncontrado.style.boxShadow = crearBoxShadow(id,color,tipo);
