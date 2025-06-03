@@ -2589,6 +2589,13 @@
           const match = id.match(/c:(\d+)/);
           return match ? parseInt(match[1], 10) : Infinity;
         }
+        function eliminarShadows(){
+          const tdsConSombra = document.querySelectorAll('td[data-shadow-aplicado="true"]');
+          tdsConSombra.forEach(td => {
+            td.style.boxShadow = 'none';
+            td.removeAttribute('data-shadow-aplicado');
+          });
+        }
 
     </script>
 </body>
