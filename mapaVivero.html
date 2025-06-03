@@ -2537,13 +2537,8 @@
                         
                           tdsEncontrado.forEach(tdEncontrado => {
                             const idTdEncontrado = tdEncontrado.id;
-                            tdEncontrado.style.boxShadow = crearBoxShadow(
-                              idTdEncontrado,
-                              color,
-                              tipo,
-                              idTdEncontrado === idPrimero,
-                              idTdEncontrado === idUltimo
-                            );
+                            tdEncontrado.style.boxShadow = crearBoxShadow(idTdEncontrado,color,tipo,idTdEncontrado === idPrimero,idTdEncontrado === idUltimo);
+                            tdEncontrado.setAttribute('data-shadow-aplicado', 'true');
                           });
                     }        
                 })
