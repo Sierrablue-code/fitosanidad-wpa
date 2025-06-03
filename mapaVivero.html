@@ -2545,8 +2545,8 @@
           const tamaño = 4;
         
           if (tipo === "area" || tipo === "nave") {
-            if (tdId.includes("l:1") || tdId.includes("l:2")) sombras.push(`inset ${tamaño}px 0 ${blur}px ${spread}px ${color}`);     // derecha1
-            if (tdId.includes("l:4")) sombras.push(`inset 0 ${tamaño}px ${blur}px ${spread}px ${color}`);     // abajo
+            if (tdId.includes("l:1")) sombras.push(`inset ${tamaño}px 0 ${blur}px ${spread}px ${color}`);     // derecha1
+            if (tdId.includes("l:4") || tdId.includes("l:2")) sombras.push(`inset 0 ${tamaño}px ${blur}px ${spread}px ${color}`);     // abajo
             if (tdId.includes("l:3")) sombras.push(`inset ${-tamaño}px 0 ${blur}px ${spread}px ${color}`);    // izquierda
             //if (tdId.includes("l:2")) sombras.push(`inset 0 ${-tamaño}px ${blur}px ${spread}px ${color}`);    // arriba
           }
