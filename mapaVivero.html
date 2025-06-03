@@ -1596,7 +1596,14 @@
                   return false;
                 }
               });
-              inputMuestraTotal.addEventListener('change',actualizarBotones);
+          inputMuestraTotal.addEventListener('change',actualizarBotones);
+          checkReporte.addEventListener("change", function () {
+              if (this.checked) {
+                 encontrarCuadrantesConReportes();
+              } else {
+                eliminarShadows();
+              }
+            });
           recorrerCS();
           cargarDatos('Ecuablue').then(()=>{if(checkReporte.checked)encontrarCuadrantesConReportes()});
           hayConexion()?enviarPendientes():actualizarContador();
