@@ -2573,6 +2573,10 @@
         
           return sombras.join(", ");
         }
+        function obtenerNumeroC(id) {
+          const match = id.match(/c:(\d+)/);
+          return match ? parseInt(match[1], 10) : Infinity;
+        }
 
     </script>
 </body>
