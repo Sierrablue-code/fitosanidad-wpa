@@ -2509,11 +2509,12 @@
                 const area = areasEncontradas[clave];
                 const tipo= area.tipo;
                 const idsTd = area.tdId;
+                console.log(idsTd);
                 const repeticiones = area.contador;
                 const porcentaje = repeticiones / maxContador;
                 const intensidad = Math.floor(220 * (1 - porcentaje)); 
                 const color = `rgb(255, ${intensidad }, ${intensidad})`;
-                idsTd.forEcah(id=>{
+                idsTd.forEach(id=>{
                     const tdEncontrado = document.getElementById(id);
                     tdEncontrado.style.boxShadow = crearBoxShadow(id,color,tipo);         
                 })
