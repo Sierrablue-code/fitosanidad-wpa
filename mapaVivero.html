@@ -2487,7 +2487,7 @@
                   const naveId = 'n:1';
                   const idArea = areaId+'-' + naveId + '-' + microtunelId;
                   if (!areasEncontradas[idArea]) {
-                    areasEncontradas[idArea] = { tipo: tipo, tdId: [idArea], contador: 0 };
+                    areasEncontradas[idArea] = { tipo: tipo, tdId: [idArea+'c:1',idArea+'c:2',idArea+'c:3',idArea+'c:4'], contador: 0 };
                   }
                   areasEncontradas[idArea].contador += 1;
                 });
