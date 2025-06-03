@@ -2505,7 +2505,7 @@
               }
             });
             const maxContador = Math.max(...Object.values(areasEncontradas).map(area => area.contador));
-            for(cont clave in areasEncontradas) {
+            for(const clave in areasEncontradas) {
                 const area = areasEncontadas[clave];
                 const tipo= area.tipo;
                 const idsTd = area.tdId;
