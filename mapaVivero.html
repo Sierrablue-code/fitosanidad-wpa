@@ -1097,9 +1097,9 @@
       <table class="formulario-table" id="encabezado-registro">
           <thead>
               <tr>
-                <td class="disabled"><label for="Hilera">Área:</label><input type="text" readonly id="valorArea"/></td>
-                <td class="disabled"><label for="Bloque">Nave:</label><input type="text" readonly id="valorNave" /></td>
-                <td class="disabled"><label for="Macrotunel">Microtunel o cama:</label><input type="text" readonly id="valorMicroCama"/></td>
+                <td class="disabled"><label for="Area">Área:</label><input type="text" readonly id="valorArea"/></td>
+                <td class="disabled"><label for="Nave">Nave:</label><input type="text" readonly id="valorNave" /></td>
+                <td class="disabled"><label for="Microtunel">Microtunel o cama:</label><input type="text" readonly id="valorMicroCama"/></td>
                 <td class="disabled"><label for="Cuadrante">Cuadrante o Microcuadrante:</label><input type="text" readonly id="valorCuadrante"/></td>
                 <td><label for="Fecha de registro">Fecha de registro:</label><input type="date"  id="fechaRegistro" required/></td>
               
@@ -1745,14 +1745,15 @@
                  if(id){
                       modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
                       const componentesId=id.split('-');
-                      const bloque = "BLOQUE "+ componentesId[0].split(':')[1];
-                      const macrotunel = componentesId[1].split(':')[1];
-                      const hilera = componentesId[2].split(':')[1];
+                      console.log(id)
+                      const area = componentesId[0].split(':')[1]=="a"?"Aclimatacion":"Endurecimiento";
+                      const nave = componentesId[1].split(':')[1];
+                      const microtOcama = componentesId[2].split(':')[1];
                       const cuadrante = componentesId[3].split(':')[1];
-                      document.getElementById('valorBloque').value=bloque;
-                      document.getElementById('valorMacrotunel').value= macrotunel;
+                      document.getElementById('valorArea').value=area;
+                      document.getElementById('valorMicroCama').value= microtOcama;
                       document.getElementById('valorCuadrante').value=cuadrante;
-                      document.getElementById('valorHilera').value = hilera;
+                      document.getElementById('valorNave').value = nave;
                       modalContent.style.display = "block";
                       document.getElementById('fechaRegistro').value = hoy;
                       //fechaRegistro.value=hoy;
@@ -2209,7 +2210,7 @@
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
-                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecuablue",'Area':'','Nave':bloque,'Microtunel /Cama':macrotunel,'Cuadrante /Microcuadrante':cuadrante,'# Plantas Muestreadas':muestraTotal,'Deficiencia (Foto 1)':"",'Observación':observacionesPrincipales}
+                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecuablue",'Area':area,'Nave':nave,'Microtunel /Cama':macrotunel,'Cuadrante /Microcuadrante':cuadrante,'# Plantas Muestreadas':muestraTotal,'Deficiencia (Foto 1)':"",'Observación':observacionesPrincipales}
                   Array.from(filas).forEach(function(fila) {
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
