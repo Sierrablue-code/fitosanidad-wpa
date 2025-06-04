@@ -1977,7 +1977,7 @@
                             registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl === "" ? null : imageUrl;
 
                             console.log("Enviando encabezado a AppSheet:", registro.encabezado);
-                            const rowId = await runServerFunction('Encabezado: Plagas y enfermedades', registro.encabezado);
+                            const rowId = await runServerFunction('Encabezado: Plagas y enfermedades vivero', registro.encabezado);
 
                             if (rowId) {
                                 idPrincipal = rowId;
@@ -2040,7 +2040,7 @@
 
                         try {
                             console.log("Enviando detalle de plaga a AppSheet:", item);
-                            const id = await runServerFunction("Detalle: Plagas", item);
+                            const id = await runServerFunction("Detalle: Plagas vivero", item);
                             if (!id) fallidosPlagas.push(item);
                         } catch (e) {
                             console.error("Error al guardar detalle de plaga:", e);
@@ -2087,7 +2087,7 @@
 
                         try {
                             console.log("Enviando detalle de enfermedad a AppSheet:", item);
-                            const id = await runServerFunction("Detalle: Enfermedades", item);
+                            const id = await runServerFunction("Detalle: Enfermedades vivero", item);
                             if (!id) fallidosEnfermedades.push(item);
                         } catch (e) {
                             console.error("Error al guardar detalle de enfermedad:", e);
