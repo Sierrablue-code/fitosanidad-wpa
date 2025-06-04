@@ -1974,7 +1974,7 @@
 
                             // *** MODIFICACIÓN CLAVE AQUÍ PARA EL ENCABEZADO ***
                             // Si imageUrl sigue siendo una cadena vacía, la convertimos a null
-                            registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl === "" ? null : imageUrl;
+                            registro.encabezado["Deficiencia (Foto 1)"] = imageUrl === "" ? null : imageUrl;
 
                             console.log("Enviando encabezado a AppSheet:", registro.encabezado);
                             const rowId = await runServerFunction('Encabezado: Plagas y enfermedades vivero', registro.encabezado);
@@ -2210,7 +2210,7 @@
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
-                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecuablue",'Area':area,'Nave':nave,'Microtunel /Cama':macrotunel,'Cuadrante /Microcuadrante':cuadrante,'# Plantas Muestreadas':muestraTotal,'Deficiencia (Foto 1)':"",'Observación':observacionesPrincipales}
+                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecuablue",'Area':area,'Nave':nave,'Microtunel /Cama':macrotunel,'Cuadrante /Microcuadrante':cuadrante,'# Plantas Muestreadas':muestraTotal,'Deficiencia (Foto 1)':imagenPrincipal,'Observación':observacionesPrincipales}
                   Array.from(filas).forEach(function(fila) {
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
