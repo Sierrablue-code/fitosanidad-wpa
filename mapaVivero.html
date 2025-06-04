@@ -2004,7 +2004,7 @@
                     // --- 2. Guardar detalles de Plagas ---
                     const fallidosPlagas = [];
                     for (const item of registro.detallesPlagas) {
-                        item["IdPlagas y Enfermedades"] = idPrincipal;
+                        item["IdEncabezado"] = idPrincipal;
 
                         const rawBase64Plaga = item["Foto 1"];
                         let imageUrlPlaga = "";
@@ -2051,7 +2051,7 @@
                     // --- 3. Guardar detalles de Enfermedades ---
                     const fallidosEnfermedades = [];
                     for (const item of registro.detallesEnfermedades) {
-                        item["IdPlagas y Enfermedades"] = idPrincipal;
+                        item["IdEncabezado"] = idPrincipal;
 
                         const rawBase64Enfermedad = item["Foto 1"];
                         let imageUrlEnfermedad = "";
