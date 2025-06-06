@@ -1620,7 +1620,6 @@
                   return false;
                 }
               });
-              inputMuestraTotal.addEventListener('change',actualizarBotones);
           recorrerCS();
           cargarDatos('Ecualasos').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes()});
           hayConexion()?enviarPendientes():actualizarContador();
@@ -1758,6 +1757,8 @@
 
            function abrirFormulario(id){
                  if(id){
+                      inputMuestraTotal.addEventListener('change',actualizarBotones);
+                     agregarListenersUltimoCampo(document.getElementById('fila-1'))
                       modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
                       const componentesId=id.split('-');
                       const bloque = "BLOQUE "+ componentesId[0].split(':')[1];
@@ -1915,7 +1916,7 @@
                   chk.addEventListener("change", actualizarBotones);
                 });
             }
-            agregarListenersUltimoCampo(document.getElementById('fila-1'))
+            
             function  hayConexion(){
               return navigator.onLine;
             }
