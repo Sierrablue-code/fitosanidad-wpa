@@ -1700,7 +1700,7 @@
             obtenerDesdeBase(productor, "Detalle: Enfermedades", cacheD)
             .then(datos => { auxDiseases = datos; jsonDiseases=auxDiseases }),
             obtenerDesdeBase(productor,"Calendario",cacheR)
-            .then(datos => { areasConReporte = datos;  console.log('reportes obtenidos: ', areasConReporte);})
+            .then(datos => { areasConReportes = datos;  console.log('reportes obtenidos: ', areasConReportes);})
         ]);
         
        }
@@ -2465,7 +2465,7 @@
               const regex = /^b:\d+-mt:\d+-h:\d+-c:\d+$/;
               const tds = Array.from(document.querySelectorAll("td"));
               const tdsFiltrados = tds.filter(td => regex.test(td.id));
-              const areasReportadas = fecha? areasConReporte.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReporte;
+              const areasReportadas = fecha? areasConReportes.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReportes;
               let areasEncontradas = [];
               areasReportadas.forEach(area=>{
                   const bloque = 'b:'+area["N° Bloque"];
