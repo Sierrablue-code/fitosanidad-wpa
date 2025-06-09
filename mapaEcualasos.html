@@ -1222,7 +1222,6 @@
     const URL_APPSCRIPT = "https://sweet-voice-1412.ecuablue-ec.workers.dev/";
     const URL_WORKER_IMAGE_UPLOAD  ="https://wild-band-20e7.ecuablue-ec.workers.dev/";
     const URL_APPSCRIPT_UPLOAD_IMAGE = 'https://script.google.com/macros/s/AKfycbw-uqDgUhvZvw7OS5kwCxjfD0AZh9q5jwdCsu3xQqPAJB7Ssm0FAO_HGAGfAAGqL2UdEg/exec';
-    const GOOGLE_DRIVE_FOLDER_ID = '1uAyXHrJ8SHVkpGTHvQ8DqnzqZN-2FkQd';
     const fechaRegistro = document.getElementById("fechaRegistro");
     const hoy = new Date().toISOString().split('T')[0];
     fechaRegistro.value = hoy;
@@ -1973,10 +1972,10 @@
                                     mimeType = 'image/png'; // Asegúrate de que esto coincida con tu tipo de imagen por defecto si no hay prefijo
                                 }
 
-                                const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotune"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
+                                const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
 
-                                console.log("Subiendo imagen de encabezado:", nombreArchivoEncabezado);
-                                const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado, mimeType);
+                                console.log("Subiendo imagen de encabezado v2:", nombreArchivoEncabezado);
+                                const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado);
 
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
@@ -2041,7 +2040,7 @@
                             const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
 
                             console.log("Subiendo imagen de detalle de plaga:", nombreFotoPlaga);
-                            const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga, mimeTypePlaga);
+                            const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga);
 
                             if (uploadResultPlaga.success) {
                                 imageUrlPlaga = uploadResultPlaga.url;
@@ -2088,7 +2087,7 @@
                             const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
 
                             console.log("Subiendo imagen de detalle de enfermedad:", nombreFotoEnfermedad);
-                            const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad, mimeTypeEnfermedad);
+                            const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad);
 
                             if (uploadResultEnfermedad.success) {
                                 imageUrlEnfermedad = uploadResultEnfermedad.url;
@@ -2274,43 +2273,42 @@
               lector.readAsDataURL(archivo); // lee el archivo como base64
             }
           }
-
-          async function subirImagenBase64DesdeCliente(base64Data, fileName, mimeType) {
-           if (!base64Data || !fileName || !mimeType) {
-                return Promise.reject({ success: false, error: "Faltan datos para subir la imagen (Base64, nombre o tipo MIME)." });
-            }
-        
-            try {
-                const response = await fetch(URL_APPSCRIPT_UPLOAD_IMAGE, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        base64: base64Data,
-                        fileName: fileName,
-                        mimeType: mimeType,
-                        folderId: GOOGLE_DRIVE_FOLDER_ID
-                    }),
-                });
-        
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Error HTTP al subir imagen a Apps Script: ${response.status} - ${errorText}`);
-                }
-        
-                const result = await response.json();
-        
-                if (result.success) {
-                    return { success: true, url: result.url };
-                } else {
-                    throw new Error(`Apps Script reportó un error: ${result.error}`);
-                }
-            } catch (error) {
-                console.error("Error en uploadImageToDrive (fetch/parsing):", error);
-                throw { success: false, error: error.message };
-            }
+        async function subirImagenBase64DesdeCliente(base64Data, fileName) {
+          if (!base64Data || !fileName) {
+            return Promise.reject({ success: false, error: "Faltan base64 o nombre de archivo." });
           }
+        
+          try {
+            const response = await fetch(URL_WORKER_IMAGE_UPLOAD, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                base64: base64Data,
+                nombre: fileName,      // nota: aquí "nombre" para que coincida con Worker
+              }),
+            });
+        
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`Error HTTP al subir imagen: ${response.status} - ${errorText}`);
+            }
+        
+            const result = await response.json();
+        
+            if (result.url) {
+              return { success: true, url: result.url };
+            } else if (result.error) {
+              throw new Error(`Error desde el worker: ${result.error}`);
+            } else {
+              throw new Error("Respuesta inesperada del worker");
+            }
+          } catch (error) {
+            console.error("Error en subirImagenBase64DesdeCliente:", error);
+            throw { success: false, error: error.message };
+          }
+        }
+
+
           /*nuevas funciones*/
           function agregarCheckbox(td){
            const tipo = td.textContent.includes('MT')?"macrotunel":td.textContent.includes('BLOQUE')?"bloque":"cuadrante";
