@@ -1,4 +1,4 @@
-const CACHE_NAME = "miapp-cache-v1"; // ¡Recuerda cambiar esto a v2, v3, etc., con cada actualización!
+const CACHE_NAME = "miapp-cache-v"; // ¡Recuerda cambiar esto a v2, v3, etc., con cada actualización!
 const urlsToCache = [
   "/ecuablue.html",
   "/ecualasos.html",
