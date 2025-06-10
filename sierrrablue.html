@@ -1282,10 +1282,10 @@
     <div id="pantalla-carga">
     <div class="spinner"></div>
   </div>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+      <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-    const URL_APPSCRIPT = "https://sweet-voice-1412.Sierrablue-ec.workers.dev/";
-    const URL_WORKER_IMAGE_UPLOAD  ="https://wild-band-20e7.Sierrablue-ec.workers.dev/";
+    const URL_APPSCRIPT = "https://sweet-voice-1412.ecuablue-ec.workers.dev/";
+    const URL_WORKER_IMAGE_UPLOAD  ="https://wild-band-20e7.ecuablue-ec.workers.dev/";
     const URL_APPSCRIPT_UPLOAD_IMAGE = 'https://script.google.com/macros/s/AKfycbw-uqDgUhvZvw7OS5kwCxjfD0AZh9q5jwdCsu3xQqPAJB7Ssm0FAO_HGAGfAAGqL2UdEg/exec';
     const fechaRegistro = document.getElementById("fechaRegistro");
     const hoy = new Date().toISOString().split('T')[0];
@@ -2366,7 +2366,7 @@
               if (agregarCb &&  !td.querySelector('input[type="checkbox"]')){
               const checkbox = document.createElement('input');
               checkbox.type = 'checkbox';
-              checkbox.className = tipo=='cuadrante'?'dynamic-corner-checkbox': tipo=='macrotunel'?'dynamic-corner-checkbox2':'dynamic-corner-checkbox2'; // <-- ¡AQUÍ LA CLASE ESPECÍFICA!
+              checkbox.className = tipo=='cuadrante'?'dynamic-corner-checkbox': tipo=='macrotunel'?'dynamic-corner-checkbox2':'dynamic-corner-checkbox3'; // <-- ¡AQUÍ LA CLASE ESPECÍFICA!
               checkbox.title = 'Seleccionar cuadrante';
               td.prepend(checkbox);
               checkbox.addEventListener('click', (event) => {
@@ -2400,7 +2400,6 @@
        botonesReporte.style.display = areasAgregadas.length>0?'block':'none';
       }
       function agregarAreaAfectada(id,tipo){
-          console.log(id,tipo)
           const idArea = id.split('-'); 
           const cb = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id==id).map(td => td.querySelector("input[type='checkbox']")).filter(chk => chk)[0];
           var checkboxes =[];
