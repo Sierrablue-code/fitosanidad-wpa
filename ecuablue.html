@@ -458,11 +458,18 @@
       transform: translate(-50%);
       overflow: auto;
     }
-
-    .close {
-        float: right;
-        font-size: 24px;
+  .close {
+        position: absolute; /* Fijo dentro del .modal-content */
+        top: 10px;
+        right: 10px;
+        background: #b40f03;
+        color: white;
+        padding: 5px 5px;
         cursor: pointer;
+        font-weight: bold;
+        border-radius: 50%;
+        z-index: 10;
+       
     }
      /* Pantalla de carga flotante */
     #pantalla-carga {
@@ -1689,11 +1696,11 @@
               allowInput: true,
               animate: false
             });
-         modalContent.addEventListener('keydown',(e)=>{
-            if (e.key == 'Escape') {
-            closeModal();
-          }
-         });
+         window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+              closeModal(); 
+            }
+          });
           const formulario = document.getElementById("formulario");
               formulario.addEventListener("keydown", function (event) {
                 if (event.key === "Enter") {
