@@ -3,6 +3,7 @@ const urlsToCache = [
   "/ecuablue.html",
   "/ecualasos.html",
   "/sierrrablue.html",
+  "/agrotati.html",
   "/mapaEcualasos.html",
   "/mapaVivero.html",
   "/manifest.json"
