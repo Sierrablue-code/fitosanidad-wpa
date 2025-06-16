@@ -199,13 +199,12 @@
 
     // Función para cerrar sesión
      btnCerrarSesion.addEventListener("click", () => {
-          // Borrar solo lo relacionado con la sesión
-      localStorage.removeItem("token");
-      localStorage.removeItem("productor");
-      localStorage.removeItem("productores");
-    
-      // Redirigir al login
-      window.location.href ="fitosanidad-wpa";
+       console.log("Cerrar sesión clickeado");
+        localStorage.removeItem("token");
+        localStorage.removeItem("productor");
+        localStorage.removeItem("productores");
+      
+        window.location.href = "index.html";
     });
   </script>
 </body>
