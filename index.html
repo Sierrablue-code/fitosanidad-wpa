@@ -73,13 +73,13 @@
         .then(async (result) => {
           const user = result.user;
           const token = await user.getIdToken();
-
+          console.log(user, token);
           const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token })
           });
-
+          console.log(respuesta);
           if (!respuesta.ok) {
             alert("No autorizado");
             return;
