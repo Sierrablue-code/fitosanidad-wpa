@@ -2024,7 +2024,7 @@
             total=total + plasticosPendientes.length
             document.getElementById('contador').textContent = total;
           }
-           async function enviarPendientes() {
+             async function enviarPendientes() {
             let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
             let nuevosPendientes = [];
             let reportes = JSON.parse(localStorage.getItem('reportesPendientes')) ||[];
@@ -2103,14 +2103,10 @@
 
                         if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
                             let base64PurePlaga = '';
-                            let mimeTypePlaga = '';
                             if (rawBase64Plaga.startsWith('data:')) {
-                                [mimeTypePlaga, base64PurePlaga] = rawBase64Plaga.split(';');
-                                mimeTypePlaga = mimeTypePlaga.split(':')[1];
-                                base64PurePlaga = base64PurePlaga.split(',')[1];
+                                base64PurePlaga = base64PurePlaga;
                             } else {
-                                base64PurePlaga = rawBase64Plaga;
-                                mimeTypePlaga = 'image/png';
+                                base64PurePlaga = `data:image/png;base64,${rawBase64Plaga}`;
                             }
 
                             const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
@@ -2145,16 +2141,11 @@
 
                         if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
                             let base64PureEnfermedad = '';
-                            let mimeTypeEnfermedad = '';
                             if (rawBase64Enfermedad.startsWith('data:')) {
-                                [mimeTypeEnfermedad, base64PureEnfermedad] = rawBase64Enfermedad.split(';');
-                                mimeTypeEnfermedad = mimeTypeEnfermedad.split(':')[1];
-                                base64PureEnfermedad = base64PureEnfermedad.split(',')[1];
+                                base64PureEnfermedad = base64PureEnfermedad;
                             } else {
-                                base64PureEnfermedad = rawBase64Enfermedad;
-                                mimeTypeEnfermedad = 'image/png';
+                                base64PureEnfermedad = `data:image/png;base64,${rawBase64Enfermedad}`;
                             }
-
                             const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
                             const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad);
 
@@ -2210,13 +2201,11 @@
                 }
             }
             localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes));
-            cargarDatos('Ecuablue')
+            cargarDatos('Agrotati')
             activarBotonesReporte();
             actualizarContador();
              
         }
-       
-
           function submitForm(event){
               event.preventDefault(); // Prevenir el envío del formulario por defecto
               const muestraTotal = document.getElementById('muestra').value;
