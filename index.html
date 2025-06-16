@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingreso con Google</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(to right, #215e99, #83caeb);
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+      color: #215e99;
+    }
+
+    button {
+      background-color: #db4437;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #c23321;
+    }
+
+    @media (max-width: 500px) {
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Bienvenido</h1>
+    <button id="btnLogin">Iniciar sesión con Google</button>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+  <script>
+    // 🔧 Configura con tus datos reales de Firebase
+    const firebaseConfig = {
+      apiKey: "TU_FIREBASE_API_KEY",
+      authDomain: "TU_FIREBASE_AUTH_DOMAIN"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById("btnLogin").addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(async (result) => {
+          const user = result.user;
+          const token = await user.getIdToken();
+
+          // Enviar a tu Worker para validar con AppSheet
+          const respuesta = await fetch("https://TU_WORKER_URL.com", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token })
+          });
+
+          if (!respuesta.ok) {
+            alert("No autorizado.");
+            return;
+          }
+
+          const { productor, correo } = await respuesta.json();
+
+          // Guardar sesión
+          localStorage.setItem("autenticado", "true");
+          localStorage.setItem("correo", correo);
+          localStorage.setItem("productor", productor.toLowerCase());
+
+          // Redirigir al mapa
+          window.location.href = `${productor.toLowerCase()}.html`;
+        })
+        .catch(error => {
+          console.error("Error al iniciar sesión:", error);
+          alert("Error en el login. Intenta de nuevo.");
+        });
+    });
+  </script>
+</body>
+</html>
