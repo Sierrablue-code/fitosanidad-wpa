@@ -67,37 +67,52 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    document.getElementById("btnLogin").addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      console.log('iniciando sesion v3');
-      auth.signInWithPopup(provider)
-        .then(async (result) => {
-          const user = result.user;
-          const token = await user.getIdToken();
-          const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token })
-          });
-          console.log('resultado:',respuesta);
-          if (!respuesta.ok) {
-            alert("No autorizado");
-            return;
-          }
+   document.getElementById("btnLogin").addEventListener("click", () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  console.log("iniciando sesion v3");
 
-          const { productores, correo } = await respuesta.json();
+  auth.signInWithPopup(provider)
+    .then(async (result) => {
+      const user = result.user;
+      const token = await user.getIdToken();
 
-          localStorage.setItem("autenticado", "true");
-          localStorage.setItem("correo", correo);
-          localStorage.setItem("productores", JSON.stringify(productores));
-
-          window.location.href = "inicio.html";
-        })
-        .catch(error => {
-          console.error("Error al iniciar sesión:", error);
-          alert("Error en el login. Intenta de nuevo.");
+      try {
+        const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
         });
+
+        const contenido = await respuesta.json();
+        console.log("Respuesta completa del worker:", contenido);
+
+        if (!respuesta.ok) {
+          const mensaje = contenido?.error || "Error desconocido";
+          const detalles = contenido?.stack || "Sin detalles técnicos.";
+          console.warn("Error de autorización:", mensaje);
+          console.warn("Stack:", detalles);
+          alert(`No autorizado: ${mensaje}`);
+          return;
+        }
+
+        const { productores, correo } = contenido;
+
+        localStorage.setItem("autenticado", "true");
+        localStorage.setItem("correo", correo);
+        localStorage.setItem("productores", JSON.stringify(productores));
+
+        window.location.href = "inicio.html";
+      } catch (error) {
+        console.error("Error de red o JSON malformado:", error);
+        alert("Error al conectarse con el servidor de autenticación.");
+      }
+    })
+    .catch(error => {
+      console.error("Error al iniciar sesión con Firebase:", error);
+      alert("Error durante el inicio de sesión. Intenta de nuevo.");
     });
+});
+
   </script>
 </body>
 </html>
