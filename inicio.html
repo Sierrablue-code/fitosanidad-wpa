@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inicio - Mapas</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      background-color: #215e99;
+      color: white;
+      padding: 0.5rem 1rem;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      cursor: pointer;
+    }
+
+    #menu {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .btn-productor {
+      background-color: #83caeb;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-productor:hover {
+      background-color: #5bbbe4;
+    }
+
+    iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
+
+    @media (max-width: 600px) {
+      .menu-toggle {
+        display: block;
+      }
+
+      #menu {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+      }
+
+      #menu.mostrar {
+        display: flex;
+      }
+
+      .btn-productor {
+        width: 100%;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="menu-toggle" id="toggleMenu">☰</button>
+    <div id="menu"></div>
+  </header>
+
+  <iframe id="visorMapa" src="" title="Mapa del productor"></iframe>
+
+  <script>
+    const productores = JSON.parse(localStorage.getItem("productores") || "[]");
+    const productorActivo = localStorage.getItem("productor");
+
+    const menu = document.getElementById("menu");
+    const iframe = document.getElementById("visorMapa");
+
+    function cambiarMapa(nombre) {
+      localStorage.setItem("productor", nombre);
+      iframe.src = `${nombre.toLowerCase()}.html`;
+    }
+
+    productores.forEach(p => {
+      const btn = document.createElement("button");
+      btn.textContent = p.charAt(0).toUpperCase() + p.slice(1);
+      btn.className = "btn-productor";
+      btn.addEventListener("click", () => cambiarMapa(p));
+      menu.appendChild(btn);
+    });
+
+    // Cargar el iframe por defecto
+    if (productorActivo) {
+      iframe.src = `${productorActivo.toLowerCase()}.html`;
+    } else if (productores.length > 0) {
+      cambiarMapa(productores[0]);
+    }
+
+    // Menú hamburguesa en móviles
+    document.getElementById("toggleMenu").addEventListener("click", () => {
+      menu.classList.toggle("mostrar");
+    });
+  </script>
+</body>
+</html>
