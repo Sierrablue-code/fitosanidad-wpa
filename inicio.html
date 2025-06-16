@@ -4,6 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Inicio - Mapas</title>
+  <script>
+    // Validar sesión y productor
+    const autenticado = localStorage.getItem("autenticado") === "true";
+    const productorSesion = localStorage.getItem("productor");
+    const archivoActual = window.location.pathname.split("/").pop().replace(".html", "");
+
+    if (!autenticado || productorSesion !== archivoActual) {
+      window.location.href = "index.html";
+    }
+  </script>
   <style>
     /* Solo estilos específicos para este documento */
     body.inicio {
