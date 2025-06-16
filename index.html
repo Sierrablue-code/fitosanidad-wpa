@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BlueData</title>
   <style>
     body {
@@ -30,28 +30,33 @@
       color: #215e99;
     }
 
+    button, select {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: none;
+      cursor: pointer;
+    }
+
     button {
       background-color: #db4437;
       color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
     }
 
     button:hover {
       background-color: #c23321;
     }
 
+    select {
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+
     @media (max-width: 500px) {
       h1 {
         font-size: 1.3rem;
-      }
-
-      button {
-        width: 100%;
       }
     }
   </style>
@@ -60,6 +65,12 @@
   <div class="login-container">
     <h1>Bienvenido a BlueData</h1>
     <button id="btnLogin">Iniciar sesión con Google</button>
+
+    <div id="selectorContainer" style="display:none;">
+      <label for="selectorProductor">Selecciona tu productor:</label>
+      <select id="selectorProductor"></select>
+      <button id="btnEntrar">Entrar</button>
+    </div>
   </div>
 
   <!-- Firebase SDKs -->
@@ -67,10 +78,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
   <script>
-    // 🔧 Configura con tus datos reales de Firebase
     const firebaseConfig = {
-      apiKey: "TU_FIREBASE_API_KEY",
-      authDomain: "TU_FIREBASE_AUTH_DOMAIN"
+      apiKey: "AIzaSyD2Y8Vc861lM1g_Vs2kkjScXmQEBfLYUFg",
+      authDomain: "mapas-4c545.firebaseapp.com"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -83,32 +93,52 @@
           const user = result.user;
           const token = await user.getIdToken();
 
-          // Enviar a tu Worker para validar con AppSheet
-          const respuesta = await fetch("https://TU_WORKER_URL.com", {
+          const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ token })
           });
 
           if (!respuesta.ok) {
-            alert("No autorizado.");
+            alert("No autorizado");
             return;
           }
 
-          const { productor, correo } = await respuesta.json();
+          const { productores, correo } = await respuesta.json();
 
           // Guardar sesión
           localStorage.setItem("autenticado", "true");
           localStorage.setItem("correo", correo);
-          localStorage.setItem("productor", productor.toLowerCase());
 
-          // Redirigir al mapa
-          window.location.href = `${productor.toLowerCase()}.html`;
+          if (productores.length === 1) {
+            // Solo un productor, redirigir
+            localStorage.setItem("productor", productores[0]);
+            window.location.href = `${productores[0]}.html`;
+          } else {
+            // Varios productores, mostrar selector
+            const selector = document.getElementById("selectorProductor");
+            selector.innerHTML = "";
+            productores.forEach(p => {
+              const option = document.createElement("option");
+              option.value = p;
+              option.textContent = p.charAt(0).toUpperCase() + p.slice(1);
+              selector.appendChild(option);
+            });
+
+            document.getElementById("btnLogin").style.display = "none";
+            document.getElementById("selectorContainer").style.display = "block";
+          }
         })
         .catch(error => {
           console.error("Error al iniciar sesión:", error);
           alert("Error en el login. Intenta de nuevo.");
         });
+    });
+
+    document.getElementById("btnEntrar").addEventListener("click", () => {
+      const seleccion = document.getElementById("selectorProductor").value;
+      localStorage.setItem("productor", seleccion);
+      window.location.href = `${seleccion}.html`;
     });
   </script>
 </body>
