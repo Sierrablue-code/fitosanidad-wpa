@@ -69,6 +69,7 @@
 
     document.getElementById("btnLogin").addEventListener("click", () => {
       const provider = new firebase.auth.GoogleAuthProvider();
+      console.log('iniciando sesion v2');
       auth.signInWithPopup(provider)
         .then(async (result) => {
           const user = result.user;
