@@ -4,8 +4,7 @@ const urlsToCache = [
   "/ecualasos.html",
   "/sierrablue.html",
   "/agrotati.html",
-  "/mapaEcualasos.html",
-  "/mapaVivero.html",
+  "/vivero.html",
   "/manifest.json"
 ];
 
