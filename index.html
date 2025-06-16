@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,7 +31,7 @@
       color: #215e99;
     }
 
-    button, select {
+    button {
       width: 100%;
       margin-top: 1rem;
       padding: 0.75rem 1rem;
@@ -38,9 +39,6 @@
       border-radius: 0.5rem;
       border: none;
       cursor: pointer;
-    }
-
-    button {
       background-color: #db4437;
       color: white;
     }
@@ -48,29 +46,12 @@
     button:hover {
       background-color: #c23321;
     }
-
-    select {
-      border: 1px solid #ccc;
-      background-color: #f9f9f9;
-    }
-
-    @media (max-width: 500px) {
-      h1 {
-        font-size: 1.3rem;
-      }
-    }
   </style>
 </head>
 <body>
   <div class="login-container">
     <h1>Bienvenido a BlueData</h1>
     <button id="btnLogin">Iniciar sesión con Google</button>
-
-    <div id="selectorContainer" style="display:none;">
-      <label for="selectorProductor">Selecciona tu productor:</label>
-      <select id="selectorProductor"></select>
-      <button id="btnEntrar">Entrar</button>
-    </div>
   </div>
 
   <!-- Firebase SDKs -->
@@ -106,39 +87,16 @@
 
           const { productores, correo } = await respuesta.json();
 
-          // Guardar sesión
           localStorage.setItem("autenticado", "true");
           localStorage.setItem("correo", correo);
+          localStorage.setItem("productores", JSON.stringify(productores));
 
-          if (productores.length === 1) {
-            // Solo un productor, redirigir
-            localStorage.setItem("productor", productores[0]);
-            window.location.href = `${productores[0]}.html`;
-          } else {
-            // Varios productores, mostrar selector
-            const selector = document.getElementById("selectorProductor");
-            selector.innerHTML = "";
-            productores.forEach(p => {
-              const option = document.createElement("option");
-              option.value = p;
-              option.textContent = p.charAt(0).toUpperCase() + p.slice(1);
-              selector.appendChild(option);
-            });
-
-            document.getElementById("btnLogin").style.display = "none";
-            document.getElementById("selectorContainer").style.display = "block";
-          }
+          window.location.href = "inicio.html";
         })
         .catch(error => {
           console.error("Error al iniciar sesión:", error);
           alert("Error en el login. Intenta de nuevo.");
         });
-    });
-
-    document.getElementById("btnEntrar").addEventListener("click", () => {
-      const seleccion = document.getElementById("selectorProductor").value;
-      localStorage.setItem("productor", seleccion);
-      window.location.href = `${seleccion}.html`;
     });
   </script>
 </body>
