@@ -189,12 +189,14 @@
     });
 
     // Función para cerrar sesión
-    btnCerrarSesion.addEventListener("click", () => {
-      // Limpiar localStorage (puedes eliminar más claves si usas otras)
-      localStorage.removeItem("productores");
+     btnCerrarSesion.addEventListener("click", () => {
+          // Borrar solo lo relacionado con la sesión
+      localStorage.removeItem("token");
       localStorage.removeItem("productor");
-      // Recargar la página para resetear la vista
-      location.reload();
+      localStorage.removeItem("productores");
+    
+      // Redirigir al login
+      window.location.href = "index.html";
     });
   </script>
 </body>
