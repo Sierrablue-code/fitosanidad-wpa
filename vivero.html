@@ -1985,17 +1985,15 @@
 
                             if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
                                 let base64Pure = '';
-                                let mimeType = '';
                                 if (rawBase64.startsWith('data:')) {
-                                    [mimeType, base64Pure] = rawBase64.split(';');
-                                    mimeType = mimeType.split(':')[1];
-                                    base64Pure = base64Pure.split(',')[1];
+                                    // Ya viene con encabezado completo, lo usamos tal cual
+                                    base64ConEncabezado = rawBase64;
                                 } else {
-                                    base64Pure = rawBase64;
-                                    mimeType = 'image/png'; // Asegúrate de que esto coincida con tu tipo de imagen por defecto si no hay prefijo
+                                    // Si solo es la cadena base64 sin encabezado, asumimos que es PNG
+                                    base64ConEncabezado = `data:image/png;base64,${rawBase64}`;
                                 }
 
-                                const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotune"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
+                                const nombreArchivoEncabezado = `MonitoreoEncabezadoVivero-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
 
                                 console.log("Subiendo imagen de encabezado:", nombreArchivoEncabezado);
                                 const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado, mimeType);
@@ -2052,15 +2050,12 @@
                             let base64PurePlaga = '';
                             let mimeTypePlaga = '';
                             if (rawBase64Plaga.startsWith('data:')) {
-                                [mimeTypePlaga, base64PurePlaga] = rawBase64Plaga.split(';');
-                                mimeTypePlaga = mimeTypePlaga.split(':')[1];
-                                base64PurePlaga = base64PurePlaga.split(',')[1];
+                                base64PurePlaga = base64PurePlaga;
                             } else {
-                                base64PurePlaga = rawBase64Plaga;
-                                mimeTypePlaga = 'image/png';
+                                base64PurePlaga = `data:image/png;base64,${rawBase64Plaga}`;
                             }
 
-                            const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
+                            const nombreFotoPlaga = `Vivero-${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
 
                             console.log("Subiendo imagen de detalle de plaga:", nombreFotoPlaga);
                             const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga, mimeTypePlaga);
@@ -2099,15 +2094,11 @@
                             let base64PureEnfermedad = '';
                             let mimeTypeEnfermedad = '';
                             if (rawBase64Enfermedad.startsWith('data:')) {
-                                [mimeTypeEnfermedad, base64PureEnfermedad] = rawBase64Enfermedad.split(';');
-                                mimeTypeEnfermedad = mimeTypeEnfermedad.split(':')[1];
-                                base64PureEnfermedad = base64PureEnfermedad.split(',')[1];
+                                base64PureEnfermedad = base64PureEnfermedad;
                             } else {
-                                base64PureEnfermedad = rawBase64Enfermedad;
-                                mimeTypeEnfermedad = 'image/png';
+                                base64PureEnfermedad = `data:image/png;base64,${rawBase64Enfermedad}`;
                             }
-
-                            const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
+                            const nombreFotoEnfermedad = `Vivero-${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
 
                             console.log("Subiendo imagen de detalle de enfermedad:", nombreFotoEnfermedad);
                             const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad, mimeTypeEnfermedad);
