@@ -1,5 +1,5 @@
 const CACHE_NAME = "miapp-cache-v"; // ¡Recuerda cambiar esto a v2, v3, etc., con cada actualización!
-onst BASE_PATH = "/fitosanidad-wpa"; // <- ajusta esto a tu nombre de repo en GitHub Pages
+const BASE_PATH = "/fitosanidad-wpa"; // <- ajusta esto a tu nombre de repo en GitHub Pages
 
 const urlsToCache = [
   `${BASE_PATH}/ecuablue.html`,
