@@ -1370,86 +1370,99 @@
             flotante.style.top = (headerHeight+heightBoton-10)+'px';
     });
     // inicia cod aux
-     function recorrerCS(){
-         customSelects.forEach(customSelect => {
-            const selectBox = customSelect.querySelector('.select-box');
-            let selectedOptions = customSelect.classList.contains('custom-select-1') ? pests : diseases;
-            let jsonData = customSelect.classList.contains('custom-select-1') ? jsonPests : jsonDiseases;
-            
-            selectBox.addEventListener('click', () => {
-                customSelect.classList.toggle('active');
-            });
-            
-            customSelect.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', (event) => {
-                    actualizarItems();
-                    const selectedOption = event.target.closest('div');
-                    const selectedItem = selectedOption.getAttribute('data-option');
-                    const selectedColor = selectedOption.getAttribute('data-color');
-                    const allCheckboxes = customSelect.querySelectorAll('input[type="checkbox"]');
-                    const opcionesSeleccionadasTotal = [...allCheckboxes].filter(cb => cb.closest('div').getAttribute('data-option') !== "todo" &&  cb.checked==true).length;
-                    const individualCheckboxes = [...allCheckboxes].filter(cb => cb.closest('div').getAttribute('data-option') !== "todo");
-                    if (event.target.checked) {
-                        // Agregar la plaga/enfermedad seleccionada
-                        if(selectedItem=="todo"){
-                          individualCheckboxes.forEach(checkboxActual=>{
-                            const elemento = checkboxActual.closest('div');
-                            checkboxActual.checked=true;
-                            checkboxActual.dispatchEvent(new Event('change'));
-                          })
-                        }else{
-                          const opcionesTotal = individualCheckboxes.length;
-                          const todoSeleccionado = [...allCheckboxes].filter(cb=>cb.closest('div').getAttribute('data-option') == "todo" )[0];
-                          if(todoSeleccionado.checked==false && opcionesTotal == opcionesSeleccionadasTotal){
-                            todoSeleccionado.checked=true;
-                          }
-                        }
-                        if(!selectedOptions.some(data=>data['option']==selectedItem)){
-                          selectedOptions.push({ option: selectedItem, color: selectedColor });
-                        }  
-                    } else {
-                        // Eliminar la plaga/enfermedad deseleccionada
-                        if(selectedItem=="todo"){
-                          individualCheckboxes.forEach(checkboxActual=>{
-                            const elemento = checkboxActual.closest('div');
-                            checkboxActual.checked=false;
-                            checkboxActual.dispatchEvent(new Event('change'));
-                          });
-                        }else{
-                          const todoSeleccionado = [...allCheckboxes].filter(cb=>cb.closest('div').getAttribute('data-option') == "todo" );
+    function recorrerCS() {
+    customSelects.forEach(customSelect => {
+        const selectBox = customSelect.querySelector('.select-box');
 
-                          todoSeleccionado.forEach(elementoActual=>{
-                            if(elementoActual.checked==true){
-                                elementoActual.checked=false;
+        let selectedOptions = customSelect.classList.contains('custom-select-1') ? pests : diseases;
+        let jsonData = customSelect.classList.contains('custom-select-1') ? jsonPests : jsonDiseases;
+
+        // Abrir/cerrar el selector al hacer click
+        selectBox.addEventListener('click', () => {
+            customSelect.classList.toggle('active');
+        });
+
+        const checkboxes = customSelect.querySelectorAll('input[type="checkbox"]');
+        const checkboxTodos = Array.from(checkboxes).find(cb =>
+            cb.closest('div').getAttribute('data-option') === "todo"
+        );
+        const checkboxIndividuales = Array.from(checkboxes).filter(cb =>
+            cb.closest('div').getAttribute('data-option') !== "todo"
+        );
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (event) => {
+                const target = event.target;
+                const optionDiv = target.closest('div');
+                const selectedItem = optionDiv.getAttribute('data-option');
+                const selectedColor = optionDiv.getAttribute('data-color');
+
+                let cambiosHechos = false;
+
+                if (selectedItem === "todo") {
+                    // Seleccionar o deseleccionar todos
+                    checkboxIndividuales.forEach(cb => {
+                        const div = cb.closest('div');
+                        const opt = div.getAttribute('data-option');
+                        const col = div.getAttribute('data-color');
+
+                        if (target.checked !== cb.checked) {
+                            cb.checked = target.checked;
+                            if (target.checked) {
+                                if (!selectedOptions.some(e => e.option === opt)) {
+                                    selectedOptions.push({ option: opt, color: col });
+                                }
+                            } else {
+                                selectedOptions = selectedOptions.filter(e => e.option !== opt);
                             }
-                          })
-                          
+                            cambiosHechos = true;
                         }
-                        
-                        selectedOptions = selectedOptions.filter(e => e.option !== selectedItem);
-                    }
-    
-                    // Actualizar el contenido del select-box
-                    selectBox.innerHTML = '';  // Limpiamos el contenido actual
-                    const opcionesSinTodo = selectedOptions.filter(op=>op['option']!="todo");
-                    if (opcionesSinTodo.length > 0) {
-                        const text = opcionesSinTodo.length === 1 ? 'seleccionada' : 'seleccionadas';
-                        customSelect.classList.contains('custom-select-1') ?selectBox.append(`${opcionesSinTodo.length}  plaga(s) ${text}`):selectBox.append(`${opcionesSinTodo.length} enfermedad(es) ${text}`);
+                    });
+                } else {
+                    // Una opción individual fue seleccionada/deseleccionada
+                    if (target.checked) {
+                        if (!selectedOptions.some(e => e.option === selectedItem)) {
+                            selectedOptions.push({ option: selectedItem, color: selectedColor });
+                            cambiosHechos = true;
+                        }
+
+                        const todosSeleccionados = checkboxIndividuales.every(cb => cb.checked);
+                        if (checkboxTodos && !checkboxTodos.checked && todosSeleccionados) {
+                            checkboxTodos.checked = true;
+                        }
                     } else {
-                        selectBox.innerText = 'Seleccione la(s) enfermedade(s)';
+                        const nuevaLista = selectedOptions.filter(e => e.option !== selectedItem);
+                        if (nuevaLista.length !== selectedOptions.length) {
+                            selectedOptions = nuevaLista;
+                            cambiosHechos = true;
+                        }
+                        if (checkboxTodos && checkboxTodos.checked) {
+                            checkboxTodos.checked = false;
+                        }
                     }
-    
-                    // Actualizamos el array global de seleccionados
-                    if (customSelect.classList.contains('custom-select-1')) {
-                        pests = selectedOptions;
-                    } else {
-                        diseases = selectedOptions;
-                    }
-                    
-              });
+                }
+
+                // Actualizar label del select-box
+                const sinTodo = selectedOptions.filter(op => op.option !== "todo");
+                selectBox.textContent = sinTodo.length > 0
+                    ? `${sinTodo.length} ${customSelect.classList.contains('custom-select-1') ? 'plaga(s)' : 'enfermedad(es)'} seleccionada(s)`
+                    : 'Seleccione la(s) enfermedade(s)';
+
+                // Actualizar variable global
+                if (customSelect.classList.contains('custom-select-1')) {
+                    pests = selectedOptions;
+                } else {
+                    diseases = selectedOptions;
+                }
+
+                // Solo llamar si hubo cambios reales
+                if (cambiosHechos) {
+                    actualizarItems();
+                }
             });
-            });
-     }
+        });
+    });
+}
         // Cerrar el menú si se hace clic fuera del custom-select
       document.addEventListener('click', (event) => {
             customSelects.forEach(customSelect => {
