@@ -1,13 +1,14 @@
 const CACHE_NAME = "miapp-cache-v"; // ¡Recuerda cambiar esto a v2, v3, etc., con cada actualización!
-const urlsToCache = [
-  "/ecuablue.html",
-  "/ecualasos.html",
-  "/sierrablue.html",
-  "/agrotati.html",
-  "/vivero.html",
-  "/manifest.json"
-];
+onst BASE_PATH = "/fitosanidad-wpa"; // <- ajusta esto a tu nombre de repo en GitHub Pages
 
+const urlsToCache = [
+  `${BASE_PATH}/ecuablue.html`,
+  `${BASE_PATH}/ecualasos.html`,
+  `${BASE_PATH}/sierrablue.html`,
+  `${BASE_PATH}/agrotati.html`,
+  `${BASE_PATH}/vivero.html`,
+  `${BASE_PATH}/manifest.json`
+];
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
