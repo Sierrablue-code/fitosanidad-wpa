@@ -2352,7 +2352,7 @@
               if (agregarCb &&  !td.querySelector('input[type="checkbox"]')){
               const checkbox = document.createElement('input');
               checkbox.type = 'checkbox';
-              checkbox.className = tipo=='cuadrante'?'dynamic-corner-checkbox': tipo=='macrotunel'?'dynamic-corner-checkbox3':'dynamic-corner-checkbox2'; // <-- ¡AQUÍ LA CLASE ESPECÍFICA!
+              checkbox.className = tipo=='cuadrante'?'dynamic-corner-checkbox': tipo=='macrotunel'?'dynamic-corner-checkbox2':'dynamic-corner-checkbox2';
               checkbox.title = 'Seleccionar cuadrante';
               td.prepend(checkbox);
               checkbox.addEventListener('click', (event) => {
