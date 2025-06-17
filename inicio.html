@@ -199,14 +199,20 @@
     });
 
     // Función para cerrar sesión
+     import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+     const auth = getAuth();
      btnCerrarSesion.addEventListener("click", () => {
-       console.log("Cerrar sesión clickeado");
-        localStorage.removeItem("token");
-        localStorage.removeItem("productor");
-        localStorage.removeItem("productores");
-        localStorage.removeItem("correo");
-        localStorage.removeItem("autenticado");
-        window.location.href = "index.html";
+        signOut(auth).then(() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("productor");
+            localStorage.removeItem("productores");
+            localStorage.removeItem("correo");
+            localStorage.removeItem("autenticado");
+    
+            window.location.href = "index.html"; // Redirige luego del logout completo
+        }).catch((error) => {
+            console.error("Error al cerrar sesión:", error);
+        });
     });
   </script>
 </body>
