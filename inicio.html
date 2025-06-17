@@ -199,21 +199,30 @@
     });
 
     // Función para cerrar sesión
-     import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
-     const auth = getAuth();
-     btnCerrarSesion.addEventListener("click", () => {
-        signOut(auth).then(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("productor");
-            localStorage.removeItem("productores");
-            localStorage.removeItem("correo");
-            localStorage.removeItem("autenticado");
-    
-            window.location.href = "index.html"; // Redirige luego del logout completo
-        }).catch((error) => {
-            console.error("Error al cerrar sesión:", error);
-        });
-    });
+    const firebaseConfig = {
+      apiKey: "AIzaSyD2Y8Vc861lM1g_Vs2kkjScXmQEBfLYUFg",
+      authDomain: "mapas-4c545.firebaseapp.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    btnCerrarSesion.addEventListener("click", () => {
+      auth.signOut()
+      .then(() => {
+        console.log("Sesión cerrada correctamente");
+        localStorage.removeItem("token");
+        localStorage.removeItem("productor");
+        localStorage.removeItem("productores");
+        localStorage.removeItem("correo");
+        localStorage.removeItem("autenticado");
+
+        // Rediriges al index o login
+        window.location.href = "index.html";
+      })
+      .catch((error) => {
+        console.error("Error cerrando sesión:", error);
+        // Opcional: mostrar mensaje al usuario
+      });
+    }); 
   </script>
 </body>
 </html>
