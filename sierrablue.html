@@ -2545,6 +2545,7 @@
                   const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
                   const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => Number(cuadrante)>0);
                   let elementosTdPorC = [];
+                  console.log("area reportada: ", area);
                   if(cuadrantes.length>0){
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+cuadrante;
@@ -2555,6 +2556,7 @@
                                                          (cuadrante == idCuadrante);
                                                 }).map(td=>td.id);
                           areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+                          console.log('hay cuadrante',areasEncontradas);
                       })
                   }else if(macrotunel !== ""){
                       elementosTdPorC = tdsFiltrados.filter(td => {
@@ -2563,12 +2565,14 @@
                                                          (idMacrotunel == macrotunel)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+                      console.log('hay solo macrotunel', areasEncontradas);
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
                                                   return (idBloque == bloque)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
+                      console.log('solo bloque', areasEncontradas);
                   }
               });
             console.log('areas encontradas de reportes: ', areasEncontradas);
