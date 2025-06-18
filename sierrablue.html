@@ -2539,6 +2539,7 @@
               const tdsFiltrados = tds.filter(td => regex.test(td.id));
               const areasReportadas = fecha? areasConReportes.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReportes;
               let areasEncontradas = [];
+              console.log('tds: ', tdsFiltrados);
               console.log('areas reportadas: ', areasReportadas);
               areasReportadas.forEach(area=>{
                   const bloque = 'b:'+area["N° Bloque"];
