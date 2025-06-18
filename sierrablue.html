@@ -2552,6 +2552,15 @@
                           const idCuadrante = 'c:'+cuadrante;
                            elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,cuadrante]= td.id.split('-');
+                                                   console.log({
+                                                        tdId: td.id,
+                                                        idBloque,
+                                                        bloque,
+                                                        idMacrotunel,
+                                                        macrotunel,
+                                                        cuadrante,
+                                                        idCuadrante,
+                                                      });
                                                   return (idBloque.trim().toLowerCase() == bloque.trim().toLowerCase()) &&
                                                          (idMacrotunel.trim().toLowerCase() == macrotunel.trim().toLowerCase()) &&
                                                          (cuadrante.trim().toLowerCase() == idCuadrante.trim().toLowerCase());
@@ -2562,6 +2571,13 @@
                   }else if(macrotunel !== ""){
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                          console.log({
+                                                        tdId: td.id,
+                                                        idBloque,
+                                                        bloque,
+                                                        idMacrotunel,
+                                                        macrotunel
+                                                      });
                                                   return (idBloque == bloque) &&
                                                          (idMacrotunel == macrotunel)
                                                 }).map(td=>td.id);
@@ -2570,6 +2586,11 @@
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
+                          console.log({
+                                                        tdId: td.id,
+                                                        idBloque,
+                                                        bloque
+                                                      });
                                                   return (idBloque == bloque)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
