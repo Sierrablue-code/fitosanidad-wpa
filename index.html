@@ -95,55 +95,47 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // Forzar cierre de sesión previo por seguridad
-    auth.signOut().catch(() => {});
+    const provider = new firebase.auth.GoogleAuthProvider();
 
     document.getElementById("btnLogin").addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
+      console.log("Redirigiendo a Google para iniciar sesión...");
+      auth.signInWithRedirect(provider);
+    });
 
-      console.log("Iniciando sesión...");
+    // Detectar si el usuario ya inició sesión (después del redirect)
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        try {
+          const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          });
 
-      firebase.auth().signInWithPopup(provider)
-        .then(async (result) => {
-          const user = result.user;
-          const token = await user.getIdToken(); // token JWT
+          const contenido = await respuesta.json();
+          console.log("Respuesta completa del Worker:", contenido);
 
-          try {
-            const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token }),
-            });
-
-            const contenido = await respuesta.json();
-            console.log("Respuesta completa del Worker:", contenido);
-
-            if (!respuesta.ok) {
-              const mensaje = contenido?.error || "Error desconocido";
-              const detalles = contenido?.stack || "Sin detalles técnicos.";
-              console.warn("Error de autorización:", mensaje);
-              console.warn("Stack:", detalles);
-              alert(`No autorizado: ${mensaje}`);
-              return;
-            }
-
-            const { productores, correo } = contenido;
-
-            localStorage.setItem("autenticado", "true");
-            localStorage.setItem("correo", correo);
-            localStorage.setItem("productores", JSON.stringify(productores));
-
-            window.location.href = "inicio.html";
-          } catch (error) {
-            console.error("Error de red o JSON malformado:", error);
-            alert("Error al conectarse con el servidor de autenticación.");
+          if (!respuesta.ok) {
+            const mensaje = contenido?.error || "Error desconocido";
+            alert(`No autorizado: ${mensaje}`);
+            return;
           }
-        })
-        .catch(error => {
-          console.error("Error al iniciar sesión con Firebase:", error);
-          alert("Error durante el inicio de sesión. Intenta de nuevo.");
-        });
+
+          const { productores, correo } = contenido;
+
+          // Guardar en localStorage
+          localStorage.setItem("autenticado", "true");
+          localStorage.setItem("correo", correo);
+          localStorage.setItem("productores", JSON.stringify(productores));
+
+          // Redirigir a inicio
+          window.location.href = "inicio.html";
+        } catch (error) {
+          console.error("Error al conectarse con el servidor de autenticación:", error);
+          alert("Error al conectarse con el servidor.");
+        }
+      }
     });
   </script>
 </body>
