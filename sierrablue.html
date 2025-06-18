@@ -2501,6 +2501,7 @@
         }
         function encontrarCuadrantesConReportes(){
             eliminarShadows();
+            console.log("Buscando cuadrantes con reportes sb...")
             const fecha = document.getElementById('fecha').value.toString();
               let fechaInicio = "";
               let fechaFin = "";
@@ -2523,6 +2524,7 @@
               const tdsFiltrados = tds.filter(td => regex.test(td.id));
               const areasReportadas = fecha? areasConReportes.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReportes;
               let areasEncontradas = [];
+              console.log('areas reportadas: ', areasReportadas);
               areasReportadas.forEach(area=>{
                   const bloque = 'b:'+area["N° Bloque"];
                   const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
@@ -2555,6 +2557,7 @@
                   }
               });
             const areasUnicas = agruparIds(areasEncontradas);
+            console.log('Areas unicas encontradas: ', areasUnicas);
             const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
             for(let clave in areasUnicas){
                 const elemento=areasUnicas[clave];
@@ -2563,6 +2566,7 @@
                 const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
                 const color = `rgb(255, ${intensidad }, ${intensidad})`;
                 idAreas.forEach(id=>{
+                    console.log('Area encontrada id: ', id);
                     const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
                     tdEncontrado.style.boxShadow = `inset 0 0 10px ${color}`;
                     tdEncontrado.setAttribute('data-shadow-aplicado', 'true');
