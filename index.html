@@ -58,31 +58,23 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyD2Y8Vc861lM1g_Vs2kkjScXmQEBfLYUFg",
-    authDomain: "mapas-4c545.firebaseapp.com"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD2Y8Vc861lM1g_Vs2kkjScXmQEBfLYUFg",
+      authDomain: "mapas-4c545.firebaseapp.com"
+    };
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  // Redirige si ya está autenticado
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      console.log("Ya autenticado:", user.email);
-      window.location.href = "inicio.html";
-    }
-  });
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
   document.getElementById("btnLogin").addEventListener("click", () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     console.log("iniciando sesión...");
 
-    auth.signInWithPopup(provider)
+    firebase.auth().signInWithPopup(provider)
       .then(async (result) => {
         const user = result.user;
-        const token = await user.getIdToken();
+        const token = await user.getIdToken(); // token JWT
 
         try {
           const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
@@ -92,28 +84,36 @@
           });
 
           const contenido = await respuesta.json();
+          console.log("Respuesta completa del Worker:", contenido);
 
           if (!respuesta.ok) {
-            alert(`No autorizado: ${contenido?.error || "Error desconocido"}`);
+            const mensaje = contenido?.error || "Error desconocido";
+            const detalles = contenido?.stack || "Sin detalles técnicos.";
+            console.warn("Error de autorización:", mensaje);
+            console.warn("Stack:", detalles);
+            alert(`No autorizado: ${mensaje}`);
             return;
           }
 
           const { productores, correo } = contenido;
+
+          // Guardar en localStorage
           localStorage.setItem("autenticado", "true");
           localStorage.setItem("correo", correo);
           localStorage.setItem("productores", JSON.stringify(productores));
+
+          // Redirigir a inicio
           window.location.href = "inicio.html";
         } catch (error) {
-          console.error("Error al conectarse con el servidor:", error);
-          alert("Error de red");
+          console.error("Error de red o JSON malformado:", error);
+          alert("Error al conectarse con el servidor de autenticación.");
         }
       })
       .catch(error => {
-        console.error("Error Firebase login:", error);
-        alert("Error durante el inicio de sesión.");
+        console.error("Error al iniciar sesión con Firebase:", error);
+        alert("Error durante el inicio de sesión. Intenta de nuevo.");
       });
   });
-</script>
-
+  </script>
 </body>
 </html>
