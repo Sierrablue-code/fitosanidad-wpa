@@ -1686,6 +1686,15 @@
               closeModal(); 
             }
           });
+           checkReportes.addEventListener("change", function () {
+           console.log("esta habilitado?: ", this.checked);
+          if (this.checked) {
+              console.log('llamar a encontrar cuadrantes...')
+             encontrarCuadrantesConReportes();
+          } else {
+            eliminarShadows();
+          }
+        });
           const formulario = document.getElementById("formulario");
               formulario.addEventListener("keydown", function (event) {
                 if (event.key === "Enter") {
@@ -2621,15 +2630,7 @@
             td.removeAttribute('data-shadow-aplicado');
           });
         }
-       checkReportes.addEventListener("change", function () {
-           console.log("esta habilitado?: ", this.checked);
-          if (this.checked) {
-              console.log('llamar a encontrar cuadrantes...')
-             encontrarCuadrantesConReportes();
-          } else {
-            eliminarShadows();
-          }
-        });
+      
     </script>
   
 </body>
