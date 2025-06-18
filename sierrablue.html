@@ -1700,7 +1700,7 @@
           //fin cod aux
       /** online y offlien*/
       function guardarEnCache(clave, datos) {
-        if(clave.include('Bloques'){
+        if(clave.includes('Bloques')){
            const bloquesUnicos = [... new Set(datos.map(dato=>dato["N° de Bloque"]))];
            localStorage.setItem(clave, JSON.stringify(bloquesUnicos));
         }else{
