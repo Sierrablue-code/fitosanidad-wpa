@@ -2616,7 +2616,9 @@
           });
         }
        checkReportes.addEventListener("change", function () {
+           console.log("esta habilitado?: ", this.checked);
           if (this.checked) {
+              console.log('llamar a encontrar cuadrantes...')
              encontrarCuadrantesConReportes();
           } else {
             eliminarShadows();
