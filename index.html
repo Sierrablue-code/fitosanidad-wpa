@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BlueData</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
   <style>
     body {
       margin: 0;
@@ -13,7 +15,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: linear-gradient(to right, #215e99, #83caeb);
+      background: linear-gradient(to right, #2f6c3c, #a8e6cf);
     }
 
     .login-container {
@@ -26,9 +28,11 @@
       max-width: 400px;
     }
 
-    h1 {
+    .logo {
+      width: 100%;
+      max-width: 250px;
+      height: auto;
       margin-bottom: 1.5rem;
-      color: #215e99;
     }
 
     button {
@@ -39,18 +43,34 @@
       border-radius: 0.5rem;
       border: none;
       cursor: pointer;
-      background-color: #db4437;
+      background-color: #388e3c;
       color: white;
+      transition: background-color 0.3s ease;
     }
 
     button:hover {
-      background-color: #c23321;
+      background-color: #2e7d32;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+
+      .logo {
+        max-width: 180px;
+      }
+
+      button {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <h1>Bienvenido a BlueData</h1>
+    <!-- Reemplaza el src por la ruta real de tu imagen -->
+    <img src="logo-verde.png" alt="Logo BlueData" class="logo" />
     <button id="btnLogin">Iniciar sesión con Google</button>
   </div>
 
@@ -67,53 +87,56 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-  document.getElementById("btnLogin").addEventListener("click", () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    console.log("iniciando sesión...");
+    // Forzar cierre de sesión previo por seguridad
+    auth.signOut().catch(() => {});
 
-    firebase.auth().signInWithPopup(provider)
-      .then(async (result) => {
-        const user = result.user;
-        const token = await user.getIdToken(); // token JWT
+    document.getElementById("btnLogin").addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
 
-        try {
-          const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }),
-          });
+      console.log("Iniciando sesión...");
 
-          const contenido = await respuesta.json();
-          console.log("Respuesta completa del Worker:", contenido);
+      firebase.auth().signInWithPopup(provider)
+        .then(async (result) => {
+          const user = result.user;
+          const token = await user.getIdToken(); // token JWT
 
-          if (!respuesta.ok) {
-            const mensaje = contenido?.error || "Error desconocido";
-            const detalles = contenido?.stack || "Sin detalles técnicos.";
-            console.warn("Error de autorización:", mensaje);
-            console.warn("Stack:", detalles);
-            alert(`No autorizado: ${mensaje}`);
-            return;
+          try {
+            const respuesta = await fetch("https://square-login-caf1.ecuablue-ec.workers.dev/", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ token }),
+            });
+
+            const contenido = await respuesta.json();
+            console.log("Respuesta completa del Worker:", contenido);
+
+            if (!respuesta.ok) {
+              const mensaje = contenido?.error || "Error desconocido";
+              const detalles = contenido?.stack || "Sin detalles técnicos.";
+              console.warn("Error de autorización:", mensaje);
+              console.warn("Stack:", detalles);
+              alert(`No autorizado: ${mensaje}`);
+              return;
+            }
+
+            const { productores, correo } = contenido;
+
+            localStorage.setItem("autenticado", "true");
+            localStorage.setItem("correo", correo);
+            localStorage.setItem("productores", JSON.stringify(productores));
+
+            window.location.href = "inicio.html";
+          } catch (error) {
+            console.error("Error de red o JSON malformado:", error);
+            alert("Error al conectarse con el servidor de autenticación.");
           }
-
-          const { productores, correo } = contenido;
-
-          // Guardar en localStorage
-          localStorage.setItem("autenticado", "true");
-          localStorage.setItem("correo", correo);
-          localStorage.setItem("productores", JSON.stringify(productores));
-
-          // Redirigir a inicio
-          window.location.href = "inicio.html";
-        } catch (error) {
-          console.error("Error de red o JSON malformado:", error);
-          alert("Error al conectarse con el servidor de autenticación.");
-        }
-      })
-      .catch(error => {
-        console.error("Error al iniciar sesión con Firebase:", error);
-        alert("Error durante el inicio de sesión. Intenta de nuevo.");
-      });
-  });
+        })
+        .catch(error => {
+          console.error("Error al iniciar sesión con Firebase:", error);
+          alert("Error durante el inicio de sesión. Intenta de nuevo.");
+        });
+    });
   </script>
 </body>
 </html>
