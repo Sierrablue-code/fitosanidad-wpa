@@ -2539,7 +2539,7 @@
               const tdsFiltrados = tds.filter(td => regex.test(td.id));
               const areasReportadas = fecha? areasConReportes.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReportes;
               let areasEncontradas = [];
-              console.log('tds: ', tdsFiltrados);
+              console.log('tds v2: ', tdsFiltrados);
               console.log('areas reportadas: ', areasReportadas);
               areasReportadas.forEach(area=>{
                   const bloque = 'b:'+area["N° Bloque"];
@@ -2557,7 +2557,7 @@
                                                          (cuadrante.trim().toLowerCase() == idCuadrante.trim().toLowerCase());
                                                 }).map(td=>td.id);
                           areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                          console.log('hay cuadrante',areasEncontradas);
+                          console.log('hay cuadrante',elementosTdPorC);
                       })
                   }else if(macrotunel !== ""){
                       elementosTdPorC = tdsFiltrados.filter(td => {
@@ -2566,14 +2566,14 @@
                                                          (idMacrotunel == macrotunel)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                      console.log('hay solo macrotunel', areasEncontradas);
+                      console.log('hay solo macrotunel', elementosTdPorC);
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
                                                   return (idBloque == bloque)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                      console.log('solo bloque', areasEncontradas);
+                      console.log('solo bloque', elementosTdPorC);
                   }
               });
             console.log('areas encontradas de reportes: ', areasEncontradas);
