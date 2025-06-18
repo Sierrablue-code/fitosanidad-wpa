@@ -8,60 +8,68 @@
   <link rel="icon" href="Logo.ico" type="image/x-icon" />
 
   <style>
-    body {
+     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #4a8551, #a3d9b1);
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background: linear-gradient(to right, #2f6c3c, #a8e6cf);
     }
 
+    /* Contenedor blanco con sombra */
     .login-container {
-      background-color: white;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background-color: #fff;
+      border-radius: 15px;
+      padding: 30px 40px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       text-align: center;
+      max-width: 350px;
       width: 90%;
-      max-width: 400px;
     }
 
+    /* Imagen logo centrada y con tamaño adecuado */
     .logo {
-      width: 100%;
-      max-width: 250px;
+      width: 160px;
       height: auto;
-      margin-bottom: 1.5rem;
+      margin-bottom: 30px;
+      user-select: none;
     }
 
+    /* Botón con color verde que combina con la imagen */
     button {
-      width: 100%;
-      margin-top: 1rem;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      border-radius: 0.5rem;
+      background-color: #3d7e3c; /* Verde oscuro */
       border: none;
-      cursor: pointer;
-      background-color: #388e3c;
       color: white;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
       transition: background-color 0.3s ease;
+      user-select: none;
     }
 
-    button:hover {
-      background-color: #2e7d32;
+    button:hover,
+    button:focus {
+      background-color: #346731; /* Verde más oscuro al pasar el mouse */
+      outline: none;
     }
 
-    @media (max-width: 480px) {
+    /* Responsive para pantallas muy pequeñas */
+    @media (max-width: 400px) {
       .login-container {
-        padding: 1.5rem;
+        padding: 20px 25px;
       }
 
       .logo {
-        max-width: 180px;
+        width: 140px;
+        margin-bottom: 20px;
       }
 
       button {
+        padding: 12px 15px;
         font-size: 1rem;
       }
     }
