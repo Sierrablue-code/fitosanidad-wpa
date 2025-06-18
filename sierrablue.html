@@ -2562,6 +2562,7 @@
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                   }
               });
+            console.log('areas encontradas de reportes: ', areasEncontradas);
             const areasUnicas = agruparIds(areasEncontradas);
             console.log('Areas unicas encontradas: ', areasUnicas);
             const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
