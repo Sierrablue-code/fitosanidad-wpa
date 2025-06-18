@@ -2552,12 +2552,7 @@
                           const idCuadrante = 'c:'+cuadrante;
                            elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,cuadrante]= td.id.split('-');
-                                                   console.log({
-                                                        tdId: td.id,
-                                                        (idBloque.trim().toLowerCase() == bloque.trim().toLowerCase()) &&
-                                                         (idMacrotunel.trim().toLowerCase() == macrotunel.trim().toLowerCase()) &&
-                                                         (cuadrante.trim().toLowerCase() == idCuadrante.trim().toLowerCase());
-                                                      });
+                                                   
                                                   return (idBloque.trim().toLowerCase() == bloque.trim().toLowerCase()) &&
                                                          (idMacrotunel.trim().toLowerCase() == macrotunel.trim().toLowerCase()) &&
                                                          (cuadrante.trim().toLowerCase() == idCuadrante.trim().toLowerCase());
