@@ -2546,7 +2546,7 @@
                   const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
                   const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => Number(cuadrante)>0);
                   let elementosTdPorC = [];
-                  console.log("area reportada: ", area);
+                  console.log("area reportada v3: ", bloque, macrotunel,cuadrantes);
                   if(cuadrantes.length>0){
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+cuadrante;
