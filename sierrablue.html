@@ -2573,7 +2573,6 @@
                 const intensidad = Math.floor(220 * (1 - porcentaje)); // entre 220 y 0
                 const color = `rgb(255, ${intensidad }, ${intensidad})`;
                 idAreas.forEach(id=>{
-                    console.log('Area encontrada id: ', id);
                     const tdEncontrado =  tdsFiltrados.find(td => td.id == id); 
                     tdEncontrado.style.boxShadow = `inset 0 0 10px ${color}`;
                     tdEncontrado.setAttribute('data-shadow-aplicado', 'true');
