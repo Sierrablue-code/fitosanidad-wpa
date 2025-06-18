@@ -7,7 +7,8 @@ const urlsToCache = [
   `${BASE_PATH}/sierrablue.html`,
   `${BASE_PATH}/agrotati.html`,
   `${BASE_PATH}/vivero.html`,
-  `${BASE_PATH}/manifest.json`
+  `${BASE_PATH}/manifest.json`,
+  `${BASE_PATH}/Logo.ico`
 ];
 self.addEventListener("install", event => {
   event.waitUntil(
