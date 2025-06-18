@@ -87,7 +87,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
  <script>
-    const firebaseConfig = {
+  const firebaseConfig = {
       apiKey: "AIzaSyD2Y8Vc861lM1g_Vs2kkjScXmQEBfLYUFg",
       authDomain: "mapas-4c545.firebaseapp.com"
     };
@@ -124,7 +124,7 @@
               const detalles = contenido?.stack || "Sin detalles técnicos.";
               console.warn("Error de autorización:", mensaje);
               console.warn("Stack:", detalles);
-              alert(No autorizado: ${mensaje});
+              alert(`No autorizado: ${mensaje}`);
               return;
             }
 
