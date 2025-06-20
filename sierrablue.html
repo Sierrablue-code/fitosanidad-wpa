@@ -2542,19 +2542,20 @@
               
               console.log('areas reportadas v4: ', areasReportadas);
               areasReportadas.forEach(area=>{
-                  const bloque = 'b:'+area["N° Bloque"];
-                  const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
+                  const bloque = 'b:'+String(area["N° Bloque"]);
+                  const macrotunel = area["Macrotunel"]?'mt:'+String(area["Macrotunel"]):"";
                   const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => Number(cuadrante)>0);
                   let elementosTdPorC = [];
-                  console.log("area reportada v3: ", bloque, macrotunel,cuadrantes);
+                  
+                  console.log("area reportada v5: ", bloque, macrotunel,cuadrantes);
                   if(cuadrantes.length>0){
                       cuadrantes.forEach(cuadrante=>{
-                          const idCuadrante = 'c:'+cuadrante;
+                          const idCuadrante = 'c:'+String(cuadrante);
                            elementosTdPorC = tdsFiltrados.filter(td => {
-                                                 const [idBloque, idMacrotunel, idHilera,cuadrante]= td.id.split('-');
-                                                  return (idBloque.trim().toLowerCase() == bloque.trim().toLowerCase()) &&
-                                                         (idMacrotunel.trim().toLowerCase() == macrotunel.trim().toLowerCase()) &&
-                                                         (cuadrante.trim().toLowerCase() == idCuadrante.trim().toLowerCase());
+                                                 const [idBloque, idMacrotunel, idHilera,cuadranteId]= td.id.split('-');
+                                                  return (idBloque.trim() == bloque.trim()) &&
+                                                         (idMacrotunel.trim() == macrotunel.trim()) &&
+                                                         (cuadranteId.trim() == idCuadrante.trim());
                                                 }).map(td=>td.id);
                           areasEncontradas = areasEncontradas.concat(elementosTdPorC)
                           console.log('hay cuadrante',elementosTdPorC);
