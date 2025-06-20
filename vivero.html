@@ -2010,7 +2010,7 @@
                                 const nombreArchivoEncabezado = `MonitoreoEncabezadoVivero-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
 
                                 console.log("Subiendo imagen de encabezado:", nombreArchivoEncabezado);
-                                const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado, mimeType);
+                                const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado);
 
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
@@ -2072,7 +2072,7 @@
                             const nombreFotoPlaga = `Vivero-${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
 
                             console.log("Subiendo imagen de detalle de plaga:", nombreFotoPlaga);
-                            const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga, mimeTypePlaga);
+                            const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga);
 
                             if (uploadResultPlaga.success) {
                                 imageUrlPlaga = uploadResultPlaga.url;
@@ -2115,7 +2115,7 @@
                             const nombreFotoEnfermedad = `Vivero-${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
 
                             console.log("Subiendo imagen de detalle de enfermedad:", nombreFotoEnfermedad);
-                            const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad, mimeTypeEnfermedad);
+                            const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad);
 
                             if (uploadResultEnfermedad.success) {
                                 imageUrlEnfermedad = uploadResultEnfermedad.url;
@@ -2312,42 +2312,39 @@
             }
           }
 
-          async function subirImagenBase64DesdeCliente(base64Data, fileName, mimeType) {
-           if (!base64Data || !fileName || !mimeType) {
-                return Promise.reject({ success: false, error: "Faltan datos para subir la imagen (Base64, nombre o tipo MIME)." });
-            }
-        
-            try {
-                const response = await fetch(URL_APPSCRIPT_UPLOAD_IMAGE, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        base64: base64Data,
-                        fileName: fileName,
-                        mimeType: mimeType,
-                        folderId: GOOGLE_DRIVE_FOLDER_ID
-                    }),
-                });
-        
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Error HTTP al subir imagen a Apps Script: ${response.status} - ${errorText}`);
-                }
-        
-                const result = await response.json();
-        
-                if (result.success) {
-                    return { success: true, url: result.url };
-                } else {
-                    throw new Error(`Apps Script reportó un error: ${result.error}`);
-                }
-            } catch (error) {
-                console.error("Error en uploadImageToDrive (fetch/parsing):", error);
-                throw { success: false, error: error.message };
-            }
+            async function subirImagenBase64DesdeCliente(base64Data, fileName) {
+          if (!base64Data || !fileName) {
+            return Promise.reject({ success: false, error: "Faltan base64 o nombre de archivo." });
           }
+        
+          try {
+            const response = await fetch(URL_WORKER_IMAGE_UPLOAD, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                base64: base64Data,
+                nombre: fileName,      // nota: aquí "nombre" para que coincida con Worker
+              }),
+            });
+        
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(`Error HTTP al subir imagen: ${response.status} - ${errorText}`);
+            }
+        
+            const result = await response.json();
+        
+            if (result.url) {
+              return { success: true, url: result.url };
+            } else if (result.error) {
+              throw new Error(`Error desde el worker: ${result.error}`);
+            } else {
+              throw new Error("Respuesta inesperada del worker");
+            }
+          } catch (error) {
+            throw { success: false, error: error.message };
+          }
+        }
           /*nuevas funciones*/
           function agregarCheckbox(td){
            const tipo = td.textContent.includes('MI')?"microtunel":td.textContent.includes('Aclimatación')||td.textContent.includes('Endurecimiento')?"area":"nave";
