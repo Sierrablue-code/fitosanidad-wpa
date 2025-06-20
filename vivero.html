@@ -1998,7 +1998,7 @@
                             let imageUrl = "";
 
                             if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
-                                let base64Pure = '';
+                                let  base64ConEncabezado = '';
                                 if (rawBase64.startsWith('data:')) {
                                     // Ya viene con encabezado completo, lo usamos tal cual
                                     base64ConEncabezado = rawBase64;
@@ -2010,7 +2010,7 @@
                                 const nombreArchivoEncabezado = `MonitoreoEncabezadoVivero-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
 
                                 console.log("Subiendo imagen de encabezado:", nombreArchivoEncabezado);
-                                const uploadResult = await subirImagenBase64DesdeCliente(base64Pure, nombreArchivoEncabezado);
+                                const uploadResult = await subirImagenBase64DesdeCliente( base64ConEncabezado, nombreArchivoEncabezado);
 
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
@@ -2106,7 +2106,6 @@
 
                         if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
                             let base64PureEnfermedad = '';
-                            let mimeTypeEnfermedad = '';
                             if (rawBase64Enfermedad.startsWith('data:')) {
                                 base64PureEnfermedad = base64PureEnfermedad;
                             } else {
