@@ -2540,7 +2540,7 @@
               const areasReportadas = fecha? areasConReportes.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReportes;
               let areasEncontradas = [];
               
-              console.log('areas reportadas v3: ', areasReportadas);
+              console.log('areas reportadas v4: ', areasReportadas);
               areasReportadas.forEach(area=>{
                   const bloque = 'b:'+area["N° Bloque"];
                   const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
@@ -2552,7 +2552,6 @@
                           const idCuadrante = 'c:'+cuadrante;
                            elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,cuadrante]= td.id.split('-');
-                                                   
                                                   return (idBloque.trim().toLowerCase() == bloque.trim().toLowerCase()) &&
                                                          (idMacrotunel.trim().toLowerCase() == macrotunel.trim().toLowerCase()) &&
                                                          (cuadrante.trim().toLowerCase() == idCuadrante.trim().toLowerCase());
@@ -2564,7 +2563,6 @@
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
                                                 const result =(idBloque == bloque) && (idMacrotunel == macrotunel);
-                                                console.log({tdId: td.id, result})
                                                   return (idBloque == bloque) &&
                                                          (idMacrotunel == macrotunel)
                                                 }).map(td=>td.id);
@@ -2573,10 +2571,6 @@
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
-                                                     console.log({
-                                                        tdId: td.id,
-                                                        (idBloque == bloque)
-                                                      });
                                                   return (idBloque == bloque)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
