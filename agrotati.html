@@ -2035,7 +2035,7 @@
                             const rawBase64 = registro.encabezado["Foto 1 (Deficiencia)"];
                             let imageUrl = "";
 
-                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0 !rawBase64.includes('drive.google')) {
+                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0 && !rawBase64.includes('drive.google')) {
                                 let base64ConEncabezado = '';
 
                                 if (rawBase64.startsWith('data:')) {
