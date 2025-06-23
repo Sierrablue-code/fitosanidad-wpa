@@ -2274,17 +2274,17 @@
                   const cuadrante= document.getElementById('valorCuadrante').value;
                   const hilera = document.getElementById('valorHilera').value;
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
-                  console.log('hiden: ', imagenPrincipal)
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
                   let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Agrotati",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
-                  Array.from(filas).forEach(function(fila) {
+                  Array.from(filas).forEach(function(fila,index) {
+                      console.log('indice: ',index);
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
                     const valorSeveridad = fila.querySelector(".severidad").value;
                     const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
                     const imagenHiden = fila.querySelector('.foto input[type=hidden]');
-                    console.log(muestraTotal, muestrasInfectadas);
+                    console.log(imagenHiden);
                     const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal)).toFixed(2) ;
                     console.log(porcentajeIncidencia);
                     if(listaEnfermedades.includes(selectAfeccion)){
