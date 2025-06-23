@@ -1236,7 +1236,7 @@
                     <td class="muestrasInfectadas"><input type="number" min="0" placeholder="Ingresa valor" required /></td>
                     <td class="foto">
                       <input type="file" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenDetalle-fila-1')">
-                      <input type="hidden" id="imagenDetalle-fila-1" />
+                      <input type="hidden" class="foto" id="imagenDetalle-fila-1" />
                     </td>
                     <td><button class="btnEliminar" onclick="eliminarFila('fila-1')">-</button> <button class="btnAgregar" type="button" onclick="agregarFila()" >+</button></td>
            
@@ -1921,7 +1921,7 @@
                           <option value="5">5</option></select></td>
                     <td class="foto"><input type="number" min="0" placeholder="Ingresa valor" required /></td>
                         <input type="file" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenDetalle-${identificador}')">
-                       <input type="hidden" id="imagenDetalle-${identificador}" />
+                       <input type="hidden" class="foto" id="imagenDetalle-${identificador}" />
                     </td>
                     <td><button class="btnEliminar" onclick="eliminarFila('${identificador}')">-</button> <button class="btnAgregar" type="button" onclick="agregarFila()" >+</button></td>
                 `;
@@ -2278,14 +2278,13 @@
                   const fechaRegistrada = fechaRegistro.value;
                   let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Agrotati",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
                   Array.from(filas).forEach(function(fila,index) {
-                      console.log('indice: ',index);
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
                     const valorSeveridad = fila.querySelector(".severidad").value;
                     const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
                     const imagenHiden = fila.querySelector('.foto input[type=hidden]');
                     const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal)).toFixed(2) ;
-                    console.log(porcentajeIncidencia);
+                    console.log('imagen enfermedad: ',imagenHiden);
                     if(listaEnfermedades.includes(selectAfeccion)){
                         const detalleEnfermedad = {'Enfermedad':selectAfeccion,'# Plantas enfermas':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdPlagas y Enfermedades':" ",'Foto 1':imagenHiden};
                         enfermedadesAgregadas.push(detalleEnfermedad);
@@ -2325,7 +2324,6 @@
               lector.onload = function(e) {
                 // e.target.result es la imagen en base64
                 const base64String = e.target.result;
-                console.log(base64String);
                 // Guardar el base64 en un campo oculto para enviar luego
                 document.getElementById(idCampoOculto).value = base64String;
               };
@@ -2402,8 +2400,9 @@
           if(enviar){
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
-            if (hayConexion()) enviarPendientes();
-            location.reload();
+            if (hayConexion()) {
+                    enviarPendientes().then( location.reload(); cargarDatod('Agrotati'));
+            }
           }
         }
       function activarBotonesReporte(){
