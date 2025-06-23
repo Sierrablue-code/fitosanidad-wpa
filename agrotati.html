@@ -1716,8 +1716,8 @@
         return datos ? JSON.parse(datos) : [];
       }
       async function obtenerDesdeBase(productor,tabla, claveCache) {
-          console.log(navigator.onLine);
-        if (!navigator.onLine) {
+          console.log(navigator.onLine, claveCache);
+        if (navigator.onLine === false) {
             const cachedData = cargarDesdeCache(claveCache);
             console.log(cachedData);
             if (cachedData) {
