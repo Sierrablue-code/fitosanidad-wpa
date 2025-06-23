@@ -1713,9 +1713,8 @@
       }
       async function obtenerDesdeBase(productor,tabla, claveCache) {
          
-          const enLinea = await estaEnLineaReal();
-           console.log(navigator.onLine, claveCache,enLinea);
-        if (enLinea) {
+          //const enLinea = await estaEnLineaReal();
+        if (navigator.onLine) {
             const cachedData = cargarDesdeCache(claveCache);
             console.log(cachedData);
             if (cachedData) {
