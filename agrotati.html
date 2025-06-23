@@ -2397,7 +2397,7 @@
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
             if (hayConexion()) {
-                    enviarPendientes().then(()=>{ location.reload(); cargarDatod('Agrotati')});
+                    enviarPendientes().then(()=>{ cargarDatos('Agrotati');});
             }
           }
         }
