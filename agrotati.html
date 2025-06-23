@@ -2129,6 +2129,7 @@
                         item["IdPlagas y Enfermedades"] = idPrincipal;
 
                         const rawBase64Enfermedad = item["Foto 1"];
+                        console.log('base 64 foto enfermedad: ', rawBase64Enfermedad)
                         let imageUrlEnfermedad = "";
 
                         if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
@@ -2193,7 +2194,6 @@
                 }
             }
             localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes));
-            cargarDatos('Agrotati')
             activarBotonesReporte();
             actualizarContador();
              
@@ -2284,7 +2284,6 @@
                     const valorSeveridad = fila.querySelector(".severidad").value;
                     const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
                     const imagenHiden = fila.querySelector('.foto input[type=hidden]');
-                    console.log(imagenHiden);
                     const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal)).toFixed(2) ;
                     console.log(porcentajeIncidencia);
                     if(listaEnfermedades.includes(selectAfeccion)){
@@ -2326,7 +2325,7 @@
               lector.onload = function(e) {
                 // e.target.result es la imagen en base64
                 const base64String = e.target.result;
-
+                console.log(base64String);
                 // Guardar el base64 en un campo oculto para enviar luego
                 document.getElementById(idCampoOculto).value = base64String;
               };
