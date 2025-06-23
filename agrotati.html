@@ -1717,8 +1717,10 @@
         return datos ? JSON.parse(datos) : [];
       }
       async function obtenerDesdeBase(productor,tabla, claveCache) {
-          console.log(navigator.onLine, claveCache);
-        if (navigator.onLine === false) {
+         
+          const enLinea = await estaEnLineaReal();
+           console.log(navigator.onLine, claveCache,enLinea);
+        if (enLinea) {
             const cachedData = cargarDesdeCache(claveCache);
             console.log(cachedData);
             if (cachedData) {
@@ -2627,6 +2629,18 @@
             eliminarShadows();
           }
         });
+async function estaEnLineaReal() {
+  try {
+    const response = await fetch("https://www.google.com/favicon.ico", {
+      method: "HEAD",
+      cache: "no-store"
+    });
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
     </script>
   
 </body>
