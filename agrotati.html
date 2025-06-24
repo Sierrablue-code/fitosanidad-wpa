@@ -2048,9 +2048,7 @@
                                 }else{
                                     imageUrl= rawBase64;
                                 }
-                            } else {
-                                 
-                            }
+                            } 
                             registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl === "" ? null : imageUrl;
 
                             const rowId = await runServerFunction('Encabezado: Plagas y enfermedades', registro.encabezado);
@@ -2081,29 +2079,30 @@
 
                         const rawBase64Plaga = item["Foto 1"];
                         let imageUrlPlaga = "";
-
+                        console.log('foto palga: ',rawBase64Plaga)
                         if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
                             let base64PurePlaga = '';
+                            console.log(rawBase64Plaga.includes('drive.google'));
                             if(!rawBase64Plaga.includes('drive.google')){
                             if (rawBase64Plaga.startsWith('data:')) {
                                 base64PurePlaga = rawBase64Plaga;
                             } else {
                                 base64PurePlaga = `data:image/png;base64,${rawBase64Plaga}`;
                             }
-
                             const nombreFotoPlaga = `${idPrincipal}-PlagaAG-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
                             const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga);
-
                             if (uploadResultPlaga.success) {
                                 imageUrlPlaga = uploadResultPlaga.url;
                             } else {
                                 console.error("Error al subir la imagen de la plaga:", uploadResultPlaga.error);
                             }
                             }else{
+                                console.log('no hay imagen plaga')
                                 imageUrlPlaga = rawBase64Plaga;
                             }
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS PLAGAS ***
+                        console.log('url imagen plaga: ', imageUrlPlaga);
                         item["Foto 1"] = imageUrlPlaga === "" ? null : imageUrlPlaga;
 
                         try {
@@ -2120,9 +2119,10 @@
                         item["IdPlagas y Enfermedades"] = idPrincipal;
                         const rawBase64Enfermedad = item["Foto 1"];
                         let imageUrlEnfermedad = "";
-
+                        console.log('foto enfermedad', rawBase64Enfermedad);
                         if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
                             let base64PureEnfermedad = '';
+                            console.log(rawBase64Enfermedad.includes('drive.google'));
                             if(!rawBase64Enfermedad.includes('drive.google')){
                             if (rawBase64Enfermedad.startsWith('data:')) {
                                 base64PureEnfermedad = rawBase64Enfermedad;
@@ -2142,6 +2142,7 @@
                             }
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
+                        console.log('foto enfermedad url',imageUrlEnfermedad)
                         item["Foto 1"] = imageUrlEnfermedad === "" ? null : imageUrlEnfermedad;
 
                         try {
