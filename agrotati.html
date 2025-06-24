@@ -1651,12 +1651,10 @@
                     if (!td.querySelector('input[type="checkbox"]')) {
                             agregarCheckbox(td);
                     }
-                    if(td.textContent.trim() ==''){
-                        td.onclick = (event) => {
-                            abrirFormulario(td.id);
-                        };
-                        });
-                     }
+                    td.onclick = (event) => {
+                        abrirFormulario(td.id);
+                    };
+                });
             }
       }
       function setScale(factor) {
@@ -2040,7 +2038,7 @@
                                     // Si solo es la cadena base64 sin encabezado, asumimos que es PNG
                                     base64ConEncabezado = `data:image/png;base64,${rawBase64}`;
                                 }
-                                const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Fila"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
+                                const nombreArchivoEncabezado = `MonitoreoEncabezadoAG-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Fila"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
                                 const uploadResult = await subirImagenBase64DesdeCliente(base64ConEncabezado, nombreArchivoEncabezado);
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
@@ -2089,7 +2087,7 @@
                                 base64PurePlaga = `data:image/png;base64,${rawBase64Plaga}`;
                             }
 
-                            const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
+                            const nombreFotoPlaga = `${idPrincipal}-PlagaAG-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
                             const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga);
 
                             if (uploadResultPlaga.success) {
@@ -2125,7 +2123,7 @@
                             } else {
                                 base64PureEnfermedad = `data:image/png;base64,${rawBase64Enfermedad}`;
                             }
-                            const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
+                            const nombreFotoEnfermedad = `${idPrincipal}-EnfermedadAG-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
                             const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad);
 
                             if (uploadResultEnfermedad.success) {
@@ -2275,7 +2273,7 @@
                   plagasAgregadas = [];
                   enfermedadesAgregadas =[];
                   if(hayConexion){
-                    enviarPendientes().then(()=>{cargarDatos('Agrotati')});
+                    enviarPendientes().then(()=>{cargarDatos('Agrotati').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();})});
                   }
                    modalContent.style.display = "none";
                     filas=1;
@@ -2377,7 +2375,7 @@
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
             if (hayConexion()) {
-                enviarPendientes().then(()=>{ desmarcarChecks(); cargarDatos('Agrotati');});
+                enviarPendientes().then(()=>{ desmarcarChecks(); cargarDatos('Agrotati').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
             }
           }
         }
