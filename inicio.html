@@ -3,7 +3,7 @@
 <head>
   <script>
   const autenticado = localStorage.getItem("autenticado") === "true";
-  const productor = localStorage.getItem("productor");
+  const productor = localStorage.getItem("productores");
   if (!autenticado || !productor ) {
     window.location.href = "index.html";
   }
