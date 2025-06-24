@@ -1715,9 +1715,9 @@
     }
 }
       function cargarDatos(productor) {
-        const cacheP = `plagas-${productor.replace(/\s+/g, "-")}`;
-        const cacheD = `enfermedades-${productor.replace(/\s+/g, "-")}`;
-        const cacheR = `reportes-${productor.replace(/\s+/g, "-")}`;
+        const cacheP = `plagasVivero-${productor.replace(/\s+/g, "-")}`;
+        const cacheD = `enfermedadesVivero-${productor.replace(/\s+/g, "-")}`;
+        const cacheR = `reportesVivero-${productor.replace(/\s+/g, "-")}`;
         return Promise.all([
             obtenerDesdeBase(productor, "Detalle: Plagas vivero", cacheP)
             .then(datos => { auxPests = datos; jsonPests=auxPests;}),
@@ -2122,7 +2122,6 @@
             localStorage.setItem('reportesPendientes-vivero',JSON.stringify(nuevosReportes))
             activarBotonesReporte();
             actualizarContador();
-            cargarDatos('Ecuablue');
         }
        
 
@@ -2224,7 +2223,7 @@
                   plagasAgregadas = [];
                   enfermedadesAgregadas =[];
                   if(hayConexion){
-                    enviarPendientes();
+                    enviarPendientes().then(()=>{cargarDatos('Ecuablue')});
                   }
                   modalContent.style.display = "none";
                     filas=1;
@@ -2587,6 +2586,9 @@
             td.style.boxShadow = 'none';
             td.removeAttribute('data-shadow-aplicado');
           });
+        }
+        function desmarcarChecks(){
+            
         }
 
     </script>
