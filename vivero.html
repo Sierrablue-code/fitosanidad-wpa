@@ -2333,8 +2333,13 @@
           if(enviar){
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
-            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks();cargarDatos('Ecuablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
-          }
+            if (hayConexion()){
+                enviarPendientes().then(()=>{desmarcarChecks();cargarDatos('Ecuablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
+            }else{
+                activarBotonesReporte();
+                 actualizarContador();
+            }
+            }
         }
       function activarBotonesReporte(){
        botonesReporte.style.display = areasAgregadas.length>0?'block':'none';
