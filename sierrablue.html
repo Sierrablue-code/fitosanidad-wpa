@@ -2038,9 +2038,9 @@ async function enviarPendientes() {
                             const rawBase64 = registro.encabezado["Foto 1 (Deficiencia)"];
                             let imageUrl = "";
 
-                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0 && !rawBase64.includes('drive.google')) {
+                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
                                 let base64ConEncabezado = '';
-
+                                if(!rawBase64.includes('drive.google')){
                                 if (rawBase64.startsWith('data:')) {
                                     // Ya viene con encabezado completo, lo usamos tal cual
                                     base64ConEncabezado = rawBase64;
@@ -2055,8 +2055,9 @@ async function enviarPendientes() {
                                 } else {
                                     console.error("Error al subir la imagen del encabezado:", uploadResult.error);
                                 }
-                            } else {
-                                if(rawBase64.includes('drive.google')) imageUrl= rawBase64
+                                }else{
+                                    imageUrl= rawBase64;
+                                }
                             }
                             registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl === "" ? null : imageUrl;
 
@@ -2067,11 +2068,9 @@ async function enviarPendientes() {
                                 registro.encabezado["Row ID"] = rowId;
                                 encabezadoGuardadoExitosamente = true;
                             } else {
-                                console.warn("No se pudo guardar el encabezado (no se recibió Row ID). Se reintentará.");
                                 encabezadoGuardadoExitosamente = false;
                             }
                         } catch (e) {
-                            console.error("Error crítico al intentar guardar encabezado o procesar su imagen:", e);
                             encabezadoGuardadoExitosamente = false;
                         }
                     } else {
@@ -2091,8 +2090,9 @@ async function enviarPendientes() {
                         const rawBase64Plaga = item["Foto 1"];
                         let imageUrlPlaga = "";
 
-                        if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0 && !rawBase64Plaga.includes('drive.google')) {
+                        if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
                             let base64PurePlaga = '';
+                            if(!rawBase64Plaga.includes('drive.google')){
                             if (rawBase64Plaga.startsWith('data:')) {
                                 base64PurePlaga = rawBase64Plaga;
                             } else {
@@ -2107,8 +2107,9 @@ async function enviarPendientes() {
                             } else {
                                 console.error("Error al subir la imagen de la plaga:", uploadResultPlaga.error);
                             }
-                        } else {
-                             if(rawBase64Plaga.includes('drive.google')) imageUrlPlaga = rawBase64Plaga;
+                            }else{
+                                imageUrlPlaga = rawBase64Plaga;
+                            }
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS PLAGAS ***
                         item["Foto 1"] = imageUrlPlaga === "" ? null : imageUrlPlaga;
@@ -2129,8 +2130,9 @@ async function enviarPendientes() {
                         const rawBase64Enfermedad = item["Foto 1"];
                         let imageUrlEnfermedad = "";
 
-                        if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0 && !rawBase64Enfermedad.includes('drive.google')) {
+                        if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
                             let base64PureEnfermedad = '';
+                            if(!rawBase64Enfermedad.includes('drive.google')){
                             if (rawBase64Enfermedad.startsWith('data:')) {
                                 base64PureEnfermedad = rawBase64Enfermedad;
                             } else {
@@ -2143,9 +2145,9 @@ async function enviarPendientes() {
                                 imageUrlEnfermedad = uploadResultEnfermedad.url;
                             } else {
                                 console.error("Error al subir la imagen de la enfermedad:", uploadResultEnfermedad.error);
+                            }else{
+                                imageUrlEnfermedad = rawBase64Enfermedad;
                             }
-                        } else {
-                            if(rawBase64Enfermedad.includes('drive.google')) imageUrlEnfermedad = rawBase64Enfermedad;
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
                         item["Foto 1"] = imageUrlEnfermedad === "" ? null : imageUrlEnfermedad;
