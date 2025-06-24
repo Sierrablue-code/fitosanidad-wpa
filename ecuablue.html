@@ -1217,21 +1217,19 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+             <tr>
                <td>
                   <label for="muestraPrincipal">Muestra:</label>
                   <input type="number" id="muestra" placeholder="Ingrese el valor" min=1 required />
                   <span id="error-messageMuestra" class="error-message"></span>
                 </td>
-                <td colspan="2">
-                  <label for="imagenPrincipal">Imagen general:</label>
-                  <input type="file" id="imagenPrincipal" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenPrincipal64')">
-                  <input type="hidden" id="imagenPrincipal64" />
-                </td>
-                <td colspan="2">
-                  <label for="observacionPrincipal">Observación:</label>
-                  <input type="text" id="observacionPrincipal" placeholder="Observación..." />
-                </td>
+                <td colspan="2"><label for="Variedad">Veriedad:</label><select id="variedad" ></select></td>
+                <td colspan="2"><label for="Estado-fenologico">Estado fenológico:</label><select id="estado-fenologico">
+                  <option value="" selected="true" disabled="true">Seleccione una opción</option>
+                  <option value="Crecimiento">Crecimiento</option>
+                  <option value="Floración">Floración</option>
+                  <option value="Producción">Producción</option>
+                </select></td>
            </tr>
           </tbody>
         </table>
@@ -1342,6 +1340,7 @@
     let areasAgregadas =[];
     let areasConReportes = [];
     let bloques = [];
+    let variedades = [];
     var filas =1;
     var filasReporte =1;
     let currentScale = 1;
@@ -1785,8 +1784,9 @@
       function cargarDatos(productor) {
         const cacheP = `plagas-${productor.replace(/\s+/g, "-")}`;
         const cacheD = `enfermedades-${productor.replace(/\s+/g, "-")}`;
-        const cacheR = `reportes-${productor.replace(/\s+/g, "-")}`
-        const cacheB = `Bloques-${productor.replace(/\s+/g, "-")}`
+        const cacheR = `reportes-${productor.replace(/\s+/g, "-")}`;
+        const cacheB = `Bloques-${productor.replace(/\s+/g, "-")}`;
+        const cacheS = `Siembras-${productor.replace(/\s+/g, "-")}`;
         return Promise.all([
             obtenerDesdeBase(productor, "Bloques", cacheB)
             .then(datos => { bloques = datos }),
@@ -1795,7 +1795,9 @@
             obtenerDesdeBase(productor, "Detalle: Enfermedades", cacheD)
             .then(datos => { auxDiseases = datos; jsonDiseases=auxDiseases }),
             obtenerDesdeBase(productor,"Calendario",cacheR)
-            .then(datos => { areasConReportes = datos;})
+            .then(datos => { areasConReportes = datos;}),
+            obtenerDesdeBase(productor,"Siembra",cacheS)
+            .then(datos => { variedades = datos;})
         ]);
         
        }
@@ -1866,6 +1868,25 @@
                       document.getElementById('valorMacrotunel').value= macrotunel;
                       document.getElementById('valorCuadrante').value=cuadrante;
                       document.getElementById('valorHilera').value = hilera;
+                      const selectVariedad = document.getElementById('variedad');
+                      const listaVariedades = variedades.length>0?[...new Set(variedades.filter(dato=>dato["Bloque"]==bloque).map(dato=>dato["Variedad"]))]:[];
+                       if(listaVariedades.length>1){
+                        const option = document.createElement('option');
+                            option.value = "";
+                            option.textContent = "Seleccionar una opción";
+                            selectVariedad.appendChild(option);
+                            option.selected=true;
+                            option.disabled=true;
+                      }
+                      listaVariedades.forEach(valor =>{
+                        const option = document.createElement('option');
+                            option.value = valor;
+                            option.textContent = valor;
+                            selectVariedad.appendChild(option);
+                      });
+                      if(listaVariedades.length==1){
+                        selectVariedad.selectedIndex = 0;
+                      }
                       modalContent.style.display = "block";
                       document.getElementById('fechaRegistro').value = hoy;
                       //fechaRegistro.value=hoy;
@@ -2276,7 +2297,9 @@
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
-                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecuablue",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
+                  const variedad = document.getElementById('variedad').value;
+                  const fenologia = document.getElementById('estado-fenologico').value;
+                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecuablue",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'Variedad':variedad,'Estado Fenológico':fenologia,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
                   Array.from(filas).forEach(function(fila) {
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
