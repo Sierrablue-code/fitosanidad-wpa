@@ -10,6 +10,16 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="data:,">
     <title>Sierrablue</title>
+    <script>
+    // Validar sesión y productor
+    const autenticado = localStorage.getItem("autenticado") === "true";
+    const productorSesion = localStorage.getItem("productor");
+    const archivoActual = window.location.pathname.split("/").pop().replace(".html", "");
+
+    if (!autenticado || productorSesion !== archivoActual) {
+      window.location.href = "noAutorizado.html";
+    }
+  </script>
     <style>
     :root {
       --scale-factor: 1;
