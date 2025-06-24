@@ -1754,7 +1754,7 @@
         }
 
         const data = await response.json();
-        const rows = data;
+        const rows = claveCache.includes('Bloques')?[...new Set(data.map(reg=>reg["N° de Bloque"]))]:data;
         guardarEnCache(claveCache, rows);
         return rows;
 
