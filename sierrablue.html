@@ -2392,8 +2392,12 @@ async function enviarPendientes() {
           if(enviar){
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
-            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks();cargarDatos('Sierrablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
-            
+            if (hayConexion()) {
+                enviarPendientes().then(()=>{desmarcarChecks();cargarDatos('Sierrablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
+            }else{
+                activarBotonesReporte();
+                 actualizarContador();
+            }
           }
         }
       function activarBotonesReporte(){
