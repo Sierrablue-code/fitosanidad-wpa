@@ -1467,7 +1467,6 @@
          limpiarTds(cuadrantesConDanios);
          const plagasSeleccionas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked);
          const enfermedadesSeleccionadas = Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked);
-         console.log(plagasSeleccionas,enfermedadesSeleccionadas);
          const filtrosSeleccionados = [...enfermedadesSeleccionadas, ...plagasSeleccionas];
          const fecha = document.getElementById('fecha').value.toString();
          let fechaInicio = "";
@@ -1482,7 +1481,6 @@
         const [anioFin, mesFin, diaFin] = fechaFin.split("-");
         const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
         const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
-        console.log(fechaInicioString,fechaFinString);
         const areasAfectadasPPlagas = auxPests.length > 0
                 ? fecha
                   ? auxPests.filter(pest => 
@@ -1504,14 +1502,12 @@
         let afeccionesAPintar = {};
         areas.forEach(area=>{
           const enfermedadOplaga = area.Enfermedad || area.Plaga;
-          console.log(area.Fecha)
           const id = area.id;
           const incidencia= parseFloat(area["Incidencia"])||0;
           const severidad = parseFloat(area["Severidad"]) ||0;
           const nivel = area["Nivel de infestación"];
           const clave= id;
           const color = filtrosSeleccionados.find(cb=>cb.closest('div').getAttribute('data-option')== enfermedadOplaga).closest('div').getAttribute('data-color');
-          console.log(enfermedadOplaga,id, color);
           if(!afeccionesAPintar[clave]){
             afeccionesAPintar[clave]={'td':id,'afecciones':[{'nombre':enfermedadOplaga,'severidad':0,'incidencia':0,'contador':0,'incidenciaPromedio':0,'color':color,'nivel':[nivel]}]};
           }
@@ -1526,7 +1522,6 @@
             afeccion.nivel.push(nivel);
           }
         });
-        console.log(afeccionesAPintar)
         const maximosPorAfeccion = Object.values(afeccionesAPintar).flatMap(obj => obj.afecciones)
                                       .reduce((acc, afeccion) => {
                                         if (afeccion.incidenciaPromedio != null && !isNaN(afeccion.incidenciaPromedio)) {
@@ -1544,7 +1539,6 @@
              const parrafo = document.createElement('p');
              const texto= afeccionesLista.length > 0 ?'Plagas o enfermedades: ' +  afeccionesLista.map(reg=>reg.nombre).toString() + '\n':"";
              elementoA.textContent= tdId;
-             console.log(tdId,celdaConProblemas);
             elementoA.href="#"+tdId;
             afeccionesLista.forEach(afeccion=>{
             const tamaño= celdaConProblemas.offsetHeight -3;
@@ -1689,9 +1683,7 @@
             }
           });
            checkReportes.addEventListener("change", function () {
-           console.log("esta habilitado?: ", this.checked);
           if (this.checked) {
-              console.log('llamar a encontrar cuadrantes...')
              encontrarCuadrantesConReportes();
           } else {
             eliminarShadows();
@@ -1705,7 +1697,7 @@
                 }
               });
           recorrerCS();
-          cargarDatos('Sierrablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes(); document.getElementById("pantalla-carga").style.display = "none";});
+          cargarDatos('Sierrablue').then(()=>{document.getElementById("pantalla-carga").style.display = "none";});
           hayConexion()?enviarPendientes():actualizarContador();
        });
           //fin cod aux
@@ -2046,7 +2038,7 @@ async function enviarPendientes() {
                                     // Si solo es la cadena base64 sin encabezado, asumimos que es PNG
                                     base64ConEncabezado = `data:image/png;base64,${rawBase64}`;
                                 }
-                                const nombreArchivoEncabezado = `MonitoreoEncabezadoSB-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
+                                const nombreArchivoEncabezado = `MonitoreoEncabezadoSB-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Fila"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
                                 const uploadResult = await subirImagenBase64DesdeCliente(base64ConEncabezado, nombreArchivoEncabezado);
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
@@ -2125,7 +2117,6 @@ async function enviarPendientes() {
                         item["IdPlagas y Enfermedades"] = idPrincipal;
 
                         const rawBase64Enfermedad = item["Foto 1"];
-                        console.log('base 64 foto enfermedad: ', rawBase64Enfermedad)
                         let imageUrlEnfermedad = "";
 
                         if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0 && !rawBase64Enfermedad.includes('drive.google')) {
@@ -2145,13 +2136,11 @@ async function enviarPendientes() {
                             }
                         } else {
                             if(rawBase64Enfermedad.includes('drive.google')) imageUrlEnfermedad = rawBase64Enfermedad;
-                            console.log("No hay Base64 para la imagen de enfermedad o no es una cadena válida. El campo se enviará como null.");
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
                         item["Foto 1"] = imageUrlEnfermedad === "" ? null : imageUrlEnfermedad;
 
                         try {
-                            console.log("Enviando detalle de enfermedad a AppSheet:", item);
                             const id = await runServerFunction("Detalle: Enfermedades", item);
                             if (!id) fallidosEnfermedades.push(item);
                         } catch (e) {
@@ -2166,11 +2155,8 @@ async function enviarPendientes() {
                             detallesPlagas: fallidosPlagas,
                             detallesEnfermedades: fallidosEnfermedades
                         });
-                        console.log("Registro con detalles fallidos añadido a la lista de reintentos.");
-                    } else {
-                        console.log("Registro completo enviado con éxito.");
-                    }
-                } // Fin del bucle for (const registro of registros)
+                    } 
+                } 
 
                 // --- 5. Actualizar el Local Storage con los registros pendientes ---
                 localStorage.setItem('registrosPendientesSB', JSON.stringify(nuevosPendientes));
@@ -2266,7 +2252,6 @@ async function enviarPendientes() {
                   const cuadrante= document.getElementById('valorCuadrante').value;
                   const hilera = document.getElementById('valorHilera').value;
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
-                  console.log('hiden: ', imagenPrincipal)
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
                   let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Sierrablue",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
@@ -2276,9 +2261,7 @@ async function enviarPendientes() {
                     const valorSeveridad = fila.querySelector(".severidad").value;
                     const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
                     const imagenHiden = fila.querySelector('.foto input[type=hidden]');
-                    console.log(muestraTotal, muestrasInfectadas);
                     const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal)).toFixed(2) ;
-                    console.log(porcentajeIncidencia);
                     if(listaEnfermedades.includes(selectAfeccion)){
                         const detalleEnfermedad = {'Enfermedad':selectAfeccion,'# Plantas enfermas':muestrasInfectadas,'Incidencia':porcentajeIncidencia,'Severidad':valorSeveridad,'Nivel de infestación':niveles,'IdPlagas y Enfermedades':" ",'Foto 1':imagenHiden};
                         enfermedadesAgregadas.push(detalleEnfermedad);
@@ -2293,7 +2276,7 @@ async function enviarPendientes() {
                   plagasAgregadas = [];
                   enfermedadesAgregadas =[];
                   if(hayConexion){
-                    enviarPendientes().then(()=>{cargarDatos('Sierrablue')});
+                    enviarPendientes().then(()=>{cargarDatos('Sierrablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();})});
                   }
                    modalContent.style.display = "none";
                     filas=1;
@@ -2396,7 +2379,7 @@ async function enviarPendientes() {
           if(enviar){
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
-            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks();cargarDatos('Sierrablue');});
+            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks();cargarDatos('Sierrablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
             
           }
         }
@@ -2405,7 +2388,6 @@ async function enviarPendientes() {
       }
       function agregarAreaAfectada(id,tipo){
           const idArea = id.split('-'); 
-          console.log(id, tipo)
           const cb = Array.from(document.querySelectorAll("td[id]")).filter(td => td.id==id).map(td => td.querySelector("input[type='checkbox']")).filter(chk => chk)[0];
           var checkboxes =[];
           const bloqueNum = idArea[0].split(':')[1];
@@ -2468,21 +2450,17 @@ async function enviarPendientes() {
                       cuadrantes.splice(indiceDato,1);
                   }
                   dato["Cuadrantes"]= cuadrantes.join(',');
-                  console.log(cuadrantes.length,dato["Cuadrantes"].length);
                   if(cuadrantes.length==0) areasAgregadas = areasAgregadas.filter(rg=>rg["Bloque"]==bloque && rg["Macrotunel"]!=mtTc)
               });
                 const valor2 = 'b:'+bloqueNum+'-mt:'+mtTc;
                 const valor1 = 'b:'+bloqueNum;
-                console.log(areasAgregadas.some(reg=>reg["Bloque"]==bloque));
               if(!areasAgregadas.some(reg=>reg["Bloque"]==bloque && reg["Macrotunel"]==mtTc)){
-                console.log("activar macrotunel")
                 checkboxes = !areasAgregadas.some(reg=>reg["Bloque"]==bloque)?Array.from(document.querySelectorAll("td[id]")).filter(td => (td.id == valor2 || td.id== valor1)).map(td => td.querySelector("input[type='checkbox']")):Array.from(document.querySelectorAll("td[id]")).filter(td => td.id == valor2).map(td => td.querySelector("input[type='checkbox']"));
               }
               
             }
            desactivaroActivarCheck(checkboxes,false);
           }
-          console.log(areasAgregadas)
           cb.disabled=false;
           activarBotonesReporte();
         }
@@ -2506,7 +2484,6 @@ async function enviarPendientes() {
         }
         function encontrarCuadrantesConReportes(){
             eliminarShadows();
-            console.log("Buscando cuadrantes con reportes sb...")
             const fecha = document.getElementById('fecha').value.toString();
               let fechaInicio = "";
               let fechaFin = "";
@@ -2529,15 +2506,11 @@ async function enviarPendientes() {
               const tdsFiltrados = tds.filter(td => regex.test(td.id));
               const areasReportadas = fecha? areasConReportes.filter(registro=>registro["Fecha"]>=fechaInicioString && registro["Fecha"]<=fechaFinString):areasConReportes;
               let areasEncontradas = [];
-              
-              console.log('areas reportadas v4: ', areasReportadas);
               areasReportadas.forEach(area=>{
                   const bloque = 'b:'+String(area["N° Bloque"]);
                   const macrotunel = area["Macrotunel"]?'mt:'+String(area["Macrotunel"]):"";
                   const cuadrantes = Array.from(area["Cuadrantes"]).filter(cuadrante => Number(cuadrante)>0);
                   let elementosTdPorC = [];
-                  
-                  console.log("area reportada v5: ", bloque, macrotunel,cuadrantes);
                   if(cuadrantes.length>0){
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+String(cuadrante);
@@ -2548,7 +2521,6 @@ async function enviarPendientes() {
                                                          (cuadranteId.trim() == idCuadrante.trim());
                                                 }).map(td=>td.id);
                           areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                          console.log('hay cuadrante',elementosTdPorC);
                       })
                   }else if(macrotunel !== ""){
                       elementosTdPorC = tdsFiltrados.filter(td => {
@@ -2558,19 +2530,15 @@ async function enviarPendientes() {
                                                          (idMacrotunel == macrotunel)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                      console.log('hay solo macrotunel', elementosTdPorC);
                   }else{ 
                       elementosTdPorC = tdsFiltrados.filter(td => {
                                                  const [idBloque, idMacrotunel, idHilera,idCuadrante]= td.id.split('-');
                                                   return (idBloque == bloque)
                                                 }).map(td=>td.id);
                       areasEncontradas = areasEncontradas.concat(elementosTdPorC)
-                      console.log('solo bloque', elementosTdPorC);
                   }
               });
-            console.log('areas encontradas de reportes: ', areasEncontradas);
             const areasUnicas = agruparIds(areasEncontradas);
-            console.log('Areas unicas encontradas: ', areasUnicas);
             const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
             for(let clave in areasUnicas){
                 const elemento=areasUnicas[clave];
@@ -2587,7 +2555,6 @@ async function enviarPendientes() {
         }
        function agruparIds(idsValidos) {
           const grupos = {};
-          console.log('agrupando ids: ', idsValidos);
           idsValidos.forEach(id => {
             // Extraemos las partes sin regex (ya sabemos que el formato es válido)
             // Asumiendo que siempre es b:x-mt:y-h:z-c:w
