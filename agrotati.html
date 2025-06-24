@@ -1179,31 +1179,37 @@
       <table class="formulario-table" id="encabezado-registro">
           <thead>
               <tr>
-                <td class="disabled"><label for="Bloque">Bloque:</label><input type="text" readonly id="valorBloque" /></td>
+                <td class="disabled" colspan="2"><label for="Bloque">Bloque:</label><input type="text" readonly id="valorBloque" /></td>
                 <td class="disabled"><label for="Macrotunel">Macrotunel:</label><input type="text" readonly id="valorMacrotunel"/></td>
                 <td class="disabled"><label for="Cuadrante">Cuadrante:</label><input type="text" readonly id="valorCuadrante"/></td>
                 <td class="disabled"><label for="Hilera">Hilera:</label><input type="text" readonly id="valorHilera"/></td>
-                <td><label for="Fecha de registro">Fecha de registro:</label><input type="date"  id="fechaRegistro" required/></td>
-              
             </tr>
           </thead>
           <tbody>
             <tr>
+               <td colspan="2"><label for="Fecha de registro">Fecha de registro:</label><input type="date"  id="fechaRegistro" required/></td>
                <td>
                   <label for="muestraPrincipal">Muestra:</label>
                   <input type="number" id="muestra" placeholder="Ingrese el valor" min=1 required />
                   <span id="error-messageMuestra" class="error-message"></span>
                 </td>
-                <td colspan="2">
+                <td colspan="2"><label for="Estado-fenologico">Estado fenológico:</label><select id="estado-fenologico">
+                  <option value="" selected="true" disabled="true">Seleccione una opción</option>
+                  <option value="Crecimiento">Crecimiento</option>
+                  <option value="Floración">Floración</option>
+                  <option value="Producción">Producción</option>
+                </select></td>
+           </tr>
+              <tr> <td colspan="3">
                   <label for="imagenPrincipal">Imagen general:</label>
                   <input type="file" id="imagenPrincipal" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenPrincipal64')">
                   <input type="hidden" id="imagenPrincipal64" />
                 </td>
-                <td colspan="2">
+                    <td colspan="2">
                   <label for="observacionPrincipal">Observación:</label>
                   <input type="text" id="observacionPrincipal" placeholder="Observación..." />
                 </td>
-           </tr>
+              </tr>
           </tbody>
         </table>
       <table class="formulario-table" >
@@ -2259,7 +2265,8 @@
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
-                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Agrotati",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
+                  const fenologia = document.getElementById('estado-fenologico').value;
+                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Agrotati",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'Estado Fenológico':fenologia,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
                   Array.from(filas).forEach(function(fila,index) {
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
