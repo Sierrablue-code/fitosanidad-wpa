@@ -2383,6 +2383,9 @@
             areasAgregadas =[];
             if (hayConexion()) {
                 enviarPendientes().then(()=>{ desmarcarChecks(); cargarDatos('Agrotati').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
+            }else{
+                 activarBotonesReporte();
+                 actualizarContador();
             }
           }
         }
