@@ -14,7 +14,7 @@
     const archivoActual = window.location.pathname.split("/").pop().replace(".html", "");
 
     if (!autenticado || productorSesion !== archivoActual) {
-      window.location.href = "index.html";
+      window.location.href = "noAutorizado.html";
     }
   </script>
     <link rel="manifest" href="manifest.json">
