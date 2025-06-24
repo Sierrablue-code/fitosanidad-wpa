@@ -2038,7 +2038,7 @@
             total=total + plasticosPendientes.length
             document.getElementById('contador').textContent = total;
           }
-             async function enviarPendientes() {
+        async function enviarPendientes() {
             let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
             let nuevosPendientes = [];
             let reportes = JSON.parse(localStorage.getItem('reportesPendientes')) ||[];
@@ -2047,14 +2047,13 @@
                 for (const registro of registros) {
                     let idPrincipal = registro.encabezado['Row ID'];
                     let encabezadoGuardadoExitosamente = false;
-
                     // --- 1. Guardar encabezado si aún no tiene Row ID ---
                     if (!idPrincipal) {
                         try {
                             const rawBase64 = registro.encabezado["Foto 1 (Deficiencia)"];
                             let imageUrl = "";
 
-                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
+                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0 && !rawBase64.includes('google.')) {
                                 let base64ConEncabezado = '';
 
                                 if (rawBase64.startsWith('data:')) {
@@ -2076,6 +2075,7 @@
                                     // imageUrl permanece "", lo que luego convertiremos a null
                                 }
                             } else {
+                                if(rawBase64.includes('google')) imageUrl = rawBase64;
                                 console.log("No hay Base64 para la imagen de encabezado o no es una cadena válida. El campo se enviará como null.");
                             }
 
