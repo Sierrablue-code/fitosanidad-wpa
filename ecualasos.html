@@ -2257,8 +2257,7 @@
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
                     const valorSeveridad = fila.querySelector(".severidad").value;
                     const niveles =  (Array.from(fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']")).filter(cb => cb.checked).map(cb => cb.value)).join(', ');
-                    const imagenHiden = fila.querySelector('.foto input[type=hidden]');
-                    console.log(muestraTotal, muestrasInfectadas);
+                    const imagenHiden = fila.querySelector('input[type=hidden]').value;
                     const porcentajeIncidencia = (Number(muestrasInfectadas)/Number(muestraTotal)).toFixed(2) ;
                     console.log(porcentajeIncidencia);
                     if(listaEnfermedades.includes(selectAfeccion)){
