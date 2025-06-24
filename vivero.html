@@ -1428,7 +1428,6 @@
          limpiarTds(cuadrantesConDanios);
          const plagasSeleccionas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked);
          const enfermedadesSeleccionadas = Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked);
-         console.log(plagasSeleccionas,enfermedadesSeleccionadas);
          const filtrosSeleccionados = [...enfermedadesSeleccionadas, ...plagasSeleccionas];
          const fecha = document.getElementById('fecha').value.toString();
          let fechaInicio = "";
@@ -1443,7 +1442,6 @@
         const [anioFin, mesFin, diaFin] = fechaFin.split("-");
         const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
         const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
-        console.log(fechaInicioString,fechaFinString);
         const areasAfectadasPPlagas = auxPests.length > 0
                 ? fecha
                   ? auxPests.filter(pest => 
@@ -1465,14 +1463,12 @@
         let afeccionesAPintar = {};
         areas.forEach(area=>{
           const enfermedadOplaga = area.Enfermedad || area.Plaga;
-          console.log(area.Fecha)
           const id = area.id;
           const incidencia= parseFloat(area["Incidencia"])||0;
           const severidad = parseFloat(area["Severidad"]) ||0;
           const nivel = area["Nivel de infestación"];
           const clave= id;
           const color = filtrosSeleccionados.find(cb=>cb.closest('div').getAttribute('data-option')== enfermedadOplaga).closest('div').getAttribute('data-color');
-          console.log(enfermedadOplaga,id, color);
           if(!afeccionesAPintar[clave]){
             afeccionesAPintar[clave]={'td':id,'afecciones':[{'nombre':enfermedadOplaga,'severidad':0,'incidencia':0,'contador':0,'incidenciaPromedio':0,'color':color,'nivel':[nivel]}]};
           }
@@ -1487,7 +1483,6 @@
             afeccion.nivel.push(nivel);
           }
         });
-        console.log(afeccionesAPintar)
         const maximosPorAfeccion = Object.values(afeccionesAPintar).flatMap(obj => obj.afecciones)
                                       .reduce((acc, afeccion) => {
                                         if (afeccion.incidenciaPromedio != null && !isNaN(afeccion.incidenciaPromedio)) {
@@ -1505,7 +1500,6 @@
              const parrafo = document.createElement('p');
              const texto= afeccionesLista.length > 0 ?'Plagas o enfermedades: ' +  afeccionesLista.map(reg=>reg.nombre).toString() + '\n':"";
              elementoA.textContent= tdId;
-             console.log(tdId,celdaConProblemas);
             elementoA.href="#"+tdId;
             afeccionesLista.forEach(afeccion=>{
             const tamaño= celdaConProblemas.offsetHeight -3;
@@ -1671,7 +1665,6 @@
       }
       async function obtenerDesdeBase(productor,tabla, claveCache) {
         if (!navigator.onLine) {
-            console.warn(`⚠ Sin conexión: intentando cargar desde caché para ${claveCache}`);
             const cachedData = cargarDesdeCache(claveCache);
             if (cachedData) {
                 return cachedData;
@@ -1714,14 +1707,10 @@
         return rows;
 
     } catch (err) {
-        // 3. Si falla la llamada al Worker (por red o error del Worker), intenta cargar desde la caché
-        console.error(`Error al obtener ${claveCache} del Worker:`, err);
         const fallbackData = cargarDesdeCache(claveCache);
         if (fallbackData) {
-            console.warn(`⚠ Fallback: Cargando desde caché debido a error de red/Worker para ${claveCache}`);
             return fallbackData;
         }
-        // Si no hay caché como fallback, propaga el error original
         throw err;
     }
 }
@@ -1731,15 +1720,14 @@
         const cacheR = `reportes-${productor.replace(/\s+/g, "-")}`;
         return Promise.all([
             obtenerDesdeBase(productor, "Detalle: Plagas vivero", cacheP)
-            .then(datos => { auxPests = datos; jsonPests=auxPests; console.log(auxPests)}),
+            .then(datos => { auxPests = datos; jsonPests=auxPests;}),
             obtenerDesdeBase(productor, "Detalle: Enfermedades vivero", cacheD)
-            .then(datos => { auxDiseases = datos; jsonDiseases=auxDiseases; console.log(auxDiseases) }),
+            .then(datos => { auxDiseases = datos; jsonDiseases=auxDiseases;}),
             obtenerDesdeBase(productor,"Reporte plásticos",cacheR)
-            .then(datos => { areasConReporte = datos;  console.log('reportes obtenidos: ', areasConReporte);})
+            .then(datos => { areasConReporte = datos;})
         ]);
         
        }
-       /* Enviar datos*/
     async function runServerFunction(tablaN, filaJson) {
         try {
         const response = await fetch(URL_APPSCRIPT, { // <--- CAMBIO AQUÍ: Usar WORKER_URL
@@ -1772,8 +1760,7 @@
             throw new Error(data.error || "Error al crear registro (Worker no obtuvo Row ID)");
         }
     } catch (err) {
-        console.error("Error en runServerFunction:", err);
-        throw err; // Propaga el error para manejo externo
+        throw err;
     }  
     }
 
@@ -1799,7 +1786,6 @@
                      agregarListenersUltimoCampo(document.getElementById('fila-1'))
                       modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
                       const componentesId=id.split('-');
-                      console.log(id)
                       const area = componentesId[0].split(':')[1]=="a"?"Aclimatacion":"Endurecimiento";
                       const nave = componentesId[1].split(':')[1];
                       const microtOcama = componentesId[2].split(':')[1];
@@ -1928,7 +1914,6 @@
               const checkboxes = fila.querySelectorAll(".nivelesInfestacion input[type='checkbox']");
               const selectValido = select && select.value !== "";
               const muestrasValidas = muestras && muestras.value !== "" && Number(muestras.value)<= Number(totalMuesta);
-                console.log(totalMuesta,muestrasValidas);
               const severidadValida = severidad && severidad.value !== "";
               const alMenosUnCheckbox = Array.from(checkboxes).some(cb => cb.checked);
               return selectValido && muestrasValidas && severidadValida && alMenosUnCheckbox;
@@ -1960,32 +1945,30 @@
               return navigator.onLine;
             }
            function guardarDatosLocalmente(jsonPrincipal, array1, array2) {
-              let pendientes = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+              let pendientes = JSON.parse(localStorage.getItem('registrosPendientes-Vivero')) || [];
               
               pendientes.push({ 'encabezado':jsonPrincipal, 'detallesPlagas':array1, 'detallesEnfermedades':array2 });
               
-              localStorage.setItem('registrosPendientes', JSON.stringify(pendientes));
-              console.log("Guardado local:",pendientes);
+              localStorage.setItem('registrosPendientes-Vivero', JSON.stringify(pendientes));
               actualizarContador();
             }
 
           function actualizarContador() {
-             const registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
-            const plasticosPendientes = JSON.parse(localStorage.getItem('reportesPendientes')) || [];
+             const registros = JSON.parse(localStorage.getItem('registrosPendientes-Vivero')) || [];
+            const plasticosPendientes = JSON.parse(localStorage.getItem('reportesPendientes-vivero')) || [];
 
             let total = 0;
             registros.forEach(r => {
               if (!r.encabezado['Row ID']) total += 1;
               total += (r.detallesPlagas?.length || 0) + (r.detallesEnfermedades?.length || 0) ;
             });
-            console.log('pendientes', plasticosPendientes.length, plasticosPendientes, registros);
             total=total + plasticosPendientes.length
             document.getElementById('contador').textContent = total;
           }
            async function enviarPendientes() {
-            let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+            let registros = JSON.parse(localStorage.getItem('registrosPendientes-Vivero')) || [];
             let nuevosPendientes = [];
-            let reportes = JSON.parse(localStorage.getItem('reportesPendientes')) ||[];
+            let reportes = JSON.parse(localStorage.getItem('reportesPendientes-vivero')) ||[];
             let nuevosReportes =[];
             if (registros.length > 0) {
                 for (const registro of registros) {
@@ -1998,7 +1981,7 @@
                             const rawBase64 = registro.encabezado["Deficiencia (Foto 1)"];
                             let imageUrl = "";
 
-                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
+                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0 && !rawBase64.includes('drive.google')) {
                                 let  base64ConEncabezado = '';
                                 if (rawBase64.startsWith('data:')) {
                                     // Ya viene con encabezado completo, lo usamos tal cual
@@ -2009,39 +1992,26 @@
                                 }
 
                                 const nombreArchivoEncabezado = `MonitoreoEncabezadoVivero-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
-
-                                console.log("Subiendo imagen de encabezado:", nombreArchivoEncabezado);
                                 const uploadResult = await subirImagenBase64DesdeCliente( base64ConEncabezado, nombreArchivoEncabezado);
 
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
-                                    console.log("Imagen de encabezado subida. URL:", imageUrl);
                                 } else {
-                                    console.error("Error al subir la imagen del encabezado:", uploadResult.error);
-                                    // imageUrl permanece "", lo que luego convertiremos a null
                                 }
                             } else {
-                                console.log("No hay Base64 para la imagen de encabezado o no es una cadena válida. El campo se enviará como null.");
+                                if(rawBase64.includes('drive.google')) imageUrl = rawBase64;
                             }
-
-                            // *** MODIFICACIÓN CLAVE AQUÍ PARA EL ENCABEZADO ***
-                            // Si imageUrl sigue siendo una cadena vacía, la convertimos a null
                             registro.encabezado["Deficiencia (Foto 1)"] = imageUrl === "" ? null : imageUrl;
-
-                            console.log("Enviando encabezado a AppSheet:", registro.encabezado);
                             const rowId = await runServerFunction('Encabezado: Plagas y enfermedades vivero', registro.encabezado);
 
                             if (rowId) {
                                 idPrincipal = rowId;
                                 registro.encabezado["Row ID"] = rowId;
                                 encabezadoGuardadoExitosamente = true;
-                                console.log("Encabezado guardado con Row ID:", rowId);
                             } else {
-                                console.warn("No se pudo guardar el encabezado (no se recibió Row ID). Se reintentará.");
                                 encabezadoGuardadoExitosamente = false;
                             }
                         } catch (e) {
-                            console.error("Error crítico al intentar guardar encabezado o procesar su imagen:", e);
                             encabezadoGuardadoExitosamente = false;
                         }
                     } else {
@@ -2061,42 +2031,32 @@
                         const rawBase64Plaga = item["Foto 1"];
                         let imageUrlPlaga = "";
 
-                        if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
+                        if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0 && !rawBase64Plaga.includes('drive.google')) {
                             let base64PurePlaga = '';
-                            let mimeTypePlaga = '';
                             if (rawBase64Plaga.startsWith('data:')) {
-                                base64PurePlaga = base64PurePlaga;
+                                base64PurePlaga = rawBase64Plaga;
                             } else {
                                 base64PurePlaga = `data:image/png;base64,${rawBase64Plaga}`;
                             }
-
                             const nombreFotoPlaga = `Vivero-${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
-
-                            console.log("Subiendo imagen de detalle de plaga:", nombreFotoPlaga);
                             const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga);
-
                             if (uploadResultPlaga.success) {
                                 imageUrlPlaga = uploadResultPlaga.url;
-                                console.log("Imagen de plaga subida. URL:", imageUrlPlaga);
                             } else {
-                                console.error("Error al subir la imagen de la plaga:", uploadResultPlaga.error);
+                               
                             }
                         } else {
-                            console.log("No hay Base64 para la imagen de plaga o no es una cadena válida. El campo se enviará como null.");
+                            if (rawBase64Plaga.includes('drive.google')) = imageUrlPlaga =rawBase64Plaga;
                         }
-                        // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS PLAGAS ***
                         item["Foto 1"] = imageUrlPlaga === "" ? null : imageUrlPlaga;
-
                         try {
-                            console.log("Enviando detalle de plaga a AppSheet:", item);
                             const id = await runServerFunction("Detalle: Plagas vivero", item);
                             if (!id) fallidosPlagas.push(item);
                         } catch (e) {
-                            console.error("Error al guardar detalle de plaga:", e);
+                           
                             fallidosPlagas.push(item);
                         }
                     }
-
                     // --- 3. Guardar detalles de Enfermedades ---
                     const fallidosEnfermedades = [];
                     for (const item of registro.detallesEnfermedades) {
@@ -2105,36 +2065,29 @@
                         const rawBase64Enfermedad = item["Foto 1"];
                         let imageUrlEnfermedad = "";
 
-                        if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
+                        if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0 && !rawBase64Enfermedad.includes('drive.google')) {
                             let base64PureEnfermedad = '';
                             if (rawBase64Enfermedad.startsWith('data:')) {
-                                base64PureEnfermedad = base64PureEnfermedad;
+                                base64PureEnfermedad = rawBase64Enfermedad;
                             } else {
                                 base64PureEnfermedad = `data:image/png;base64,${rawBase64Enfermedad}`;
                             }
                             const nombreFotoEnfermedad = `Vivero-${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
-
-                            console.log("Subiendo imagen de detalle de enfermedad:", nombreFotoEnfermedad);
                             const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad);
-
                             if (uploadResultEnfermedad.success) {
                                 imageUrlEnfermedad = uploadResultEnfermedad.url;
-                                console.log("Imagen de enfermedad subida. URL:", imageUrlEnfermedad);
                             } else {
                                 console.error("Error al subir la imagen de la enfermedad:", uploadResultEnfermedad.error);
                             }
                         } else {
-                            console.log("No hay Base64 para la imagen de enfermedad o no es una cadena válida. El campo se enviará como null.");
+                            if(rawBase64Enfermedad.includes('drive.google')) imageUrlEnfermedad =rawBase64Enfermedad;
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
                         item["Foto 1"] = imageUrlEnfermedad === "" ? null : imageUrlEnfermedad;
-
                         try {
-                            console.log("Enviando detalle de enfermedad a AppSheet:", item);
                             const id = await runServerFunction("Detalle: Enfermedades vivero", item);
                             if (!id) fallidosEnfermedades.push(item);
                         } catch (e) {
-                            console.error("Error al guardar detalle de enfermedad:", e);
                             fallidosEnfermedades.push(item);
                         }
                     }
@@ -2146,33 +2099,27 @@
                             detallesPlagas: fallidosPlagas,
                             detallesEnfermedades: fallidosEnfermedades
                         });
-                        console.log("Registro con detalles fallidos añadido a la lista de reintentos.");
                     } else {
-                        console.log("Registro completo enviado con éxito.");
                     }
                 } // Fin del bucle for (const registro of registros)
 
                 // --- 5. Actualizar el Local Storage con los registros pendientes ---
-                localStorage.setItem('registrosPendientes', JSON.stringify(nuevosPendientes));
+                localStorage.setItem('registrosPendientes-Vivero', JSON.stringify(nuevosPendientes));
             } else {
-                console.log("No hay registros pendientes para enviar.");
             }
-            console.log('reportes pendientes: ', reportes)
             if(reportes.length > 0){
                 for (const reporte of reportes) {
                     try {
-                        console.log('enviando reporte: ', reporte)
                         const id = await runServerFunction("Reporte plásticos", reporte);
                         if (!id) {
                             nuevosReportes.push(reporte);
                         }
                     } catch (e) {
-                        console.error("Error al guardar reporte pendiente:", e);
                         nuevosReportes.push(reporte);
                     }
                 }
             }
-            localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes))
+            localStorage.setItem('reportesPendientes-vivero',JSON.stringify(nuevosReportes))
             activarBotonesReporte();
             actualizarContador();
             cargarDatos('Ecuablue');
@@ -2295,7 +2242,6 @@
           }
           
           function convertirImagenA64(inputFile, idCampoOculto) {
-            console.log(idCampoOculto)
             if (inputFile.files && inputFile.files[0]) {
               const archivo = inputFile.files[0];
               const lector = new FileReader();
@@ -2365,7 +2311,7 @@
           }
            function guardarReportesLocalmente(array){
            if (Array.isArray(array) && array.length > 0) {
-              localStorage.setItem('reportesPendientes', JSON.stringify(array));
+              localStorage.setItem('reportesPendientes-vivero', JSON.stringify(array));
            }
            actualizarContador();
         }
