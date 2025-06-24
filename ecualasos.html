@@ -1179,22 +1179,30 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+             <tr>
+               <td colspan="2"><label for="Fecha de registro">Fecha de registro:</label><input type="date"  id="fechaRegistro" required/></td>
                <td>
                   <label for="muestraPrincipal">Muestra:</label>
                   <input type="number" id="muestra" placeholder="Ingrese el valor" min=1 required />
                   <span id="error-messageMuestra" class="error-message"></span>
                 </td>
-                <td colspan="2">
+                <td colspan="2"><label for="Estado-fenologico">Estado fenológico:</label><select id="estado-fenologico">
+                  <option value="" selected="true" disabled="true">Seleccione una opción</option>
+                  <option value="Crecimiento">Crecimiento</option>
+                  <option value="Floración">Floración</option>
+                  <option value="Producción">Producción</option>
+                </select></td>
+           </tr>
+              <tr> <td colspan="3">
                   <label for="imagenPrincipal">Imagen general:</label>
                   <input type="file" id="imagenPrincipal" accept="image/*" capture="environment" onchange="convertirImagenA64(this, 'imagenPrincipal64')">
                   <input type="hidden" id="imagenPrincipal64" />
                 </td>
-                <td colspan="2">
+                    <td colspan="2">
                   <label for="observacionPrincipal">Observación:</label>
                   <input type="text" id="observacionPrincipal" placeholder="Observación..." />
                 </td>
-           </tr>
+              </tr>
           </tbody>
         </table>
       <table class="formulario-table" >
@@ -2248,10 +2256,10 @@
                   const cuadrante= document.getElementById('valorCuadrante').value;
                   const hilera = document.getElementById('valorHilera').value;
                   const imagenPrincipal = document.getElementById('imagenPrincipal64').value;
-                  console.log('hiden: ', imagenPrincipal)
+                  const fenologia = document.getElementById('estado-fenologico').value;
                   const observacionesPrincipales = document.getElementById('observacionPrincipal').value;
                   const fechaRegistrada = fechaRegistro.value;
-                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecualasos",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
+                  let filaEncabezado ={'Fecha':fechaRegistrada,'Productor':"Ecualasos",'Bloque':bloque,'Macrotunel':macrotunel,'Cuadrante':cuadrante,'Fila':hilera,'Estado Fenológico':fenologia,'# Plantas Muestreadas':muestraTotal,'Foto 1 (Deficiencia)':imagenPrincipal,'Observación':observacionesPrincipales}
                   Array.from(filas).forEach(function(fila) {
                     const selectAfeccion = fila.querySelector(".miSelect").value;
                     const muestrasInfectadas = fila.querySelector("input[type='number']").value;
