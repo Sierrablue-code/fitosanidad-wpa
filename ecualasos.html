@@ -1758,7 +1758,7 @@
         const cacheB = `Bloques-${productor.replace(/\s+/g, "-")}`
         return Promise.all([
             obtenerDesdeBase(productor, "Bloques", cacheB)
-            .then(datos => { bloques = [...new Set(datos.map(reg=>reg["N° de Bloque"]))] }),
+            .then(datos => { bloques = datos}),
             obtenerDesdeBase(productor, "Detalle: Plagas", cacheP)
             .then(datos => { auxPests = datos; jsonPests=auxPests; }),
             obtenerDesdeBase(productor, "Detalle: Enfermedades", cacheD)
