@@ -7,15 +7,16 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
+   <script>
     // Validar sesión y productor
     const autenticado = localStorage.getItem("autenticado") === "true";
     const productorSesion = localStorage.getItem("productor");
     const archivoActual = window.location.pathname.split("/").pop().replace(".html", "");
 
     if (!autenticado || productorSesion !== archivoActual) {
-      window.location.href = "index.html";
+      window.location.href = "noAutorizado.html";
     }
+   </script>
     </script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="data:,">
