@@ -2186,8 +2186,8 @@ async function enviarPendientes() {
                         nuevosReportes.push(reporte);
                     }
                 }
+                localStorage.setItem('reportesPendientesSB',JSON.stringify(nuevosReportes));
             }
-            localStorage.setItem('reportesPendientesSB',JSON.stringify(nuevosReportes));
             activarBotonesReporte();
             actualizarContador();
         }
