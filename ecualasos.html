@@ -2167,8 +2167,8 @@
                         nuevosReportes.push(reporte);
                     }
                 }
+                localStorage.setItem('reportesPendientesEL',JSON.stringify(nuevosReportes));
             }
-            localStorage.setItem('reportesPendientesEL',JSON.stringify(nuevosReportes));
             activarBotonesReporte();
             actualizarContador();
         }
