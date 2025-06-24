@@ -16,7 +16,7 @@
     const productorSesion = localStorage.getItem("productores");
     const archivoActual = window.location.pathname.split("/").pop().replace(".html", "");
 
-    if (!autenticado || productorSesion !== archivoActual) {
+    if (!autenticado || !productorSesion.includes(archivoActual)) {
       window.location.href = "noAutorizado.html";
     }
   </script>
