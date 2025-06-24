@@ -1704,7 +1704,9 @@
         if (!navigator.onLine) {
             const cachedData = cargarDesdeCache(claveCache);
             if (cachedData) {
-                return cachedData;
+                return claveCache.includes('Bloques') 
+                          ? [...new Set(cachedData)] // ya es un array de strings
+                          : cachedData;
             } else {
                 // Si no hay conexión y no hay caché, lanza un error
                 throw new Error(`No hay conexión a internet y no hay datos en caché para ${claveCache}.`);
