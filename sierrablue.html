@@ -1846,6 +1846,7 @@
                      agregarListenersUltimoCampo(document.getElementById('fila-1'))
                       modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
                       const componentesId=id.split('-');
+                     console.log(id, bloques)
                       const bloque =bloques.find(valor=>valor.includes(componentesId[0].split(':')[1]));
                       const macrotunel = componentesId[1].split(':')[1];
                       const hilera = componentesId[2].split(':')[1];
