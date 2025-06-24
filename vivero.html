@@ -1600,10 +1600,11 @@
                     if (!td.querySelector('input[type="checkbox"]')) {
                             agregarCheckbox(td);
                     }
-                    td.onclick = (event) => {
-                        abrirFormulario(td.id);
-                    };
-                    //td.style.boxShadow = shadow;
+                    if(td.textContent.trim() ==''){
+                      td.onclick = (event) => {
+                          abrirFormulario(td.id);
+                      };
+                   }
                 });
             }
       }
@@ -1769,12 +1770,14 @@
       // Asignamos el event listener a cada uno de los <td> con un id
       tds.forEach(td => {
                 agregarCheckbox(td);
-                td.addEventListener('click', function(event) {
-                    // Aquí va el código que deseas ejecutar cuando se haga clic
-                    const id =td.id;
-                    // Llamar a tu función que maneja el clic
-                    abrirFormulario(id);
-                });
+                if(td.textContent.trim() ==''){
+                    td.addEventListener('click', function(event) {
+                        // Aquí va el código que deseas ejecutar cuando se haga clic
+                        const id =td.id;
+                        // Llamar a tu función que maneja el clic
+                        abrirFormulario(id);
+                    });
+                }
             });
       const ths = document.querySelectorAll('th[id]');
       ths.forEach(th=>{
@@ -2192,8 +2195,6 @@
               });
 
               if (valid) {
-                  //alert('Formulario enviado correctamente');
-                  //formulario.reset(); // Resetea el formulario si es válido
                   const macrotunel = document.getElementById('valorMicroCama').value;
                   const nave = document.getElementById('valorNave').value;
                   const cuadrante= document.getElementById('valorCuadrante').value;
@@ -2325,8 +2326,7 @@
           if(enviar){
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
-            if (hayConexion()) enviarPendientes();
-            location.reload();
+            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks();cargarDatos('Ecuablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();});});
           }
         }
       function activarBotonesReporte(){
@@ -2588,8 +2588,15 @@
           });
         }
         function desmarcarChecks(){
-            
-        }
+         const checksMarcados = document.querySelectorAll('input[type="checkbox"]:checked');
+         checksMarcados.forEach(checkbox => {
+            checkbox.checked = false;
+         });
+        const checksDeshabilitados = document.querySelectorAll('input[type="checkbox"]:disabled');
+        checksDeshabilitados.forEach(checkbox => {
+          checkbox.disabled = false;
+        });
+       }
 
     </script>
 </body>
