@@ -1647,11 +1647,9 @@
                     if (!td.querySelector('input[type="checkbox"]')) {
                             agregarCheckbox(td);
                     }
-                    if(td.textContent.trim() ==''){
-                      td.onclick = (event) => {
-                          abrirFormulario(td.id);
-                      };
-                   }
+                    td.onclick = (event) => {
+                        abrirFormulario(td.id);
+                    };
                 });
             }
       }
