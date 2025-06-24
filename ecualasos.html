@@ -1647,10 +1647,11 @@
                     if (!td.querySelector('input[type="checkbox"]')) {
                             agregarCheckbox(td);
                     }
-                    td.onclick = (event) => {
-                        abrirFormulario(td.id);
-                    };
-                    //td.style.boxShadow = shadow;
+                    if(td.textContent.trim() ==''){
+                      td.onclick = (event) => {
+                          abrirFormulario(td.id);
+                      };
+                   }
                 });
             }
       }
@@ -1810,12 +1811,14 @@
             // Asignamos el event listener a cada uno de los <td> con un id
             tds.forEach(td => {
                 agregarCheckbox(td);
-                td.addEventListener('click', function(event) {
-                    // Aquí va el código que deseas ejecutar cuando se haga clic
-                    const id =td.id;
-                    // Llamar a tu función que maneja el clic
-                    abrirFormulario(id);
-                });
+                if(td.textContent.trim() ==''){
+                    td.addEventListener('click', function(event) {
+                        // Aquí va el código que deseas ejecutar cuando se haga clic
+                        const id =td.id;
+                        // Llamar a tu función que maneja el clic
+                        abrirFormulario(id);
+                    });
+                }
             });
 
            function abrirFormulario(id){
@@ -1982,17 +1985,17 @@
               return navigator.onLine;
             }
            function guardarDatosLocalmente(jsonPrincipal, array1, array2) {
-              let pendientes = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+              let pendientes = JSON.parse(localStorage.getItem('registrosPendientesEL')) || [];
               
               pendientes.push({ 'encabezado':jsonPrincipal, 'detallesPlagas':array1, 'detallesEnfermedades':array2 });
               
-              localStorage.setItem('registrosPendientes', JSON.stringify(pendientes));
+              localStorage.setItem('registrosPendientesEL', JSON.stringify(pendientes));
               actualizarContador();
             }
 
           function actualizarContador() {
-             const registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
-            const plasticosPendientes = JSON.parse(localStorage.getItem('reportesPendientes')) || [];
+             const registros = JSON.parse(localStorage.getItem('registrosPendientesEL')) || [];
+            const plasticosPendientes = JSON.parse(localStorage.getItem('reportesPendientesEL')) || [];
 
             let total = 0;
             registros.forEach(r => {
@@ -2003,9 +2006,9 @@
             document.getElementById('contador').textContent = total;
           }
            async function enviarPendientes() {
-            let registros = JSON.parse(localStorage.getItem('registrosPendientes')) || [];
+            let registros = JSON.parse(localStorage.getItem('registrosPendientesEL')) || [];
             let nuevosPendientes = [];
-            let reportes = JSON.parse(localStorage.getItem('reportesPendientes')) ||[];
+            let reportes = JSON.parse(localStorage.getItem('reportesPendientesEL')) ||[];
             let nuevosReportes =[];
             if (registros.length > 0) {
                 for (const registro of registros) {
@@ -2028,7 +2031,7 @@
                                     // Si solo es la cadena base64 sin encabezado, asumimos que es PNG
                                     base64ConEncabezado = `data:image/png;base64,${rawBase64}`;
                                 }
-                                const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
+                                const nombreArchivoEncabezado = `MonitoreoEncabezadoEL-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Fila"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
                                 const uploadResult = await subirImagenBase64DesdeCliente(base64ConEncabezado, nombreArchivoEncabezado);
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
@@ -2079,7 +2082,7 @@
                                 base64PurePlaga = `data:image/png;base64,${rawBase64Plaga}`;
                             }
 
-                            const nombreFotoPlaga = `${idPrincipal}-Plaga-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
+                            const nombreFotoPlaga = `${idPrincipal}-PlagaEL-${item["Plaga"]}-${registro.encabezado["Fecha"]}.png`;
                             const uploadResultPlaga = await subirImagenBase64DesdeCliente(base64PurePlaga, nombreFotoPlaga);
 
                             if (uploadResultPlaga.success) {
@@ -2118,7 +2121,7 @@
                             } else {
                                 base64PureEnfermedad = `data:image/png;base64,${rawBase64Enfermedad}`;
                             }
-                            const nombreFotoEnfermedad = `${idPrincipal}-Enfermedad-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
+                            const nombreFotoEnfermedad = `${idPrincipal}-EnfermedadEL-${item["Enfermedad"]}-${registro.encabezado["Fecha"]}.png`;
                             const uploadResultEnfermedad = await subirImagenBase64DesdeCliente(base64PureEnfermedad, nombreFotoEnfermedad);
 
                             if (uploadResultEnfermedad.success) {
@@ -2156,7 +2159,7 @@
                 } // Fin del bucle for (const registro of registros)
 
                 // --- 5. Actualizar el Local Storage con los registros pendientes ---
-                localStorage.setItem('registrosPendientes', JSON.stringify(nuevosPendientes));
+                localStorage.setItem('registrosPendientesEL', JSON.stringify(nuevosPendientes));
                 
             } else {
                 console.log("No hay registros pendientes para enviar.");
@@ -2173,7 +2176,7 @@
                     }
                 }
             }
-            localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes));
+            localStorage.setItem('reportesPendientesEL',JSON.stringify(nuevosReportes));
             activarBotonesReporte();
             actualizarContador();
         }
@@ -2278,7 +2281,7 @@
                   plagasAgregadas = [];
                   enfermedadesAgregadas =[];
                   if(hayConexion){
-                    enviarPendientes();
+                    enviarPendientes().then(()=>{ cargarDatos('Ecualasos').then(()=>{if(checkReportes.checked)encontrarCuadrantesConReportes();});});
                   }
                    modalContent.style.display = "none";
                     filas=1;
@@ -2365,7 +2368,7 @@
           }
            function guardarReportesLocalmente(array){
            if (Array.isArray(array) && array.length > 0) {
-              localStorage.setItem('reportesPendientes', JSON.stringify(array));
+              localStorage.setItem('reportesPendientesEL', JSON.stringify(array));
            }
            actualizarContador();
         }
@@ -2380,8 +2383,7 @@
           if(enviar){
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
-            if (hayConexion()) enviarPendientes();
-            location.reload();
+            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks(); cargarDatos('Ecualasos').then(()=>{if(checkReportes.checked)encontrarCuadrantesConReportes();});});
           }
         }
       function activarBotonesReporte(){
@@ -2607,6 +2609,16 @@
             eliminarShadows();
           }
         });
+        function desmarcarChecks(){
+         const checksMarcados = document.querySelectorAll('input[type="checkbox"]:checked');
+         checksMarcados.forEach(checkbox => {
+            checkbox.checked = false;
+         });
+        const checksDeshabilitados = document.querySelectorAll('input[type="checkbox"]:disabled');
+        checksDeshabilitados.forEach(checkbox => {
+          checkbox.disabled = false;
+        });
+       }
     </script>
   
 </body>
