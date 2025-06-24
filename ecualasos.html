@@ -2018,7 +2018,7 @@
                             const rawBase64 = registro.encabezado["Foto 1 (Deficiencia)"];
                             let imageUrl = "";
 
-                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0) {
+                            if (rawBase64 && typeof rawBase64 === 'string' && rawBase64.length > 0 && !rawBase64.includes('drive.google')) {
                                 let base64ConEncabezado = '';
 
                                 if (rawBase64.startsWith('data:')) {
@@ -2028,24 +2028,16 @@
                                     // Si solo es la cadena base64 sin encabezado, asumimos que es PNG
                                     base64ConEncabezado = `data:image/png;base64,${rawBase64}`;
                                 }
-
                                 const nombreArchivoEncabezado = `MonitoreoEncabezado-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
-                                
                                 const uploadResult = await subirImagenBase64DesdeCliente(base64ConEncabezado, nombreArchivoEncabezado);
-
                                 if (uploadResult.success) {
                                     imageUrl = uploadResult.url;
                                 } else {
                                     console.error("Error al subir la imagen del encabezado:", uploadResult.error);
-                                    // imageUrl permanece "", lo que luego convertiremos a null
                                 }
                             } else {
-                                console.log("No hay Base64 para la imagen de encabezado o no es una cadena válida. El campo se enviará como null.");
+                                if(rawBase64.includes('drive.google')) imageUrl= rawBase64
                             }
-
-
-                            // *** MODIFICACIÓN CLAVE AQUÍ PARA EL ENCABEZADO ***
-                            // Si imageUrl sigue siendo una cadena vacía, la convertimos a null
                             registro.encabezado["Foto 1 (Deficiencia)"] = imageUrl === "" ? null : imageUrl;
 
                             const rowId = await runServerFunction('Encabezado: Plagas y enfermedades', registro.encabezado);
@@ -2079,10 +2071,10 @@
                         const rawBase64Plaga = item["Foto 1"];
                         let imageUrlPlaga = "";
 
-                        if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
+                        if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0 && !rawBase64Plaga.includes('drive.google')) {
                             let base64PurePlaga = '';
                             if (rawBase64Plaga.startsWith('data:')) {
-                                base64PurePlaga = base64PurePlaga;
+                                base64PurePlaga = rawBase64Plaga;
                             } else {
                                 base64PurePlaga = `data:image/png;base64,${rawBase64Plaga}`;
                             }
@@ -2096,6 +2088,7 @@
                                 console.error("Error al subir la imagen de la plaga:", uploadResultPlaga.error);
                             }
                         } else {
+                             if(rawBase64Plaga.includes('drive.google')) imageUrlPlaga = rawBase64Plaga;
                             console.log("No hay Base64 para la imagen de plaga o no es una cadena válida. El campo se enviará como null.");
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS PLAGAS ***
@@ -2115,12 +2108,13 @@
                         item["IdPlagas y Enfermedades"] = idPrincipal;
 
                         const rawBase64Enfermedad = item["Foto 1"];
+                        console.log('base 64 foto enfermedad: ', rawBase64Enfermedad)
                         let imageUrlEnfermedad = "";
 
-                        if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
+                        if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0 && !rawBase64Enfermedad.includes('drive.google')) {
                             let base64PureEnfermedad = '';
                             if (rawBase64Enfermedad.startsWith('data:')) {
-                                base64PureEnfermedad = base64PureEnfermedad;
+                                base64PureEnfermedad = rawBase64Enfermedad;
                             } else {
                                 base64PureEnfermedad = `data:image/png;base64,${rawBase64Enfermedad}`;
                             }
@@ -2133,6 +2127,7 @@
                                 console.error("Error al subir la imagen de la enfermedad:", uploadResultEnfermedad.error);
                             }
                         } else {
+                            if(rawBase64Enfermedad.includes('drive.google')) imageUrlEnfermedad = rawBase64Enfermedad;
                             console.log("No hay Base64 para la imagen de enfermedad o no es una cadena válida. El campo se enviará como null.");
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
@@ -2179,10 +2174,8 @@
                 }
             }
             localStorage.setItem('reportesPendientes',JSON.stringify(nuevosReportes));
-            cargarDatos('Ecualasos')
             activarBotonesReporte();
             actualizarContador();
-             
         }
           function submitForm(event){
               event.preventDefault(); // Prevenir el envío del formulario por defecto
