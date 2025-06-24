@@ -1677,12 +1677,10 @@
                     if (!td.querySelector('input[type="checkbox"]')) {
                             agregarCheckbox(td);
                     }
-                    if(td.textContent.trim()==''){
-                        td.onclick = (event) => {
-                            abrirFormulario(td.id);
-                        };
-                        });
-                    }
+                    td.onclick = (event) => {
+                        abrirFormulario(td.id);
+                    };
+                });
             }
       }
       function setScale(factor) {
@@ -2397,7 +2395,7 @@
           if(enviar){
             guardarReportesLocalmente(areasAgregadas);
             areasAgregadas =[];
-            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks(); cargarDatos('Ecuablue')});
+            if (hayConexion()) enviarPendientes().then(()=>{desmarcarChecks(); cargarDatos('Ecuablue').then(()=>{ if(checkReportes.checked) encontrarCuadrantesConReportes();})});
           }
         }
       function activarBotonesReporte(){
