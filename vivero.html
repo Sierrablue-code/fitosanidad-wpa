@@ -1187,6 +1187,7 @@
                     </td>
                     <td><select class="severidad" required>
                           <option value="" selected="true" disabled="true">Seleccione una opción</option>
+                          <option value="0">0</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -1866,6 +1867,7 @@
                     </td>
                     <td><select class="severidad"  required>
                           <option value="" selected="true" disabled="true">Seleccione una opción</option>
+                          <option value="0">0</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -1994,8 +1996,7 @@
                                     // Si solo es la cadena base64 sin encabezado, asumimos que es PNG
                                     base64ConEncabezado = `data:image/png;base64,${rawBase64}`;
                                 }
-
-                                const nombreArchivoEncabezado = `MonitoreoEncabezadoVivero-${registro.encabezado["Bloque"]}-${registro.encabezado["Macrotunel"]}-${registro.encabezado["Hilera"]}-${registro.encabezado["Cuadrante"]}-${registro.encabezado["Fecha"]}.png`;
+                                const nombreArchivoEncabezado = `MonitoreoEncabezadoVivero-${registro.encabezado["Area"]}-${registro.encabezado["Nave"]}-${registro.encabezado["Microtunel /Cama"]}-${registro.encabezado["Cuadrante /Microcuadrante"]}-${registro.encabezado["Fecha"]}.png`;
                                 const uploadResult = await subirImagenBase64DesdeCliente( base64ConEncabezado, nombreArchivoEncabezado);
 
                                 if (uploadResult.success) {
