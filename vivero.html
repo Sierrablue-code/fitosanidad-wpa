@@ -1454,7 +1454,7 @@
                 ? fecha
                   ? auxDiseases.filter(disease => 
                       enfermedadesSeleccionadas.some(cb=>cb.closest('div').getAttribute('data-option')== disease.Enfermedad) && 
-                      disease.Fecha >= fechaInicio && disease.Fecha <= fechaFin
+                      disease.Fecha >= fechaInicioString && disease.Fecha <= fechaFinString
                     )
                   : auxDiseases.filter(disease => enfermedadesSeleccionadas.some(cb=>cb.closest('div').getAttribute('data-option')== disease.Enfermedad))
                 : [];
