@@ -1472,7 +1472,6 @@
       });
       fecha.addEventListener('change',(event)=>{
         const opciones =  [... Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo'&& cb.checked),...Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked)];
-        console.log(document.getElementById('fecha').value)
         if (opciones.length==0 && !document.getElementById('fecha').value) {
             marcarPlagasYenfermedadesActual();
         } else {
@@ -1488,7 +1487,6 @@
          limpiarTds(cuadrantesConDanios);
          const plagasSeleccionas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked);
          const enfermedadesSeleccionadas = Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked);
-         console.log(plagasSeleccionas,enfermedadesSeleccionadas);
          const filtrosSeleccionados = [...enfermedadesSeleccionadas, ...plagasSeleccionas];
          const fecha = document.getElementById('fecha').value.toString();
          let fechaInicio = "";
@@ -2098,10 +2096,8 @@
 
                         const rawBase64Plaga = item["Foto 1"];
                         let imageUrlPlaga = "";
-                        console.log('foto palga: ',rawBase64Plaga)
                         if (rawBase64Plaga && typeof rawBase64Plaga === 'string' && rawBase64Plaga.length > 0) {
                             let base64PurePlaga = '';
-                            console.log(rawBase64Plaga.includes('drive.google'));
                             if(!rawBase64Plaga.includes('drive.google')){
                             if (rawBase64Plaga.startsWith('data:')) {
                                 base64PurePlaga = rawBase64Plaga;
@@ -2121,7 +2117,6 @@
                             }
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS PLAGAS ***
-                        console.log('url imagen plaga: ', imageUrlPlaga);
                         item["Foto 1"] = imageUrlPlaga === "" ? null : imageUrlPlaga;
 
                         try {
@@ -2138,10 +2133,8 @@
                         item["IdPlagas y Enfermedades"] = idPrincipal;
                         const rawBase64Enfermedad = item["Foto 1"];
                         let imageUrlEnfermedad = "";
-                        console.log('foto enfermedad', rawBase64Enfermedad);
                         if (rawBase64Enfermedad && typeof rawBase64Enfermedad === 'string' && rawBase64Enfermedad.length > 0) {
                             let base64PureEnfermedad = '';
-                            console.log(rawBase64Enfermedad.includes('drive.google'));
                             if(!rawBase64Enfermedad.includes('drive.google')){
                             if (rawBase64Enfermedad.startsWith('data:')) {
                                 base64PureEnfermedad = rawBase64Enfermedad;
@@ -2161,7 +2154,6 @@
                             }
                         }
                         // *** MODIFICACIÓN CLAVE AQUÍ PARA LAS ENFERMEDADES ***
-                        console.log('foto enfermedad url',imageUrlEnfermedad)
                         item["Foto 1"] = imageUrlEnfermedad === "" ? null : imageUrlEnfermedad;
 
                         try {
@@ -2539,7 +2531,6 @@
                   const macrotunel = area["Macrotunel"]?'mt:'+area["Macrotunel"]:"";
                   const cuadrantes = area["Cuadrantes"].split(",").filter(cuadrante => Number(cuadrante)>0);
                   let elementosTdPorC = [];
-                  console.log('Bloque: ', bloque, 'MT: ', macrotunel, 'Cuadrantes: ', cuadrantes);
                   if(cuadrantes.length>0){
                       cuadrantes.forEach(cuadrante=>{
                           const idCuadrante = 'c:'+cuadrante;
@@ -2567,7 +2558,6 @@
                   }
               });
             const areasUnicas = agruparIds(areasEncontradas);
-            console.log('areas únicas: ', areasUnicas);
             const repeticionMaxima = Math.max(...Object.values(areasUnicas).map(entry => entry.repeticiones));
             for(let clave in areasUnicas){
                 const elemento=areasUnicas[clave];
@@ -2649,10 +2639,8 @@
          limpiarTds(cuadrantesConDanios);
          const plagasSeleccionas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
          const enfermedadesSeleccionadas = Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
-         console.log(plagasSeleccionas,enfermedadesSeleccionadas);
          const filtrosSeleccionados = [...enfermedadesSeleccionadas, ...plagasSeleccionas];
          const fecha = new Date().toISOString().split('T')[0];
-         console.log(fecha)
          let fechaInicio = "";
          let fechaFin = "";
          if (fecha.includes("to")) {
@@ -2699,16 +2687,12 @@
         }
        
         }
-        console.log(areasConEnfermedadelStorage,areasConPlagasDelStorage)
         const areas = [...areasAfectadasPEnfermedades,...areasAfectadasPPlagas,...areasConEnfermedadelStorage,...areasConPlagasDelStorage];
-        console.log(areas);
         const areasUnicas = [...new Set(areas.id)];
         let afeccionesAPintar = {};
         areas.forEach(area=>{
-          console.log(area)
           const enfermedadOplaga = area.Enfermedad || area.Plaga;
           const id = area.id ;
-          console.log(id);
           const incidencia= parseFloat(area["Incidencia"])||0;
           const severidad = parseFloat(area["Severidad"]) ||0;
           const nivel = area["Nivel de infestación"];
