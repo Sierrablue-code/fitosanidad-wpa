@@ -1390,8 +1390,13 @@
                 }
 
                 // Solo llamar si hubo cambios reales
-                if (cambiosHechos) {
-                    actualizarItems();
+                 if (cambiosHechos) {
+                    const opciones =  [... Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo'&& cb.checked),...Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked)];
+                      if (opciones.length==0) {
+                          marcarPlagasYenfermedadesActual();
+                      } else {
+                          actualizarItems();
+                      }
                 }
             });
         });
@@ -1419,7 +1424,12 @@
         }
       });
       fecha.addEventListener('change',(event)=>{
-        actualizarItems();
+        const opciones =  [... Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo'&& cb.checked),...Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo' && cb.checked)];
+        if (opciones.length==0 && !document.getElementById('fecha').value) {
+            marcarPlagasYenfermedadesActual();
+        } else {
+            actualizarItems();
+        }
         if(checkReporte.checked) encontrarCuadrantesConReportes();
       })
        function actualizarItems(){
@@ -1653,7 +1663,7 @@
               }
             });
           recorrerCS();
-          cargarDatos('Ecuablue').then(()=>{if(checkReporte.checked)encontrarCuadrantesConReportes();document.getElementById("pantalla-carga").style.display = "none";});
+          cargarDatos('Ecuablue').then(()=>{marcarPlagasYenfermedadesActual(); if(checkReporte.checked)encontrarCuadrantesConReportes();document.getElementById("pantalla-carga").style.display = "none";});
           hayConexion()?enviarPendientes():actualizarContador();
        });
           //fin cod aux
@@ -1790,7 +1800,7 @@
                      agregarListenersUltimoCampo(document.getElementById('fila-1'))
                       modalContent.style.top = (header.offsetHeight+boton.offsetHeight-5)+'px';
                       const componentesId=id.split('-');
-                      const area = componentesId[0].split(':')[1]=="a"?"Aclimatacion":"Endurecimiento";
+                      const area = componentesId[0].split(':')[1]=="a"?"Aclimatación":"Endurecimiento";
                       const nave = componentesId[1].split(':')[1];
                       const microtOcama = componentesId[2].split(':')[1];
                       const cuadrante = componentesId[3].split(':')[1];
@@ -2233,7 +2243,9 @@
                   plagasAgregadas = [];
                   enfermedadesAgregadas =[];
                   if(hayConexion){
-                    enviarPendientes().then(()=>{cargarDatos('Ecuablue')});
+                    enviarPendientes().then(()=>{cargarDatos('Ecuablue').then(()=>{marcarPlagasYenfermedadesActual();})});
+                  }else{
+                    marcarPlagasYenfermedadesActual();
                   }
                   modalContent.style.display = "none";
                     filas=1;
@@ -2611,6 +2623,195 @@
           checkbox.disabled = false;
         });
        }
+       function marcarPlagasYenfermedadesActual(){
+         lista.innerHTML='';
+         itemsDiv.innerHTML='';
+         const cuadrantesConDanios = document.querySelectorAll('td[id]:has(span)');
+         limpiarTds(cuadrantesConDanios);
+         const plagasSeleccionas = Array.from(document.querySelectorAll('.custom-select-1 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
+         const enfermedadesSeleccionadas = Array.from(document.querySelectorAll('.custom-select-2 input[type="checkbox"]')).filter(cb=>cb.closest('div').getAttribute('data-option')!='todo');
+         const filtrosSeleccionados = [...enfermedadesSeleccionadas, ...plagasSeleccionas];
+         const fecha = new Date().toISOString().split('T')[0];
+         let fechaInicio = "";
+         let fechaFin = "";
+         if (fecha.includes("to")) {
+                [fechaInicio, fechaFin] = fecha.split(" to ");
+        } else {
+                fechaInicio = fecha;
+                fechaFin = fecha;
+        }
+        const [anioInicio, mesInicio, diaInicio] = fechaInicio.split("-");
+        const [anioFin, mesFin, diaFin] = fechaFin.split("-");
+        const fechaInicioString = `${mesInicio}/${diaInicio}/${anioInicio}`;
+        const fechaFinString = `${mesFin}/${diaFin}/${anioFin}`;
+        const areasAfectadasPPlagas = auxPests.length > 0
+                ? fecha
+                  ? auxPests.filter(pest => 
+                      plagasSeleccionas.some(cb=>cb.closest('div').getAttribute('data-option')== pest.Plaga) && 
+                       pest.Fecha >= fechaInicioString && pest.Fecha <= fechaFinString
+                    )
+                  : auxPests.filter(pest => plagasSeleccionas.some(cb=>cb.closest('div').getAttribute('data-option')== pest.Plaga))
+                : [];
+        const areasAfectadasPEnfermedades = auxDiseases.length > 0
+                ? fecha
+                  ? auxDiseases.filter(disease => 
+                      enfermedadesSeleccionadas.some(cb=>cb.closest('div').getAttribute('data-option')== disease.Enfermedad) && 
+                      disease.Fecha >= fechaInicioString && disease.Fecha <= fechaFinString
+                    )
+                  : auxDiseases.filter(disease => enfermedadesSeleccionadas.some(cb=>cb.closest('div').getAttribute('data-option')== disease.Enfermedad))
+                : [];
+        const registrosDeCachePendientes = JSON.parse(localStorage.getItem('registrosPendientes-Vivero'));
+        const areasConEnfermedadelStorage = [];
+        const areasConPlagasDelStorage = [];
+        if(registrosDeCachePendientes){
+          for (const registro of registrosDeCachePendientes) {
+          const encabezado = registro.encabezado;
+          const plagas = registro.detallesPlagas || [];
+          const enfermedades = registro.detallesEnfermedades || [];
+          const id =encabezado.Area=="Endurecimiento" ?`b:e-n:${encabezado.Nave}-ca:${encabezado["Microtunel /Cama"]}-c:${encabezado["Cuadrante /Microcuadrante"]}`:`b:a-n:${encabezado.Nave}-mi:${encabezado["Microtunel /Cama"]}-c:${encabezado["Cuadrante /Microcuadrante"]}`;
+          for (const plaga of plagas) {
+            areasConPlagasDelStorage.push({ ...plaga, id });
+          }
+          for (const enfermedad of enfermedades) {
+            areasConEnfermedadelStorage.push({ ...enfermedad, id });
+          }
+        }
+       
+        }
+        const areas = [...areasAfectadasPEnfermedades,...areasAfectadasPPlagas,...areasConEnfermedadelStorage,...areasConPlagasDelStorage];
+        const areasUnicas = [...new Set(areas.id)];
+        let afeccionesAPintar = {};
+        areas.forEach(area=>{
+          const enfermedadOplaga = area.Enfermedad || area.Plaga;
+          const id = area.id ;
+          const incidencia= parseFloat(area["Incidencia"])||0;
+          const severidad = parseFloat(area["Severidad"]) ||0;
+          const nivel = area["Nivel de infestación"];
+          const clave= id;
+          const color = filtrosSeleccionados.find(cb=>cb.closest('div').getAttribute('data-option')== enfermedadOplaga).closest('div').getAttribute('data-color');
+          if(!afeccionesAPintar[clave]){
+            afeccionesAPintar[clave]={'td':id,'afecciones':[{'nombre':enfermedadOplaga,'severidad':0,'incidencia':0,'contador':0,'incidenciaPromedio':0,'color':color,'nivel':[nivel]}]};
+          }
+          const afeccion = afeccionesAPintar[clave].afecciones.find(rg=>rg.nombre==enfermedadOplaga);
+          if(!afeccion){
+            afeccionesAPintar[clave].afecciones.push({'nombre':enfermedadOplaga,'severidad':severidad,'incidencia':incidencia,'contador':1,'incidenciaPromedio':incidencia,'color':color,'nivel':[nivel]})
+          }else{
+            afeccion.contador = afeccion.contador+1;
+            afeccion.severidad = afeccion.severidad +severidad;
+            afeccion.incidencia = afeccion.incidencia +incidencia;
+            afeccion.incidenciaPromedio = (afeccion.incidencia / afeccion.contador)||0;
+            afeccion.nivel.push(nivel);
+          }
+        });
+        const maximosPorAfeccion = Object.values(afeccionesAPintar).flatMap(obj => obj.afecciones)
+                                      .reduce((acc, afeccion) => {
+                                        if (afeccion.incidenciaPromedio != null && !isNaN(afeccion.incidenciaPromedio)) {
+                                          acc[afeccion.nombre] = Math.max(acc[afeccion.nombre] ?? -Infinity, afeccion.incidenciaPromedio);
+                                        }
+                                        return acc;
+                                      }, {});
+        for(const clave in afeccionesAPintar){
+          const tdId = clave;
+          const afeccionesLista = afeccionesAPintar[clave].afecciones;
+          const celdaConProblemas = document.getElementById(tdId);
+          if(celdaConProblemas){
+             const itemData = document.createElement('li');
+             const elementoA =  document.createElement('a');
+             const parrafo = document.createElement('p');
+             const texto= afeccionesLista.length > 0 ?'Plagas o enfermedades: ' +  afeccionesLista.map(reg=>reg.nombre).toString() + '\n':"";
+             elementoA.textContent= tdId;
+            elementoA.href="#"+tdId;
+            afeccionesLista.forEach(afeccion=>{
+            const tamaño= celdaConProblemas.offsetHeight -3;
+            const nombre = afeccion.nombre;
+            const color = afeccion.color;
+            const incidencia = afeccion.incidenciaPromedio *100;
+            const nivelesInfestacion = [...new Set(afeccion.nivel)];
+            const promedioSeveridad = (afeccion.severidad/afeccion.contador)||0;
+            const shadowActual =  celdaConProblemas.style.boxShadow || '';
+               const promedioMaximo = maximosPorAfeccion[nombre] || 1;
+               const porcentaje = incidencia / promedioMaximo;
+               const opacidad = Math.max(0.1, Math.min(porcentaje, 1));
+               //const valorColor = incidencia>0? aplicarIntensidadHex(color,alpha):'transparent';
+               const valorColor = incidencia>0? `rgba(${color}, ${opacidad})`:'transparent';
+               const colorOption = document.createElement('span');
+               colorOption.style.backgroundColor = valorColor;
+               //colorOption.style.opacity= alpha;
+               colorOption.style.width = tamaño+'px';
+               colorOption.style.height = tamaño+'px';
+               colorOption.style.borderRadius = '50%';
+               colorOption.style.display = 'inline-block';
+               colorOption.style.cursor = 'pointer';
+               colorOption.style.position = 'relative';
+               colorOption.style.borderColor= `rgb(${color})`;
+               colorOption.style.borderWidth=1+'px';
+               colorOption.style.borderStyle='solid';
+               celdaConProblemas.style.justifyContent = 'center';
+               celdaConProblemas.style.alignItems = 'center';
+               celdaConProblemas.style.alignContent='center';
+               celdaConProblemas.style.padding='0px';
+               celdaConProblemas.style.margin='0px';
+               celdaConProblemas.style.boxShadow = shadowActual;
+
+               const popup = document.createElement('div');
+               const rect = celdaConProblemas.offsetTop;
+               popup.classList.add('popup');
+               popup.style.display = 'none';
+               popup.style.position = 'fixed';
+               popup.style.backgroundColor = '#fff';
+               popup.style.border = '1px solid #ccc';
+               popup.style.padding = '5px';
+               popup.style.zIndex = '1000';
+               popup.style.top = `${celdaConProblemas.offsetTop+20}px`;
+               popup.style.left = `${celdaConProblemas.offsetLeft + 10}px`;
+            
+               popup.innerHTML = `<b>${nombre}</b><br>Incidencia: ${(incidencia).toFixed(2)}%<br>Severidad: ${promedioSeveridad.toFixed(2)}<br>Nivel de infestación: ${nivelesInfestacion.join(', ')}`;
+                                colorOption.appendChild(popup);
+                                colorOption.addEventListener('click', function (event) {
+                                     event.stopPropagation();
+                                     const rect = colorOption.getBoundingClientRect();
+                                    const yaVisible = popup.style.display === 'block';
+                                    document.querySelectorAll('.popup').forEach(p => p.style.display = 'none');
+                                    if (!yaVisible) {
+                                        popup.style.display = 'block';
+                                    }
+                                });
+               celdaConProblemas.appendChild(colorOption);
+               const countSpan = celdaConProblemas.querySelectorAll('span');
+               const size = tamaño/countSpan.length;
+               celdaConProblemas.querySelectorAll('span').forEach(span => {
+                                    span.style.width = size+'px';
+                                    span.style.height = size+'px';
+                                });
+          })
+            elementoA.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const celdaDestino = document.getElementById(tdId);
+                        const celdasMarcadas = document.querySelectorAll('.celda-resaltada');
+                        celdasMarcadas.forEach(celda => {
+                            celda.classList.remove('celda-resaltada');
+                        });
+                        if (celdaDestino) {
+                            celdaDestino.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                            celdaDestino.classList.add('celda-resaltada');
+
+                            // Opcionalmente, remover la clase después de un tiempo
+                            setTimeout(() => {
+                                celdaDestino.classList.remove('celda-resaltada');
+                            }, 5000); // Remover después de 1.5 segundos
+                        }
+                        
+                    });
+                    parrafo.textContent= texto;
+                    itemData.appendChild(elementoA);
+                    itemData.appendChild(parrafo);
+                    lista.appendChild(itemData);
+        
+        }
+        itemsDiv.appendChild(lista);
+        }
+       }
+
 
     </script>
 </body>
